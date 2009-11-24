@@ -1,0 +1,17 @@
+<VirtualHost *:80>
+
+    PerlWarn On
+    PerlTaintCheck On
+
+    LogLevel error
+
+    #the name of the virtual host we are defining
+    ServerName smmid.localhost.localdomain
+
+    <Perl>
+      use lib '/crypt/rob/cxgn/git/local-lib/core/SMMID/lib';
+    </Perl>
+
+    PerlModule SMMID
+
+</VirtualHost>

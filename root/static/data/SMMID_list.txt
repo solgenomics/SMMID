@@ -1,0 +1,229 @@
+SMMID: 
+NAME: 
+SYNONYMS: 
+MOLECULAR FORMULA: 
+MOLECULAR WEIGHT: 
+SMILES: 
+CAS#	
+
+	
+SMMID: ascr#1
+NAME: 6R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-heptanoic acid
+SYNONYMS: "C7", daumone
+MOLECULAR FORMULA: C13H24O6
+MOLECULAR WEIGHT: 276.33
+
+(Jeong, Jung et al. 2005)
+http://www.ncbi.nlm.nih.gov/pubmed/15690045?ordinalpos=51&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+
+(Schroeder 2006)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17163670 
+
+(Butcher, Fujita et al. 2007)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398 
+
+(Butcher, Ragains et al. 2008)
+http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+
+(Butcher, Ragains et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19174521 
+
+(Jeong, Na et al. 2009)
+http://www.ncbi.nlm.nih.gov/pubmed/19381582?ordinalpos=6&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+
+(Joo, Yim et al. 2009)
+http://www.ncbi.nlm.nih.gov/pubmed/19496754?ordinalpos=1&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+SMMID: ascr#2
+NAME: 5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2R-hexanol
+SYNONYMS: "C6"
+MOLECULAR FORMULA: C12H22O5
+MOLECULAR WEIGHT: 246.30
+
+(Butcher, Fujita et al. 2007)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398 
+
+(Butcher, Ragains et al. 2008)
+http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+
+(Srinivasan, Kaplan et al. 2008)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18650807 
+
+(Macosko, Pokala et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19349961 
+
+(Butcher, Ragains et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19174521 
+
+(Pungaliya, Srinivasan et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+
+
+SMMID: ascr#3
+NAME: 8R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2E-nonenoic acid
+SYNONYMS: "C9"
+MOLECULAR FORMULA: C15H26O6
+MOLECULAR WEIGHT: 302.36
+
+(Butcher, Fujita et al. 2007)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398 
+
+(Butcher, Ragains et al. 2008)
+http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+
+(Srinivasan, Kaplan et al. 2008)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18650807 
+
+(Macosko, Pokala et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19349961 
+
+(Butcher, Ragains et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19174521 
+
+(Pungaliya, Srinivasan et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+
+
+SMMID: ascr#4
+NAME: 5R-(3'-O-[?-D-glucosyl]-3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2R-hexanol
+SYNONYMS: none
+MOLECULAR FORMULA: C18H32O10
+MOLECULAR WEIGHT: 408.44
+
+(Srinivasan, Kaplan et al. 2008)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18650807 
+
+(Pungaliya, Srinivasan et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+
+SMMID: ascr#5
+NAME: 3-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-propanoic acid
+SYNONYMS: "C3"
+MOLECULAR FORMULA: C9H16O6
+MOLECULAR WEIGHT: 220.22
+
+(Butcher, Ragains et al. 2008)
+http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+
+(Macosko, Pokala et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19349961 
+
+(Butcher, Ragains et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19174521 
+
+(Pungaliya, Srinivasan et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+
+
+SMMID: ascr#6.1	
+NAME: 5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2R-hexanol
+SYNONYMS: none
+MOLECULAR FORMULA: C12H24O5
+MOLECULAR WEIGHT: 248.32
+
+(Pungaliya, Srinivasan et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+
+
+SMMID: ascr#6.2
+NAME: 5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2S-hexanol
+SYNONYMS: none
+MOLECULAR FORMULA: C12H24O5
+MOLECULAR WEIGHT: 248.32
+
+(Pungaliya, Srinivasan et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+
+
+SMMID: ascr#7
+NAME: 6R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2E-heptenoic acid
+SYNONYMS: none
+MOLECULAR FORMULA: C13H22O6
+MOLECULAR WEIGHT: 274.31
+
+(Pungaliya, Srinivasan et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+
+
+SMMID: ascr#8
+NAME: N-(6'R-[3''R,5''R-dihydroxy-6''S-methyl-(2H)-tetrahydropyran-2-yloxy]-2'E-heptenoyl)-4-aminobenzoic acid
+SYNONYMS: none
+MOLECULAR FORMULA: C20H27NO7
+MOLECULAR WEIGHT: 393.43
+
+(Pungaliya, Srinivasan et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+
+
+SMMID: dafa#1
+NAME: 3-keto-7,(5a)-cholestenoic acid
+SYNONYMS: dafachronic acid A, ?7-dafachronic acid
+MOLECULAR FORMULA: C27H42O3
+MOLECULAR WEIGHT: 414.62
+
+(Motola, Cummins et al. 2006)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=16529801 
+
+(Schroeder 2006)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17163670 
+
+(Beckstead and Thummel 2006)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=16564008 
+
+(Gerisch, Rottiers et al. 2007)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17360327 
+
+(Giroux and Corey 2007)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17658816 
+
+(Giroux and Corey 2008)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18247628 
+
+(Giroux, Bethke et al. 2008)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18642835 
+
+(Martin, Dabritz et al. 2008)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19005586 
+
+(Sharma, Wang et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19196833 
+
+
+
+
+
+SMMID: dafa#2
+NAME: 3-keto-4-cholestenoic acid
+SYNONYMS: dafachronic acid B, ?4-dafachronic acid
+MOLECULAR FORMULA: C27H42O3
+MOLECULAR WEIGHT: 414.62
+
+
+(Motola, Cummins et al. 2006)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=16529801 
+
+(Schroeder 2006)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17163670 
+
+(Beckstead and Thummel 2006)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=16564008 
+
+(Gerisch, Rottiers et al. 2007)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17360327 
+
+(Giroux and Corey 2007)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17658816 
+
+(Giroux and Corey 2008)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18247628 
+
+(Giroux, Bethke et al. 2008)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18642835 
+
+(Martin, Dabritz et al. 2008)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19005586 
+
+(Sharma, Wang et al. 2009)
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19196833 
+
+
+

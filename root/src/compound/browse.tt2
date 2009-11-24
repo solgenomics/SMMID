@@ -1,0 +1,12 @@
+
+<table>
+<h2>Browse SMMIDs</h2>
+
+[% FOREACH s = all_smmids %]
+
+<tr>
+<td><a href="/detail/[% s.get_smmid_for_link %]/">[% s.get_smmid %]</a></td>
+<td>[% s.get_name %]</td>
+</tr>
+[% END %]
+</table>

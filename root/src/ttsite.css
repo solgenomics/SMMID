@@ -1,0 +1,61 @@
+
+html {
+    height: 100%;
+}
+
+body { 
+    background-color: [% site.col.page %];
+    font-family: arial;
+    color: [% site.col.text %];
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    font-face: arial;
+}
+
+#header {
+    margin: 0 auto;
+    background-color: [% site.col.head %];
+    font-color: [% site.col.title %];
+    border-bottom: 1px solid [% site.col.line %];
+    width: [% site.width %];
+}
+
+#footer {
+    background-color: [% site.col.head %];
+    text-align: left;
+    border-top: 1px solid [% site.col.line %];
+    width: [% site.width %];
+    padding: 4px;
+    margin: 0 auto;
+}
+
+#content {
+    padding: 10px;
+    margin: 0 auto;
+    width: [% site.width %];
+}
+
+h1.title {
+    padding: 4px;
+    margin: 0px;
+    text-decorations: none;
+}
+
+.sitetitle { 
+    font-family: arial;
+    text-decoration: none;
+    font-size: 24pt;
+    font-weight: bold;
+    color: [% site.rgb.blue %];
+    margin-bottom: 0px;
+    
+}
+
+.message {
+    color: [% site.col.message %];
+}
+
+.error {
+    color: [% site.col.error %];
+}

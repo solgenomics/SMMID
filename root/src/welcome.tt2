@@ -1,0 +1,16 @@
+[% META title = 'SMMID.org' %]
+
+
+
+<h2>Welcome to the Small Molecule Metabolite Identifier Database (SMMID DB)</h2>
+<br /><br />
+SMMIDs are Small Molecule Metabolite Identifiers that aim to make life easier for describing metabolites in metabolomic and genomic applications. Conceptually, they represent gene-style identifiers for <i>C. elegans</i> small molecule signals.
+    <br /><br /><br /><br />
+<a href="/static/SMMID_06102008.pdf">More about SMMIDs [PDF]</a><br /><br />
+
+<a href="/browse">Browse SMMIDs</a><br /><br />
+
+<a href="/contact">Contact us</a><br /><br />
+
+<br /><br /><br />
+

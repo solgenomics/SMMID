@@ -1,0 +1,15 @@
+
+<h1>SMMID details for smmid <b>[% smmid %]</b></h1>
+
+SMMID ID: <b>[% smmid %]</b> <br /><br />
+NAME: [% name %]<br /><br />
+SYNONYMS: [% synonyms %]<br /><br />
+MOLECULAR WEIGHT: [% molecular_weight %]<br /><br />
+MOLECULAR FORMULA: [% molecular_formula %]<br /><br />
+REFERENCES: [% FOREACH link IN links %]
+ <a href="[% link.1 %]">[% link.0  %]</a>&nbsp;&nbsp;
+[% END %]
+<br /><br />
+STRUCTURE FILE: [% structure_file %]<br />
+STRUCTURE: <br /> <img src="[% structure_file %]" />
+<br /><br />
