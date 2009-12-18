@@ -45,13 +45,24 @@ our $VERSION = '0.01';
 # with a external configuration file acting as an override for
 # local deployment.
 
+# logs go by default in /var/log/smmid-site
+my $logdir = File::Spec->catfile( File::Spec->rootdir,
+				  'var',
+				  'log',
+				  'smmid-site',
+				);
+
 __PACKAGE__->config(
-                      name => 'SMMID',
+		    name => 'SMMID',
+		    access_log => File::Spec->catfile( $logdir, 'access.log' ),
+		    error_log  => File::Spec->catfile( $logdir, 'error.log'  ),
+
+		    # our conf file is by default in /etc/cxgn/SMMID.conf
+		    'Plugin::ConfigLoader' => { file => File::Spec->catfile( File::Spec->rootdir, 'etc', 'cxgn', 'SMMID.conf') },
                    );
 
 # Start the application
 __PACKAGE__->setup();
-
 
 # also load SMMIDDb, since it won't be found by the regular Catalyst
 # requires
