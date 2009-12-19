@@ -1,17 +1,17 @@
 <VirtualHost *:80>
 
-    PerlWarn On
-    PerlTaintCheck On
-
+    PerlWarn Off
     LogLevel error
 
-    #the name of the virtual host we are defining
-    ServerName smmid.localhost.localdomain
+    ServerName smmid.org
 
     <Perl>
-      use lib '/crypt/rob/cxgn/git/local-lib/core/SMMID/lib';
-    </Perl>
+      use lib '/usr/share/smmid-site/SMMID/lib';
+      use lib '/usr/share/smmid-site/lib/perl5';
 
-    PerlModule SMMID
+      use SMMID;
+      SMMID->configure_mod_perl( vhost => 1 );
+
+    </Perl>
 
 </VirtualHost>
