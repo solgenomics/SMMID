@@ -42,7 +42,7 @@ my $build = $class->new(
         'Test::More' => 0,
     },
     requires       => {
-        perl => '5.10',
+        perl => '5.10.0',
         'Catalyst::Action::RenderView'     => 0,
         'Catalyst::Runtime'                => '5.7006',
         'Catalyst::Plugin::ConfigLoader'   => 0,
