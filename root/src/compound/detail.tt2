@@ -2,10 +2,14 @@
 <h1>SMMID details for smmid <b>[% smmid %]</b></h1>
 
 SMMID ID: <b>[% smmid %]</b> <br /><br />
-NAME: [% name %]<br /><br />
+CHEMICAL NAME: [% chemical_name %]<br /><br />
+CONCISE SUMMARY: [% concise_summary %]<br /><br />
 SYNONYMS: [% synonyms %]<br /><br />
+CAS: [% cas %]<br /><br />
 MOLECULAR WEIGHT: [% molecular_weight %]<br /><br />
 MOLECULAR FORMULA: [% molecular_formula %]<br /><br />
+BIOSYNTHESIS: [% biosynthesis %]<br /><br />
+RECEPTORS: [% receptors %]<br /><br />
 REFERENCES: [% FOREACH link IN links %]
  <a href="[% link.1 %]">[% link.0  %]</a>&nbsp;&nbsp;
 [% END %]

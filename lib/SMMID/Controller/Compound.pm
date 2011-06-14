@@ -50,12 +50,16 @@ sub detail :Path('/detail') {
     my $s = SMMIDDb->new($file, $smmid);
 
     $c->stash->{smmid}=$s->get_smmid();
-    $c->stash->{name}=$s->get_name();
+    $c->stash->{chemical_name}=$s->get_name();
     $c->stash->{synonyms} = $s->get_synonyms();
     $c->stash->{molecular_weight}=$s->get_molecular_weight();
+    $c->stash->{concise_summary} = $s->get_concise_summary();
+    $c->stash->{receptors} = $s->get_receptors();
+    $c->stash->{biosynthesis} = $s->get_biosynthesis();
+    $c->stash->{cas} = $s->get_cas();
     my $formatted_formula=$s->get_molecular_formula();
     $formatted_formula=~s/(\d+)/\<sub\>$1\<\/sub\>/g;
-    print STDERR "FORMATTED FORMULA = $formatted_formula\n";
+    #print STDERR "FORMATTED FORMULA = $formatted_formula\n";
     $c->stash->{molecular_formula}=$formatted_formula;
     $c->stash->{structure_file}= '/static/structures/'.$s->get_structure_file().".gif";
 

@@ -90,10 +90,12 @@ sub fetch {
 
 sub get_name {
   my $self = shift;
-  if (!exists $SMMID{$self->get_smmid()}) { 
-      die "Need to set smmid first with set_smmid()";
-  }
-  return $SMMID{$self->get_smmid()}->{NAME}; 
+  #if (!exists $SMMID{$self->get_smmid()}) { 
+  #    die "Need to set smmid first with set_smmid()";
+  #}
+  my $name =  $SMMID{$self->get_smmid()}->{"CHEMICAL NAME"}; 
+  print STDERR "Chemical name is $name\n";
+  return $name;
 }
 
 sub set_name {
@@ -220,6 +222,74 @@ sub get_links {
     return @links;
     
 }
+
+
+=head2 get_cas
+
+ Usage:
+ Desc:
+ Ret:
+ Args:
+ Side Effects:
+ Example:
+
+=cut
+
+sub get_cas {
+    my $self = shift;
+    return $SMMID{$self->get_smmid()}->{CAS};
+}
+
+=head2 get_concise_summary
+
+ Usage:
+ Desc:
+ Ret:
+ Args:
+ Side Effects:
+ Example:
+
+=cut
+
+sub get_concise_summary {
+    my $self = shift;
+    return $SMMID{$self->get_smmid()}->{"CONCISE SUMMARY"};
+}
+
+=head2 get_biosynthesis
+
+ Usage:
+ Desc:
+ Ret:
+ Args:
+ Side Effects:
+ Example:
+
+=cut
+
+sub get_biosynthesis {
+    my $self = shift;
+    return $SMMID{$self->get_smmid()}->{BIOSYNTHESIS};
+}
+
+=head2 get_receptors
+
+ Usage:
+ Desc:
+ Ret:
+ Args:
+ Side Effects:
+ Example:
+
+=cut
+
+sub get_receptors {
+    my $self = shift;
+    return $SMMID{$self->get_smmid()}->{RECEPTORS};
+}
+
+
+
 
 
 
