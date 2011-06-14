@@ -1,229 +1,583 @@
 SMMID: 
-NAME: 
+CHEMICAL NAME:
 SYNONYMS: 
+CONCISE SUMMARY:
 MOLECULAR FORMULA: 
 MOLECULAR WEIGHT: 
-SMILES: 
-CAS#	
+CAS:
+BIOSYNTHESIS:
+RECEPTORS:
+REFERENCES:
 
-	
 SMMID: ascr#1
-NAME: 6R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-heptanoic acid
-SYNONYMS: "C7", daumone
+
+CHEMICAL NAME: (-)-6R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)heptanoic acid
+
+SYNONYMS: “C7”; daumone-1
 MOLECULAR FORMULA: C13H24O6
 MOLECULAR WEIGHT: 276.33
+CAS: 690991-47-0
 
-(Jeong, Jung et al. 2005)
-http://www.ncbi.nlm.nih.gov/pubmed/15690045?ordinalpos=51&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+CONCISE SUMMARY: Very low dauer induction activity in C. elegans.  No mating activity in C. elegans.
 
-(Schroeder 2006)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17163670 
+BIOSYNTHESIS: 
+(DAF-22)
+http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene
 
-(Butcher, Fujita et al. 2007)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398 
+(DHS-28) 
+http://www.wormbase.org/db/gene/gene?name=WBGene00000991;class=Gene
 
-(Butcher, Ragains et al. 2008)
-http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
 
-(Butcher, Ragains et al. 2009)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19174521 
+RECEPTORS: tbd
 
-(Jeong, Na et al. 2009)
-http://www.ncbi.nlm.nih.gov/pubmed/19381582?ordinalpos=6&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
 
-(Joo, Yim et al. 2009)
+REFERENCES:
+(Jeong, Jung et al. 2005) http://www.ncbi.nlm.nih.gov/pubmed/15690045?ordinalpos=51&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum
+
+(Schroeder 2006) http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17163670
+
+(Butcher, Fujita et al. 2007) http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398
+
+(Butcher, Ragains et al. 2008) 
+http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum
+
+(Butcher, Ragains et al. 2009) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19174521
+
+(Jeong, Na et al. 2009) 
+http://www.ncbi.nlm.nih.gov/pubmed/19381582?ordinalpos=6&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum
+
+(Joo, Yim et al. 2009) 
 http://www.ncbi.nlm.nih.gov/pubmed/19496754?ordinalpos=1&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+
+(Guo and O'Doherty 2005) 
+http://www.ncbi.nlm.nih.gov/pubmed/16119932
+
+(Gallo and Riddle 2009) 
+http://www.ncbi.nlm.nih.gov/pubmed/19190963 
+
+(Lee, Kim et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/19940149 
+
+(Joo, Kim et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20610393 
+
+(Kim, Sato et al. 2009) 
+http://www.ncbi.nlm.nih.gov/pubmed/19797623 
+
+(Jung, Lee et al. 2009) 
+http://www.ncbi.nlm.nih.gov/pubmed/19342127 
+
+(Fujita 2008) 
+no link available; 
+
+(Baiga 2008) 
+http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2692194 
+
+(Jung and Paik 2005) 
+http://v3.espacenet.com/publicationDetails/biblio?DB=EPODOC&adjacent=true&locale=en_ep&FT=D&date=20050818&CC=WO&NR=2005075491A1&KC=A1 
+
+(Paik and Jeong 2004) 
+http://v3.espacenet.com/publicationDetails/originalDocument?CC=WO&NR=2004043944A1&KC=A1&FT=D&date=20040527&DB=EPODOC&locale=en_ep
+
+(Martin, Schafer et al. 2009) 
+https://www.thieme-connect.de/DOI/DOI?10.1055/s-0029-1216967
+
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418
 SMMID: ascr#2
-NAME: 5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2R-hexanol
-SYNONYMS: "C6"
+
+CHEMICAL NAME: (-)-5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2R-hexanol
+
+SYNONYMS: “C6”; daumone-2
 MOLECULAR FORMULA: C12H22O5
 MOLECULAR WEIGHT: 246.30
+CAS: 946524-24-9
 
-(Butcher, Fujita et al. 2007)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398 
+CONCISE SUMMARY: Dauer induction activity (nM) (high activity, moderate mating activity, synergizes with ascr#3 for male attraction with full reconstitution of male attraction in ternary mixture with ascr#3 and ascr#8 (fM), and exhibits some synergy with ascr#4 in C. elegans.
 
-(Butcher, Ragains et al. 2008)
-http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+BIOSYNTHESIS: 
+(DAF-22)
+http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene 
 
-(Srinivasan, Kaplan et al. 2008)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18650807 
+(DHS-28)
+http://www.wormbase.org/db/gene/gene?name=WBGene00000991;class=Gene
 
-(Macosko, Pokala et al. 2009)
+(ACOX-1)
+http://www.wormbase.org/db/gene/gene?name=WBGene00008564;class=Gene
+
+RECEPTORS: tbd
+
+
+REFERENCES:
+(Butcher, Fujita et al. 2007) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398
+
+(Butcher, Ragains et al. 2008) 
+http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum
+
+(Srinivasan, Kaplan et al. 2008) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18650807
+
+(Macosko, Pokala et al. 2009) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19349961 
 
-(Butcher, Ragains et al. 2009)
+(Butcher, Ragains et al. 2009) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19174521 
 
-(Pungaliya, Srinivasan et al. 2009)
+(Pungaliya, Srinivasan et al. 2009) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
 
+(Butcher, Ragains et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726967
 
+(Joo, Yim et al. 2009)
+http://www.ncbi.nlm.nih.gov/pubmed/19496754
+
+(Martin, Schafer et al. 2009) 
+https://www.thieme-connect.de/DOI/DOI?10.1055/s-0029-1216967
+
+(Kim, Sato et al. 2009) 
+http://www.ncbi.nlm.nih.gov/pubmed/19797623
+
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418
 SMMID: ascr#3
-NAME: 8R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2E-nonenoic acid
-SYNONYMS: "C9"
+
+CHEMICAL NAME: (-)-8R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2E-nonenoic acid
+
+SYNONYMS: “C9”; daumone-3
 MOLECULAR FORMULA: C15H26O6
 MOLECULAR WEIGHT: 302.36
+CAS: 946524-26-1
 
-(Butcher, Fujita et al. 2007)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398 
+CONCISE SUMMARY: Dauer induction activity (nM) (high activity, moderate mating activity, synergizes with ascr#3 for male attraction with full reconstitution of male attraction in ternary mixture with ascr#3 and ascr#8 (fM), and exhibits some synergy with ascr#4 in C. elegans.
 
-(Butcher, Ragains et al. 2008)
-http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+BIOSYNTHESIS: 
+(DAF-22)
+http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene 
 
-(Srinivasan, Kaplan et al. 2008)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18650807 
+(DHS-28)
+http://www.wormbase.org/db/gene/gene?name=WBGene00000991;class=Gene 
 
-(Macosko, Pokala et al. 2009)
+(ACOX-1)
+http://www.wormbase.org/db/gene/gene?name=WBGene00008564;class=Gene
+
+RECEPTORS: tbd
+
+
+REFERENCES:
+(Butcher, Fujita et al. 2007) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398
+
+(Butcher, Ragains et al. 2008) 
+http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum
+
+(Srinivasan, Kaplan et al. 2008) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18650807
+
+(Macosko, Pokala et al. 2009) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19349961 
 
-(Butcher, Ragains et al. 2009)
+(Butcher, Ragains et al. 2009) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19174521 
 
-(Pungaliya, Srinivasan et al. 2009)
+(Pungaliya, Srinivasan et al. 2009) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
 
+(Kim, Sato et al. 2009) 
+http://www.ncbi.nlm.nih.gov/pubmed/19797623
 
+(Joo, Yim et al. 2009)
+http://www.ncbi.nlm.nih.gov/pubmed/19496754 
+
+(Butcher, Ragains et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726967
+
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418
+
+(Baiga 2008) 
+http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2692194 
+ 
 SMMID: ascr#4
-NAME: 5R-(3'-O-[?-D-glucosyl]-3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2R-hexanol
+
+CHEMICAL NAME: (-)-5R-(3'-O-[β-D-glucosyl]-3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2R-hexanol
+
 SYNONYMS: none
 MOLECULAR FORMULA: C18H32O10
 MOLECULAR WEIGHT: 408.44
+CAS: 1255514-32-9
 
-(Srinivasan, Kaplan et al. 2008)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18650807 
+CONCISE SUMMARY: Low dauer induction activity and no mating activity alone, male attraction in low concentrations with ascr#2 and ascr#3, hermaphrodite repulsion in high concentrations with ascr#2 and ascr#3, and not produced in liquid cultures in C. elegans.
 
-(Pungaliya, Srinivasan et al. 2009)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+BIOSYNTHESIS: DAF-22; (http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene); 
+DHS-28 (http://www.wormbase.org/db/gene/gene?name=WBGene00000991;class=Gene); 
 
+RECEPTORS: tbd
+
+
+REFERENCES:
+(Srinivasan, Kaplan et al. 2008) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18650807
+
+(Pungaliya, Srinivasan et al. 2009) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493
+
+(Martin, Schafer et al. 2009) 
+https://www.thieme-connect.de/DOI/DOI?10.1055/s-0029-1216967
+
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418 
 SMMID: ascr#5
-NAME: 3-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-propanoic acid
-SYNONYMS: "C3"
+
+CHEMICAL NAME: (-)-3-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-propanoic acid
+
+SYNONYMS: “C3”
 MOLECULAR FORMULA: C9H16O6
 MOLECULAR WEIGHT: 220.22
+CAS: 1086696-26-5
 
-(Butcher, Ragains et al. 2008)
-http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum 
+CONCISE SUMMARY: High dauer formation activity in C. elegans with synergism with ascr#2 and ascr#3.  Also, ASK dependent synergistic mating behavior in C. elegans with combinations of ascr#2 and ascr#3.
 
-(Macosko, Pokala et al. 2009)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19349961 
+BIOSYNTHESIS: DAF-22; (http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene); 
+DHS-28 (http://www.wormbase.org/db/gene/gene?name=WBGene00000991;class=Gene); 
 
-(Butcher, Ragains et al. 2009)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19174521 
+RECEPTORS: tbd
 
-(Pungaliya, Srinivasan et al. 2009)
+
+REFERENCES:
+(Butcher, Ragains et al. 2008) 
+http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum
+
+(Macosko, Pokala et al. 2009) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19349961
+
+(Butcher, Ragains et al. 2009) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19174521
+
+(Pungaliya, Srinivasan et al. 2009) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
 
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418
 
-SMMID: ascr#6.1	
-NAME: 5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2R-hexanol
+(Kim, Sato et al. 2009) 
+http://www.ncbi.nlm.nih.gov/pubmed/19797623 
+
+(Butcher, Ragains et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726967 
+ 
+SMMID: ascr#6.1
+
+CHEMICAL NAME: (-)-5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2R-hexanol
+
 SYNONYMS: none
 MOLECULAR FORMULA: C12H24O5
 MOLECULAR WEIGHT: 248.32
+CAS: 1172120-36-3
 
-(Pungaliya, Srinivasan et al. 2009)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+CONCISE SUMMARY: Moderate male attraction and low dauer induction activity in C. elegans.
+. 
+BIOSYNTHESIS: DAF-22; (http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene)
+
+RECEPTORS: tbd
 
 
+REFERENCES:
+(Pungaliya, Srinivasan et al. 2009) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493
+
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418
+ 
 SMMID: ascr#6.2
-NAME: 5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2S-hexanol
+
+CHEMICAL NAME: (-)-5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2S-hexanol
+
 SYNONYMS: none
 MOLECULAR FORMULA: C12H24O5
 MOLECULAR WEIGHT: 248.32
+CAS: 1172120-41-0
 
-(Pungaliya, Srinivasan et al. 2009)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+CONCISE SUMMARY: No dauer induction or mating activity known in C. elegans.  Diastereomer of ascr#6.1.
+
+BIOSYNTHESIS: DAF-22; (http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene); 
+
+RECEPTORS: tbd
 
 
+REFERENCES:
+(Pungaliya, Srinivasan et al. 2009) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493
+
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418
 SMMID: ascr#7
-NAME: 6R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2E-heptenoic acid
+
+CHEMICAL NAME: 6R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2E-heptenoic acid
+
 SYNONYMS: none
 MOLECULAR FORMULA: C13H22O6
 MOLECULAR WEIGHT: 274.31
+CAS: 1139837-37-8
 
-(Pungaliya, Srinivasan et al. 2009)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+CONCISE SUMMARY: Little to no male attraction or dauer induction activity in C. elegans.
+
+BIOSYNTHESIS: 
+(DAF-22) 
+http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene
+(DHS-28) 
+http://www.wormbase.org/db/gene/gene?name=WBGene00000991;class=Gene
+
+RECEPTORS: tbd
 
 
+REFERENCES:
+(Pungaliya, Srinivasan et al. 2009) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493
+
+(Martin, Schafer et al. 2009) 
+https://www.thieme-connect.de/DOI/DOI?10.1055/s-0029-1216967
+
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418
+ 
 SMMID: ascr#8
-NAME: N-(6'R-[3''R,5''R-dihydroxy-6''S-methyl-(2H)-tetrahydropyran-2-yloxy]-2'E-heptenoyl)-4-aminobenzoic acid
+
+CHEMICAL NAME: N-(6R-[3R,5R-dihydroxy-6S-methyl-(2H)-tetrahydropyran-2-yloxy]-2E-heptenoyl)-4-aminobenzoic acid
+
 SYNONYMS: none
 MOLECULAR FORMULA: C20H27NO7
 MOLECULAR WEIGHT: 393.43
+CAS: 1172120-40-9
 
-(Pungaliya, Srinivasan et al. 2009)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493 
+CONCISE SUMMARY: Moderate dauer induction activity in C. elegans.  High male attraction activity and synergy with ascr#2 and ascr#3 in C. elegans.
+
+BIOSYNTHESIS: 
+(DAF-22)
+http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene
 
 
+REFERENCES:
+(Pungaliya, Srinivasan et al. 2009) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19346493
+
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418 
+ 
+SMMID: icas#9
+
+CHEMICAL NAME: (4R)-4-((3,6-dideoxy-4-O-(1H-indol-3-ylcarbonyl)-a-L-arabino-hexopyranosyl)oxy)-pentanoic acid
+
+SYNONYMS: indolecarboxylascaroside C5; ascr#9
+MOLECULAR FORMULA: C20H25NO7
+MOLECULAR WEIGHT: 391.42
+CAS: 1173933-40-8
+
+CONCISE SUMMARY: Moderate dauer induction activity in C. elegans (bell-shaped response).  Mating activity in C. elegans has not been tested.
+
+BIOSYNTHESIS: tbd
+
+RECEPTORS: tbd
+
+
+REFERENCES:
+(Butcher, Ragains et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726967
+
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418
 SMMID: dafa#1
-NAME: 3-keto-7,(5a)-cholestenoic acid
-SYNONYMS: dafachronic acid A, ?7-dafachronic acid
+
+CHEMICAL NAME: (+)-(5a,25S)-3-ketocholest-7-en-26-oic acid
+
+SYNONYMS: 7-dafachronic acid; dafachronic acid A; (+)-(5a,25S)-3-oxocholest-7-en-26-oic acid
 MOLECULAR FORMULA: C27H42O3
 MOLECULAR WEIGHT: 414.62
+CAS: 949004-12-0
 
-(Motola, Cummins et al. 2006)
+CONCISE SUMMARY: Putative endogenous ligand for DAF-12; (http://www.wormbase.org/db/gene/gene?name=WBGene00000908;class=Gene).
+
+BIOSYNTHESIS: 
+(HSD-1)
+http://www.wormbase.org/db/gene/gene?name=WBGene00012394;class=Gene
+
+(DAF-9) 
+http://www.wormbase.org/db/gene/gene?name=WBGene00000905;class=Gene
+
+(STRM-1)
+http://www.wormbase.org/db/misc/paper?name=WBPaper00034639;class=Paper
+
+(DHS-16) 
+http://www.wormbase.org/db/gene/gene?name=WBGene00000979;class=Gene
+
+(DAF-36)
+http://www.wormbase.org/db/gene/gene?name=WBGene00007536;class=Gene
+
+RECEPTORS: 
+(DAF-12)
+http://www.wormbase.org/db/gene/gene?name=WBGene00000908;class=Gene
+
+
+REFERENCES:
+(Bento, Ogawa et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20592728
+
+(Motola, Cummins et al. 2006) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=16529801 
 
-(Schroeder 2006)
+(Schroeder 2006) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17163670 
 
-(Beckstead and Thummel 2006)
+(Beckstead and Thummel 2006) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=16564008 
 
-(Gerisch, Rottiers et al. 2007)
+(Gerisch, Rottiers et al. 2007) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17360327 
 
-(Giroux and Corey 2007)
+(Giroux and Corey 2007) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17658816 
 
-(Giroux and Corey 2008)
+(Giroux and Corey 2008) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18247628 
 
-(Giroux, Bethke et al. 2008)
+(Giroux, Bethke et al. 2008) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18642835 
 
-(Martin, Dabritz et al. 2008)
+(Martin, Dabritz et al. 2008) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19005586 
 
-(Sharma, Wang et al. 2009)
+(Sharma, Wang et al. 2009) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19196833 
 
+(Martin, Entchev et al. 2009) 
+http://onlinelibrary.wiley.com/doi/10.1002/ejoc.200900443/abstract;jsessionid=D05A7E52AD99F70F5196390F411DCEB0.d01t02
 
+(Wang, Zhou et al. 2009) 
+http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2695123
 
+(Hannich, Entchev et al. 2009) 
+http://www.ncbi.nlm.nih.gov/pubmed/19531354
 
+(Ogawa, Streit et al. 2009) 
+http://www.ncbi.nlm.nih.gov/pubmed/19110431 
 
+(Mangelsdorf, Auchus et al. 2007) 
+http://v3.espacenet.com/publicationDetails/biblio?DB=EPODOC&adjacent=true&locale=en_ep&FT=D&date=20070913&CC=WO&NR=2007103508A2&KC=A2
+
+(Patel, Fang et al. 2008) 
+http://www.ncbi.nlm.nih.gov/pubmed/18495818
+
+(Gioiello, Sabbatini et al. 2011) 
+http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B6THR-523JY1P-2&_user=492137&_coverDate=03%2F11%2F2011&_alid=1671926313&_rdoc=3&_fmt=high&_orig=search&_origin=search&_zone=rslt_list_item&_cdi=5289&_sort=r&_st=13&_docanchor=&view=c&_ct=3&_acct=C000022719&_version=1&_urlVersion=0&_userid=492137&md5=42860e68bdf0c64a4487b0d221a7470a&searchtype=a
 SMMID: dafa#2
-NAME: 3-keto-4-cholestenoic acid
-SYNONYMS: dafachronic acid B, ?4-dafachronic acid
+
+CHEMICAL NAME: (+)-(25S)-3-keto-cholest-4-en-26-oic acid
+
+SYNONYMS: dafachronic acid B, 4-dafachronic acid; (+)-(25S)-3-oxocholest-4-en-26-oic acid, (+)-3-keto-4-cholestenoic acid
 MOLECULAR FORMULA: C27H42O3
 MOLECULAR WEIGHT: 414.62
+CAS: 869858-35-5
+
+CONCISE SUMMARY: Putative endogenous ligand for DAF-12; (http://www.wormbase.org/db/gene/gene?name=WBGene00000908;class=Gene).
+
+BIOSYNTHESIS: 
+(HSD-1)
+http://www.wormbase.org/db/gene/gene?name=WBGene00012394;class=Gene); 
+
+(DAF-9)
+http://www.wormbase.org/db/gene/gene?name=WBGene00000905;class=Gene
+
+(STRM-1)
+http://www.wormbase.org/db/misc/paper?name=WBPaper00034639;class=Paper
+
+(DHS-16)
+http://www.wormbase.org/db/gene/gene?name=WBGene00000979;class=Gene
+
+(DAF-36)
+http://www.wormbase.org/db/gene/gene?name=WBGene00007536;class=Gene
 
 
-(Motola, Cummins et al. 2006)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=16529801 
+REFERENCES:
+(Motola, Cummins et al. 2006) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=16529801
 
-(Schroeder 2006)
+(Schroeder 2006) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17163670 
 
-(Beckstead and Thummel 2006)
-http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=16564008 
+(Beckstead and Thummel 2006) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=16564008
 
-(Gerisch, Rottiers et al. 2007)
+(Gerisch, Rottiers et al. 2007) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17360327 
 
-(Giroux and Corey 2007)
+(Giroux and Corey 2007) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17658816 
 
-(Giroux and Corey 2008)
+(Giroux and Corey 2008) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18247628 
 
-(Giroux, Bethke et al. 2008)
+(Giroux, Bethke et al. 2008) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=18642835 
 
-(Martin, Dabritz et al. 2008)
+(Martin, Dabritz et al. 2008) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19005586 
 
-(Sharma, Wang et al. 2009)
+(Sharma, Wang et al. 2009) 
 http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=19196833 
 
+(Branicky, Desjardins et al. 2010) 
+http://www.ncbi.nlm.nih.gov/pubmed/20151418
+
+(Patel, Fang et al. 2008) 
+http://www.ncbi.nlm.nih.gov/pubmed/18495818 
+
+(Gioiello, Sabbatini et al. 2011) 
+http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B6THR-523JY1P-2&_user=492137&_coverDate=03%2F11%2F2011&_alid=1671926313&_rdoc=3&_fmt=high&_orig=search&_origin=search&_zone=rslt_list_item&_cdi=5289&_sort=r&_st=13&_docanchor=&view=c&_ct=3&_acct=C000022719&_version=1&_urlVersion=0&_userid=492137&md5=42860e68bdf0c64a4487b0d221a7470a&searchtype=a
+
+Literature references with titles:
+
+Baiga (2008). "Metabolite Induction of Caenorhabditis elegans Dauer Larvae Arises via Transport in the Pharynx." ACS Chem Biol 3(5): 294-304.
+Beckstead, R. B. and C. S. Thummel (2006). "Indicted: worms caught using steroids." Cell 124(6): 1137-1140.
+Bento, G., A. Ogawa, et al. (2010). "Co-option of the hormone-signalling module dafachronic acid-DAF-12 in nematode evolution." Nature 466(7305): 494-497.
+Branicky, R., D. Desjardins, et al. (2010). "Lipid transport and signaling in Caenorhabditis elegans." Dev Dyn 239(5): 1365-1377.
+Butcher, R. A., M. Fujita, et al. (2007). "Small-molecule pheromones that control dauer development in Caenorhabditis elegans." Nat Chem Biol 3(7): 420-422.
+Butcher, R. A., J. R. Ragains, et al. (2010). "An indole-containing dauer pheromone component with unusual dauer inhibitory activity at higher concentrations." Organic letters 11(14): 3100-3103.
+Butcher, R. A., J. R. Ragains, et al. (2008). "A potent dauer pheromone component in Caenorhabditis elegans that acts synergistically with other components." Proceedings of the National Academy of Sciences 105(38): 14288-14292.
+Butcher, R. A., J. R. Ragains, et al. (2009). "Biosynthesis of the Caenorhabditis elegans dauer pheromone." Proc Natl Acad Sci U S A 106(6): 1875-1879.
+Fujita, M. (2008). "C. elegans dauer larval pheromones. Living longer by pheromones? Chemical ecology of model organism." Kagaku to Seibutsu 46(7): 442-443.
+Gallo, M. and D. L. Riddle (2009). "Effects of a Caenorhabditis elegans dauer pheromone ascaroside on physiology and signal transduction pathways
+." J Chem Ecol 35(2): 272-279.
+Gerisch, B., V. Rottiers, et al. (2007). "A bile acid-like steroid modulates Caenorhabditis elegans lifespan through nuclear receptor signaling." Proc Natl Acad Sci U S A 104(12): 5014-5019.
+Gioiello, A., P. Sabbatini, et al. (2011). "Divergent and stereoselective synthesis of dafachronic acids." Tetrahedron.
+Giroux, S., A. Bethke, et al. (2008). "Syntheses and biological evaluation of B-ring-modified analogues of dafachronic acid A." Org Lett 10(16): 3643-3645.
+Giroux, S. and E. J. Corey (2007). "Stereocontrolled synthesis of dafachronic acid A, the ligand for the DAF-12 nuclear receptor of Caenorhabditis elegans." J Am Chem Soc 129(32): 9866-9867.
+Giroux, S. and E. J. Corey (2008). "An efficient, stereocontrolled synthesis of the 25-(R)-diastereomer of dafachronic acid A from beta-ergosterol." Org Lett 10(5): 801-802.
+Guo and O'Doherty (2005). "de novo asymmetric synthesis of daumone via a palladium-catalyzed glycosylation." Organic letters 7(18): 3921-3924.
+Hannich, J. T., E. V. Entchev, et al. (2009). "Methylation of the sterol nucleus by STRM-1 regulates dauer larva formation in Caenorhabditis elegans." Dev Cell 16(6): 833-843.
+Jeong, P. Y., M. Jung, et al. (2005). "Chemical structure and biological activity of the Caenorhabditis elegans dauer-inducing pheromone." Nature 433(7025): 541-545.
+Jeong, P. Y., K. Na, et al. (2009). "Proteomic analysis of Caenorhabditis elegans." Methods Mol Biol 519: 145-169.
+Joo, H. J., K. Y. Kim, et al. (2010). "Contribution of the peroxisomal acox gene to the dynamic balance of daumone production in Caenorhabditis elegans." J Biol Chem 285(38): 29319-29325.
+Joo, H. J., Y. H. Yim, et al. (2009). "Caenorhabditis elegans utilizes dauer pheromone biosynthesis to dispose of toxic peroxisomal fatty acids for cellular homeostasis." Biochem J.
+Joo, H. J., Y. H. Yim, et al. (2009). "Caenorhabditis elegans utilizes dauer pheromone biosynthesis to dispose of toxic peroxisomal fatty acids for cellular homeostsasis." Biochem J 422(1): 61-71.
+Jung, M., Y. Lee, et al. (2009). "Total synthesis and anticancer activity of highly potent novel glycolipid derivatives." Eur J Med Chem 44(8): 3120-3129.
+Jung, M. and Y. K. Paik (2005). "6R-(3,6-dideoxy-L-arabino-hexopyranosyloxy)heptanoic acid, prepration process for the same and dauer effect thereof." patent.
+Kim, K., K. Sato, et al. (2009). "Two chemoreceptors mediate developmental effects of dauer pheromone in C. elegans." Science 326(5955): 994-998.
+Lee, J., K. Y. Kim, et al. (2010). "Regulation of Dauer formation by O-GlcNAcylation in Caenorhabditis elegans." J Biol Chem 285(5): 2930-2939.
+Macosko, E. Z., N. Pokala, et al. (2009). "A hub-and-spoke circuit drives pheromone attraction and social behaviour in C. elegans." Nature 458(7242): 1171-1175.
+Mangelsdorf, D. J., R. J. Auchus, et al. (2007). Ligands for nematode nuclear receptors and uses thereof. E. P. Office.
+Martin, R., F. Dabritz, et al. (2008). "Stereoselective synthesis of the hormonally active (25S)-delta7-dafachronic acid, (25S)-Delta4-dafachronic acid, (25S)-dafachronic acid, and (25S)-cholestenoic acid." Org Biomol Chem 6(23): 4293-4295.
+Martin, R., E. V. Entchev, et al. (2009). "Synthesis and Hormonal Activity of the (25S)-Cholesten-26-oic Acids - Potent Ligands for the DAF-12 Receptor in Caenorhabditis elegans." Eur J Org Chem(22): 3703-3714.
+Martin, R., T. Schafer, et al. (2009). "Improved Synthesis of an Ascaroside Pheromone Controlling Dauer Larva Development in Caenorhabditis elegans " Synthesis 20.
+Motola, D. L., C. L. Cummins, et al. (2006). "Identification of ligands for DAF-12 that govern dauer formation and reproduction in C. elegans." Cell 124(6): 1209-1223.
+Ogawa, A., A. Streit, et al. (2009). "A conserved endocrine mechanism controls the formation of dauer and infective larvae in nematodes." Curr Biol 19(1): 67-71.
+Paik, Y. K. and P. Y. Jeong (2004). "PHARMACOLOGICALLY ACTIVE NOVEL DAUER PHEROMONE COMPOUND FOR CONTROLLING AGING AND STRESS AND METHOD FOR ISOLATING AND CHARACTERIZING THE SAME." patent.
+Patel, D. S., L. L. Fang, et al. (2008). "Genetic identification of HSD-1, a conserved steroidogenic enzyme that directs larval development in Caenorhabditis elegans." Development 135(13): 2239-2249.
+Pungaliya, C., J. Srinivasan, et al. (2009). "A shortcut to identifying small molecule signals that regulate behavior and development in Caenorhabditis elegans." Proc Natl Acad Sci U S A 106(19): 7708-7713.
+Schroeder, F. C. (2006). "Small molecule signaling in Caenorhabditis elegans." ACS Chem Biol 1(4): 198-200.
+Sharma, K. K., Z. Wang, et al. (2009). "Synthesis and activity of dafachronic acid ligands for the C. elegans DAF-12 nuclear hormone receptor." Mol Endocrinol 23(5): 640-648.
+Srinivasan, J., F. Kaplan, et al. (2008). "A blend of small molecules regulates both mating and development in Caenorhabditis elegans." Nature 454(7208): 1115-1118.
+Wang, Z., X. E. Zhou, et al. (2009). "Identification of the nuclear receptor DAF-12 as a therapeutic target in parasitic nematodes." Proc Natl Acad Sci USA 106(23): 9138-9143.
 
 
