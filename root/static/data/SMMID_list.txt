@@ -398,7 +398,7 @@ SMMID: dafa#1
 
 CHEMICAL NAME: (+)-(5a,25S)-3-ketocholest-7-en-26-oic acid
 
-SYNONYMS: 7-dafachronic acid; dafachronic acid A; (+)-(5a,25S)-3-oxocholest-7-en-26-oic acid
+SYNONYMS: &Delta;7-dafachronic acid; dafachronic acid A; (+)-(5a,25S)-3-oxocholest-7-en-26-oic acid
 MOLECULAR FORMULA: C27H42O3
 MOLECULAR WEIGHT: 414.62
 CAS: 949004-12-0
@@ -481,7 +481,7 @@ SMMID: dafa#2
 
 CHEMICAL NAME: (+)-(25S)-3-keto-cholest-4-en-26-oic acid
 
-SYNONYMS: dafachronic acid B, 4-dafachronic acid; (+)-(25S)-3-oxocholest-4-en-26-oic acid, (+)-3-keto-4-cholestenoic acid
+SYNONYMS: dafachronic acid B, &Delta;4-dafachronic acid; (+)-(25S)-3-oxocholest-4-en-26-oic acid, (+)-3-keto-4-cholestenoic acid
 MOLECULAR FORMULA: C27H42O3
 MOLECULAR WEIGHT: 414.62
 CAS: 869858-35-5
