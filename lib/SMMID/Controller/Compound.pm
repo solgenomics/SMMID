@@ -50,9 +50,9 @@ sub detail :Path('/detail') {
     my $file = $c->path_to("root", "static", "data", "SMMID_list.txt");
     my $s = SMMIDDb->new($file, $smmid);
 
-        print STDERR Dumper($s);
+        #print STDERR Dumper($s);
 
-    print STDERR "RECEPTOR LINKS: ". $s->get_links("RECEPTORS");
+##    print STDERR "RECEPTOR LINKS: ". $s->get_links("RECEPTORS");
 
     $c->stash->{smmid}=$s->get_smmid();
     $c->stash->{chemical_name}=$s->get_name();
