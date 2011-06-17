@@ -50,25 +50,28 @@ sub fetch {
     if (!$PARSED) { 
 	open (my $F, "<".$self->{smmid_file}) || die "Can't open the SMMID definition file $self->{smmid_file}.";
 	my $current = "";	
+	my $section = "";
 	while (<$F>) { 
 	    chomp;
-	    
+	    next() if !$_;
 	    if (/^SMMID\:\s*(.*)/) { 
 		$current = $1;
 		$SMMID{$current}->{SMMID}=$current;
+		
 	    }
 	    else { 
 		my ($key, $value) = split /\s*\:\s*/;
 		if ($key=~/^http/) { 
-		    print STDERR "Adding URL $value\n";
-		    push @{$SMMID{$current}->{link_url}}, $value;
+		    print STDERR "Adding reference to $section: $value.\n";
+		    push @{$SMMID{$current}->{link_url}->{$section}}, $value;
 		}
 		elsif ($key=~/^\(/) { 
-		    print STDERR "Adding link text $key\n";
-		    push @{$SMMID{$current}->{link_text}}, $key;
+		    print STDERR "Adding link to $section: $key\n";
+		    push @{$SMMID{$current}->{link_text}->{$section}}, $key;
 		}
 		else { 
 		    $SMMID{$current}->{$key}=$value;
+		    $section = $key;
 		}
 	    
 	    }
@@ -214,10 +217,13 @@ sub get_smmid_for_link {
 
 sub get_links {
     my $self =shift;
-    
+    my $section = shift;
+    print STDERR "getting links for section $section\n";
     my @links = ();
-    for (my $i=0; $i<@{$SMMID{$self->get_smmid()}->{link_text}}; $i++) { 
-	push @links, [ ${$SMMID{$self->get_smmid()}->{link_text}}[$i], ${$SMMID{$self->get_smmid()}->{link_url}}[$i] ];
+    if (!defined($SMMID{$self->get_smmid()}->{link_text}->{$section})) { return; }
+    print STDERR scalar(@{$SMMID{$self->get_smmid()}->{link_text}->{$section}})." entries\n";
+    for (my $i=0; $i<@{$SMMID{$self->get_smmid()}->{link_text}->{$section}}; $i++) { 
+	push @links, [ ${$SMMID{$self->get_smmid()}->{link_text}->{$section}}[$i], ${$SMMID{$self->get_smmid()}->{link_url}->{$section}}[$i] ];
     }
     return @links;
     

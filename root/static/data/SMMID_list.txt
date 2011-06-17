@@ -32,11 +32,14 @@ RECEPTORS: tbd
 
 
 REFERENCES:
-(Jeong, Jung et al. 2005) http://www.ncbi.nlm.nih.gov/pubmed/15690045?ordinalpos=51&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum
+(Jeong, Jung et al. 2005) 
+http://www.ncbi.nlm.nih.gov/pubmed/15690045?ordinalpos=51&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum
 
-(Schroeder 2006) http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17163670
+(Schroeder 2006) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17163670
 
-(Butcher, Fujita et al. 2007) http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398
+(Butcher, Fujita et al. 2007) 
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids=17558398
 
 (Butcher, Ragains et al. 2008) 
 http://www.ncbi.nlm.nih.gov/pubmed/18791072?ordinalpos=3&itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum
@@ -85,6 +88,7 @@ https://www.thieme-connect.de/DOI/DOI?10.1055/s-0029-1216967
 
 (Branicky, Desjardins et al. 2010) 
 http://www.ncbi.nlm.nih.gov/pubmed/20151418
+
 SMMID: ascr#2
 
 CHEMICAL NAME: (-)-5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2-yloxy)-2R-hexanol
@@ -211,8 +215,11 @@ CAS: 1255514-32-9
 
 CONCISE SUMMARY: Low dauer induction activity and no mating activity alone, male attraction in low concentrations with ascr#2 and ascr#3, hermaphrodite repulsion in high concentrations with ascr#2 and ascr#3, and not produced in liquid cultures in C. elegans.
 
-BIOSYNTHESIS: DAF-22; (http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene); 
-DHS-28 (http://www.wormbase.org/db/gene/gene?name=WBGene00000991;class=Gene); 
+BIOSYNTHESIS: 
+(DAF-22)
+http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene
+(DHS-28)
+http://www.wormbase.org/db/gene/gene?name=WBGene00000991;class=Gene 
 
 RECEPTORS: tbd
 
@@ -345,7 +352,7 @@ http://www.ncbi.nlm.nih.gov/pubmed/20151418
  
 SMMID: ascr#8
 
-CHEMICAL NAME: N-(6R-[3R,5R-dihydroxy-6S-methyl-(2H)-tetrahydropyran-2-yloxy]-2E-heptenoyl)-4-aminobenzoic acid
+CHEMICAL NAME: N-(6'R-[3''R,5''R-dihydroxy-6''S-methyl-(2H)-tetrahydropyran-2-yloxy]-2E-heptenoyl)-4-aminobenzoic acid
 
 SYNONYMS: none
 MOLECULAR FORMULA: C20H27NO7
@@ -357,7 +364,6 @@ CONCISE SUMMARY: Moderate dauer induction activity in C. elegans.  High male att
 BIOSYNTHESIS: 
 (DAF-22)
 http://www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene
-
 
 REFERENCES:
 (Pungaliya, Srinivasan et al. 2009) 

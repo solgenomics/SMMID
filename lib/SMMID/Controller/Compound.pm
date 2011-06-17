@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use parent 'Catalyst::Controller';
 
+use Data::Dumper;
 use SMMID;
 
 =head1 NAME
@@ -49,13 +50,19 @@ sub detail :Path('/detail') {
     my $file = $c->path_to("root", "static", "data", "SMMID_list.txt");
     my $s = SMMIDDb->new($file, $smmid);
 
+        print STDERR Dumper($s);
+
+    print STDERR "RECEPTOR LINKS: ". $s->get_links("RECEPTORS");
+
     $c->stash->{smmid}=$s->get_smmid();
     $c->stash->{chemical_name}=$s->get_name();
     $c->stash->{synonyms} = $s->get_synonyms();
     $c->stash->{molecular_weight}=$s->get_molecular_weight();
     $c->stash->{concise_summary} = $s->get_concise_summary();
     $c->stash->{receptors} = $s->get_receptors();
+    @{$c->stash->{receptor_references}} = $s->get_links("RECEPTORS");
     $c->stash->{biosynthesis} = $s->get_biosynthesis();
+    @{$c->stash->{biosynthesis_references}} = $s->get_links("BIOSYNTHESIS");
     $c->stash->{cas} = $s->get_cas();
     my $formatted_formula=$s->get_molecular_formula();
     $formatted_formula=~s/(\d+)/\<sub\>$1\<\/sub\>/g;
@@ -64,7 +71,9 @@ sub detail :Path('/detail') {
     $c->stash->{structure_file}= '/static/structures/'.$s->get_structure_file().".gif";
 
     
-    @{$c->stash->{links}} = $s->get_links();
+    @{$c->stash->{links}} = $s->get_links("REFERENCES");
+
+
 
 }
 

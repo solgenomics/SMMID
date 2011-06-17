@@ -8,8 +8,18 @@ SYNONYMS: [% synonyms %]<br /><br />
 CAS: [% cas %]<br /><br />
 MOLECULAR WEIGHT: [% molecular_weight %]<br /><br />
 MOLECULAR FORMULA: [% molecular_formula %]<br /><br />
-BIOSYNTHESIS: [% biosynthesis %]<br /><br />
-RECEPTORS: [% receptors %]<br /><br />
+
+BIOSYNTHESIS REFERENCES: 
+[% FOREACH link IN biosynthesis_references %]
+ <a href="[% link.1 %]">[% link.0  %]</a>&nbsp;&nbsp;
+[% END %]
+<br /><br />
+
+RECEPTOR REFERENCES: 
+[% FOREACH link IN receptor_references %]
+ <a href="[% link.1 %]">[% link.0  %]</a>&nbsp;&nbsp;
+[% END %]
+<br /><br />
 REFERENCES: [% FOREACH link IN links %]
  <a href="[% link.1 %]">[% link.0  %]</a>&nbsp;&nbsp;
 [% END %]
@@ -17,3 +27,5 @@ REFERENCES: [% FOREACH link IN links %]
 STRUCTURE FILE: [% structure_file %]<br />
 STRUCTURE: <br /> <img src="[% structure_file %]" />
 <br /><br />
+
+
