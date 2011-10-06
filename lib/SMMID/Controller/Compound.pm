@@ -68,7 +68,7 @@ sub detail :Path('/detail') {
     $formatted_formula=~s/(\d+)/\<sub\>$1\<\/sub\>/g;
     #print STDERR "FORMATTED FORMULA = $formatted_formula\n";
     $c->stash->{molecular_formula}=$formatted_formula;
-    $c->stash->{structure_file}= '/static/structures/'.$s->get_structure_file().".png";
+    $c->stash->{structure_file}= '/data/prod/public/smid/structures/'.$s->get_structure_file().".png";
 
     
     @{$c->stash->{links}} = $s->get_links("REFERENCES");
