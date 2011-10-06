@@ -47,7 +47,7 @@ sub browse :Path('/browse') :Args(0) {
 sub detail :Path('/detail') {
     my ($self , $c, $smmid) = @_;
 
-    my $file = $c->path_to("root", "static", "data", "SMMID_list.txt");
+    my $file = "/data/prod/public/smid/SMMID_list.txt";
     my $s = SMMIDDb->new($file, $smmid);
 
         #print STDERR Dumper($s);
@@ -68,7 +68,7 @@ sub detail :Path('/detail') {
     $formatted_formula=~s/(\d+)/\<sub\>$1\<\/sub\>/g;
     #print STDERR "FORMATTED FORMULA = $formatted_formula\n";
     $c->stash->{molecular_formula}=$formatted_formula;
-    $c->stash->{structure_file}= '/static/structures/'.$s->get_structure_file().".gif";
+    $c->stash->{structure_file}= '/static/structures/'.$s->get_structure_file().".png";
 
     
     @{$c->stash->{links}} = $s->get_links("REFERENCES");

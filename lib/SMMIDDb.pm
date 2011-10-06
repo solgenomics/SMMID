@@ -181,8 +181,7 @@ sub set_molecular_weight {
 sub get_structure_file {
     my $self = shift;
     my $file = $self->get_smmid();
-    $file=~s/\#//g;
-    $file=~s/\./\-/g;
+    $file =~ s/\#/\%23/g;
     return $file;
 
 }

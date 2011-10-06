@@ -46,6 +46,10 @@ sub contact :Path('/contact') :Args(0) {
     my ($self, $c) = @_;
 }
 
+sub about :Path('/about') :Args(0) {
+    my ($self, $c) = @_;
+}
+
 =head2 end
 
 Attempt to render a view, if needed.
