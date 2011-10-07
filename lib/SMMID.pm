@@ -12,8 +12,7 @@ SMMID - Catalyst based application
 
 package SMMID;
 
-use strict;
-use warnings;
+use Moose;
 
 use Catalyst::Runtime '5.70';
 
@@ -25,10 +24,12 @@ use Catalyst::Runtime '5.70';
 # Static::Simple: will serve static files from the application's root 
 #                 directory
 
-use parent qw/Catalyst/;
+extends 'Catalyst';
+
 use File::Spec ();
 use File::Basename ();
 use File::Path ();
+
 use Catalyst qw(
                 ConfigLoader
                 Static::Simple
@@ -58,7 +59,7 @@ __PACKAGE__->config(
 		    error_log  => File::Spec->catfile( $logdir, 'error.log'  ),
 
 		    # our conf file is by default in /etc/cxgn/SMMID.conf
-		    'Plugin::ConfigLoader' => { file => File::Spec->catfile( File::Spec->rootdir, 'etc', 'cxgn', 'SMMID.conf') },
+		   ### 'Plugin::ConfigLoader' => { file => File::Spec->catfile( File::Spec->rootdir, 'etc', 'cxgn', 'SMMID.conf') },
                    );
 
 # Start the application
