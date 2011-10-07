@@ -33,7 +33,7 @@ sub index :Path :Args(0) {
 sub browse :Path('/browse') :Args(0) { 
     my ($self, $c) = @_;
 
-    my @all_smmids = SMMIDDb->all_smmids($c->path_to("root", "static", "data", "SMMID_list.txt"));
+    my @all_smmids = SMMIDDb->all_smmids($c->config->{"smid_file"});
     
     print STDERR "NOW DEALING WITH REQUEST...\n";
     foreach my $s (@all_smmids) { print STDERR "SMMID: ".$s->get_smmid()."\n"; }
@@ -47,7 +47,7 @@ sub browse :Path('/browse') :Args(0) {
 sub detail :Path('/detail') {
     my ($self , $c, $smmid) = @_;
 
-    my $file = "/data/prod/public/smid/SMMID_list.txt";
+    my $file = $c->config->{"smid_file"};
     my $s = SMMIDDb->new($file, $smmid);
 
         #print STDERR Dumper($s);
@@ -68,7 +68,7 @@ sub detail :Path('/detail') {
     $formatted_formula=~s/(\d+)/\<sub\>$1\<\/sub\>/g;
     #print STDERR "FORMATTED FORMULA = $formatted_formula\n";
     $c->stash->{molecular_formula}=$formatted_formula;
-    $c->stash->{structure_file}= '/data/prod/public/smid/structures/'.$s->get_structure_file().".png";
+    $c->stash->{structure_file}= $c->config->{"smid_structure_dir"}."/".$s->get_structure_file().".png";
 
     
     @{$c->stash->{links}} = $s->get_links("REFERENCES");
