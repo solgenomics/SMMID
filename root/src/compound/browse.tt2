@@ -1,6 +1,6 @@
 
 <table>
-<h2>Browse SMMIDs</h2>
+<h2>Browse SMIDs</h2>
 
 [% FOREACH s = all_smmids %]
 

@@ -1,7 +1,7 @@
 
-<h1>SMMID details for smmid <b>[% smmid %]</b></h1>
+<h1>SMID details for smid <b>[% smmid %]</b></h1>
 
-SMMID ID: <b>[% smmid %]</b> <br /><br />
+SMID ID: <b>[% smmid %]</b> <br /><br />
 CHEMICAL NAME: [% chemical_name %]<br /><br />
 CONCISE SUMMARY: [% concise_summary %]<br /><br />
 SYNONYMS: [% synonyms %]<br /><br />
