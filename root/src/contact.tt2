@@ -1,8 +1,17 @@
 
-<h2>Contact</h2>
-The SMID list ist currently maintained by Prof. Frank Schroeder. 
-<br /><br />
-To submit a new SMID, please contact fs31@cornell.edu .
 
+<br /><br />
+
+<div id="content">
+
+<h2>Contact information</h2>
+The SMID database is maintained by <b>Lukas Mueller</b> (<a href="http://solgenomics.net">SGN</a> &amp; <a href="http://solcyc.sgn.cornell.edu">SolCyc</a> databases, <a href="http://bti.cornell.edu">Boyce Thompson Institute</a> and <a href="http://cornell.edu">Cornell University</a>) 
+and <b>Joshua Judkins</b> (<a href="http://bti.cornell.edu">Boyce Thompson Institute</a> and <a href="http://cornell.edu">Cornell University</a>) in collaboration with <a href="//wormbase.org"><b>Wormbase</b></a>. 
+<br /><br />
+For questions and comments or to submit new compounds, please contact <b><a href="mailto:smid-db@cornell.edu">smid-db@cornell.edu</a></b>.
+
+ 
 
 <br /><br /><br /><br />
+
+</div>
