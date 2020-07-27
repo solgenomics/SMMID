@@ -104,6 +104,10 @@ __PACKAGE__->table("dbuser");
   data_type: 'timestamp'
   is_nullable: 1
 
+=head2 disabled
+
+=head2 user_prefs
+
 =head2 user_type
 
   data_type: 'varchar'
@@ -153,7 +157,11 @@ __PACKAGE__->add_columns(
   "last_access_time",
   { data_type => "timestamp", is_nullable => 1 },
   "user_type",
-  { data_type => "varchar", is_nullable => 1, size => 100 },
+    { data_type => "varchar", is_nullable => 1, size => 100 },
+    "disabled",
+    { data_type => "varchar", size=>100 },
+    "user_prefs",
+    { data_type => "text" },
   "creation_date",
   { data_type => "timestamp", is_nullable => 1 },
   "last_modified_date",

@@ -3,6 +3,7 @@ package SMMID::Controller::Root;
 use strict;
 use warnings;
 use parent 'Catalyst::Controller';
+use SMMID::Login;
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -26,6 +27,28 @@ SMMID::Controller::Root - Root Controller for SMMID
 
 =cut
 
+
+sub auto : Private {
+    my ($self, $c) = @_;
+ 
+    # gluecode for logins
+    #
+    unless( $c->config->{'disable_login'} ) {
+	my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema() });
+	
+        if ( my $dbuser_id = $login->has_session())  {
+
+            my $dbuser = $c->model("SMIDDB")->find( { dbuser_id => $dbuser_id });
+
+            $c->authenticate({
+                username => $dbuser->username(),
+                password => $dbuser->password(),
+            });
+        }
+    }
+    return 1;
+}
+    
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 

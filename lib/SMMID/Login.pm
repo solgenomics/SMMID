@@ -209,21 +209,21 @@ else it's the person ID if in scalar context, or (person ID, user type) in array
 
 sub has_session {
     my $self = shift;
-
+    
     #if people are not allowed to be logged in, return
     if ( !$self->login_allowed() ) {
+	print STDERR "LOGIN NOT ALLOWED.\n";
         return;
     }
 
-    my $cookie = $self->get_login_cookie();
-
     #if they have no cookie, they are not logged in
-    unless ($cookie) {
+    unless ($self->cookie_string()) {
+	print STDERR "NO COOKIE\n";
         return;
     }
 
     my ( $person_id, $user_type, $user_prefs, $expired ) =
-      $self->query_from_cookie($cookie);
+      $self->query_from_cookie($self->cookie());
 
     #if cookie string is not found, they are not logged in
     unless ( $person_id and $user_type ) {
@@ -241,7 +241,7 @@ sub has_session {
 
     my $login_info = { 
 	person_id => $person_id,
-	cookie_string => $cookie,
+	cookie_string => $self->cookie(),
 	user_type => $user_type,
     };
 
@@ -349,6 +349,7 @@ sub login_user {
 	$login_info->{error} = "Please provide a password.";
     }
     elsif ( $self->login_allowed() ) {
+	print STDERR "LOGIN ALLOWED: PROCEEDING WITH LOGIN\n";
 #        my $sth = $self->get_sql("user_from_uname_pass");
           # "	SELECT 
 	  # 			sp_person_id, disabled, user_prefs, first_name, last_name
@@ -358,7 +359,15 @@ sub login_user {
 	  # 			UPPER(username)=UPPER(?) 
 	  # 			AND (sp_person.password = crypt(?, sp_person.password))";
 
-	my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { username => { ilike => $username },  password => "crypt( '$password', dbuser.password )" } );
+	my $encoded_password_h = $self->schema()->storage->dbh()->prepare("
+	    SELECT crypt(?, dbuser.password) FROM dbuser");
+	$encoded_password_h->execute($password);
+	my ($encoded_password) = $encoded_password_h->fetchrow_array();
+	
+	print STDERR "ENCODED PASSWORD = $encoded_password\n";
+	
+	
+	my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { username => { ilike => $username },  password => $encoded_password } );
  
 	print STDERR "NOW LOGGING IN USER $username\n";
         #my $num_rows = $sth->execute( $username, $password );
@@ -418,9 +427,9 @@ sub login_user {
 			});
 		    
 		    
-                    SMMID::Cookie::set_cookie( $LOGIN_COOKIE_NAME,
-                        $new_cookie_string );
-                    SMMID::Cookie::set_cookie( "user_prefs", $user_prefs );
+#                    SMMID::Cookie::set_cookie( $LOGIN_COOKIE_NAME,
+ #                       $new_cookie_string );
+  #                  SMMID::Cookie::set_cookie( "user_prefs", $user_prefs );
                     $login_info->{person_id}     = $person_id;
                     $login_info->{first_name}     = $first_name;
                     $login_info->{last_name}     = $last_name;
@@ -474,7 +483,7 @@ sub logout_user {
 
 sub update_timestamp {
     my $self   = shift;
-    my $cookie = $self->get_login_cookie();
+    my $cookie = $self->cookie();
     if ($cookie) {
         my $sth = $self->get_sql("refresh_cookie");
         $sth->execute($cookie);

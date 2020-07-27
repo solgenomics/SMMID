@@ -11,6 +11,7 @@ create table dbuser (
        email varchar(100),
        registration_email varchar(100),
        cookie_string text,
+       disabled varchar(100),
        last_access_time timestamp without time zone,
        user_type varchar(100),
        creation_date timestamp without time zone,

@@ -32,6 +32,12 @@ sub login : Path('/ajax/user/login') Args(0) {
     my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema(), cookie => $cookie } );
     my $login_info = $login->login_user($username, $password);
 
+    if ($cookie ne $login_info->{cookie_string}) {
+	# set the new cookie
+
+	$c->response->cookies->{$LOGIN_COOKIE_NAME}->{value} = $login_info->{cookie_string};
+    }
+    
     if (exists($login_info->{incorrect_password}) && $login_info->{incorrect_password} == 1) {
 	$c->stash->{rest} = { error => "Login credentials are incorrect. Please try again." };
 	return;

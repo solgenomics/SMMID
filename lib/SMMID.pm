@@ -33,7 +33,14 @@ use File::Path ();
 use Catalyst qw(
                 ConfigLoader
                 Static::Simple
-               );
+                SmartURI
+                Authentication
+                +SMMID::Authentication::Store
+                Authorization::Roles
+                +SMMID::Role::Site::Exceptions
+                +SMMID::Role::Site::Files
+);
+
 our $VERSION = '0.01';
 
 
@@ -57,7 +64,7 @@ __PACKAGE__->config(
 		    name => 'SMMID',
 		    access_log => File::Spec->catfile( $logdir, 'access.log' ),
 		    error_log  => File::Spec->catfile( $logdir, 'error.log'  ),
-
+                    default_view => 'Mason',
 		    # our conf file is by default in /etc/cxgn/SMMID.conf
 		   ### 'Plugin::ConfigLoader' => { file => File::Spec->catfile( File::Spec->rootdir, 'etc', 'cxgn', 'SMMID.conf') },
                    );
