@@ -1,0 +1,133 @@
+
+
+<div id="content1">
+
+
+
+
+<h1>SMIDs: Unique identifiers for biogenic small molecules in <i>C. elegans</i>. </h1>
+</div>
+<div id="content3">
+<h2>1. The issue </h2>
+Small molecules/secondary metabolites are referred to by a plethora of names and abbreviations. Some compounds are referred to by more than 10 different names, 
+and in certain cases different compounds are referred to by the same name. Significantly, there is no established system for naming newly identified metabolites that would permit <b><i>database
+ searching for small molecule metabolites in the same manner as for genes.</b></i> <b> <br/><br/>
+
+Example I</b> highlights the large number of acceptable names for a signaling molecule recently identified from <i>C. elegans</i>.
+
+ </div> <div id="content2"> <br/><br/>
+
+<img src="/static/images/about_EXAMPLEI.png" /> <br/><br/>
+</div> <div id="content3">
+
+<b>Example II</b> highlights a case where two different compounds are referred to by overlapping sets of names. In this example, structure <b>A</b> 
+shows "phenylpyruvic acid", frequently and somewhat 
+misleadingly referred to as "phenyl pyruvate", which based on IUPAC nomenclature would 
+denote compound <b>B</b>. However, referring to the sodium salt of <b>A</b> as "sodium phenylpyruvate"
+would be considered correct: "phenylpyruvate" denotes a salt or ester of phenylpyruvic acid, 
+whereas "phenyl pyruvate" would refer to the phenyl ester of pyruvic acid. 
+
+ </div> <div id="content2"> <br/><br/>
+
+<img src="/static/images/about_EXAMPLEII.png" /> <br/><br/>
+</div> <div id="content3">
+
+
+<p>
+Ambiguities and parallel usage have prevented the development of effective text mining tools for small molecules. 
+As a result, effective sharing of small-molecule data in chemical biology and metabolomics is virtually impossible. 
+Even experienced researchers familiar with the chemical nomenclature often have difficulty locating references 
+for a specific substance. Researchers that are less knowledgeable with chemical nomenclature face even greater 
+difficulties when trying to locate a specific substance or reference.
+ 
+</p>
+<h2>2. Existing naming schemes do not offer a viable solution</h2>
+<p>
+<u><b>CAS</b></u>: The Chemical Abstracting Service (CAS) assigns every new compound presented in the literature a unique Chemical Abstracts registry number (CAS#). 
+For example, using the CAS system the compounds shown above in <b>Example I</b> and <b>II</b> are referred to as 946524-24-9 (<b>Example I</b>) 
+156-06-9 (<b>Example II, Structure A</b>), and 2149-49-7 (<b>Example II, Structure B</b>). Although the CAS system is useful for archiving the chemical literature, 
+CAS numbers are cumbersome to use in scientific writing as they have no recognition value. Importantly, many biological journals are not indexed by CAS.  </p> 
+<p><u><b>IUPAC</b></u>: The IUPAC nomenclature system is highly sophisticated. As a result, derivation and interpretation of IUPAC names requires extensive chemical knowledge. 
+Non-chemists are frequently unable to determine whether two IUPAC names refer to the same compound or not.  In addition, IUPAC names are often exceedingly long and complicated
+ and thus unsuitable for use in scientific writing. </p>
+<p><u><b>SMILES</b></u>: SMILES are useful as technical, unambiguous descriptors of chemical structures, but unsuitable as in-text identifiers.</p>
+
+
+<h2>3. A new proposal for naming biogenic small molecules/secondary metabolites in <i>C. elegans</i>: <u>SMIDs</u></h2>
+
+<p>
+<b>I.</b><i> Small molecules newly identified from the nematode <i>C. elegans</i> are assigned a 
+unique biogenic <u><b>S</b></u>mall <b><u>M</u></b>olecule <b><u>Id</b></u>entifier </i>(<b>SMID</b>)<i> consisting of <b>four lower case non-
+italicized letters</b> that refer to the general structural class of the compound, <b>followed by a 
+pound sign and a number.</b></i> This scheme is comparable to that used for genes and proteins: <a href="//www.wormbase.org/db/gene/gene?name=WBGene00013284;class=Gene/"<b><i>daf-22</b></i></a> 
+(three letters, italicized, lower case) or <b>DAF-22</b> (non-italicized, upper case).
+</p>
+
+<u>Examples</u>:<br /><br/>
+
+Many pheromones in <i>C. elegans</i> belong to a class of glycosides known as <b><i>ascarosides</b></i>. Therefore, <b>ascr</b> was chosen as the four-letter SMID for this 
+class of compounds. 
+
+<ul></div><div id="content1"><ul>
+
+<li><a href="//www.smmid.org/detail/ascr%231/"<b>ascr#1</b></a>:"daumone" or "C7" or "(6R-(tetrahydro-3'R,5'R-dihydroxy-6'S-methyl-2Hpyran-2'R-yloxy)-heptanoic acid" </li>
+
+ </p></div> </ul><div id="content2"> <br/>
+
+<img src="/static/structures/ascr%231.png" /> <br/>
+</div> <div id="content1"><ul>
+
+<li><a href="//www.smmid.org/detail/ascr%234/"<b>ascr#4</b></a>:"nematone-1" or "5R-(3'-O-beta-D-glucosyl-tetrahydro-3'R,5'R-dihydroxy-6'Smethyl-2H-pyran-2'R-yloxy)-2-hexanone" </li>
+
+ </div> </ul><div id="content2"> <br/>
+
+<img src="/static/structures/ascr%234.png" /> <br/>
+</div> <div id="content3">
+
+<br/>Similarly, steroids called <b><i>dafachronic acids</b></i> that regulate <i>C. elegans</i> development have been assigned the four-letter SMID "<b>dafa</b>":<br/>
+</div><div id="content1"><ul>
+<li><a href="//www.smmid.org/detail/dafa%231/"<b>dafa#1</b></a>:("delta4-dafachronic acid" or "3-keto-4-cholestenoic acid") </li>
+
+ </div> </ul><div id="content2"> <br/>
+
+<img src="/static/structures/dafa%231.png" /> <br/>
+</div> <div id="content1"><ul>
+
+<li><a href="//www.smmid.org/detail/dafa%232/"<b>dafa#2</b></a>:("delta7-dafachronic acid" or "3-keto-7,(5a)-cholestenoic acid") </li>
+
+ </div></ul> <div id="content2"> <br/>
+
+<img src="/static/structures/dafa%232.png" /> <br/>
+</div> <div id="content3">
+
+
+</ul>
+
+<p>
+<b>II.</b><i> Stereoisomers are distinguished by the addition of a second numeral.</i> The first discovered stereoisomer of any compound will be named with the ending .1, i.e. xxxx#x.1.
+For example, in the case of ascr#6, (-)-5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2'-yloxy)-2R-hexanol would be <a href="//www.smmid.org/detail/ascr%236.1/"<b>ascr#6.1</b></a>, and (-)-5R-(3'R,5'R-dihydroxy-6'S-methyl
+-(2H)-tetrahydropyran-2'-yloxy)-2S-hexanol would be <a href="//www.smmid.org/detail/ascr%232/"<b>ascr#6.2</b></a>.
+
+<p>
+<b>III.</b> <i>The SMID database is maintained by <b>Lukas Mueller</b> (METACYC SGN databases, Boyce Thompson Institute and Cornell University) and <b>Joshua Judkins</b> (Boyce Thompson Institute and Cornell University) in collaboration with <a href="//www.wormbase.org/"<b>Wormbase</b></a>. For each C. elegans metabolite, <a href="//www.smid-db.org/"<b>SMID-DB.org</b></a> provides:</i>: </p>
+<ul><p>	
+<li>Structure (structural drawing, SMILES)</p>
+<p>
+<li>Compound ID (common names, CAS, Beilstein, IUPAC)</p>
+<p>
+<li>Original reference(s)</p>
+<p>
+<li>List of references that mention the compound</p>
+<p>
+<li>Genes in associated pathways (e.g. receptors, biosynthetic enzymes)</p></ul>
+<p>
+<br/>
+All gene entries at <a href="//www.smid-db.org/"<b>SMID-DB.org</b></a> are linked to <a href="//www.wormbase.org/"<b>Wormbase.org</b></a>.  <br/>
+
+<br/>
+For questions and comments or to submit new compounds, please contact <b>smid-db@cornell.edu</b>.
+<br /> <br /><br/><br/>
+</div>
+
+
+

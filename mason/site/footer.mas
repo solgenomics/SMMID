@@ -1,0 +1,20 @@
+
+<%args>
+
+</%args>
+
+<!-- start footer -->
+
+</div>
+
+<br />
+<div id="footer" class="footer">
+ 
+  SMID-DB is hosted at the Boyce Thompson Institute. <br />
+  Copyright &copy; 2020
+
+</div>
+</body>
+</html>
+
+<!-- end footer -->

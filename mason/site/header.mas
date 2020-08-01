@@ -1,0 +1,30 @@
+
+<%args>
+
+</%args>
+
+<!-- start header -->
+
+<html>
+  
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>SMID-DB</title>
+    <& /site/google_analytics.mas &>
+      <script type="text/javascript" src="js/node_modules/jquery/dist/jquery.min.js"></script>
+      <script type="text/javascript" src="js/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" href="/src/ttsite.css"  />
+      <link rel="stylesheet" href="/js/node_modules/bootstrap/dist/css/bootstrap.css" />
+
+    <& /site/login_dialog.mas &>
+  </head>
+  
+  <body bgcolor="">
+
+
+      
+    <& /site/toolbar.mas &>
+
+      <div class="content">
+
+<!-- end header -->

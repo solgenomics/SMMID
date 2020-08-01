@@ -4,36 +4,38 @@ html {
 }
 
 body { 
-    background-color: [% site.col.page %];
+    background-color: white;
     font-family: arial;
-    color: [% site.col.text %];
-    margin: 0px;
-    padding: 0px;
+    color: dark grey;
+    margin: 10px;
+    padding: 10px;
     height: 100%;
     font-face: arial;
 }
 
-#header {
+.header {
     margin: 0 auto;
-    background-color: [% site.col.head %];
-    font-color: [% site.col.title %];
-    border-bottom: 1px solid [% site.col.line %];
-    width: [% site.width %];
+    background-color: litegray;
+    font-color: darkblue;
+    border-bottom: 5px solid lightblue;
+    width: 100%;
 }
 
-#footer {
-    background-color: [% site.col.head %];
+.footer {
+    background-color: white;
     text-align: left;
-    border-top: 1px solid [% site.col.line %];
-    width: [% site.width %];
-    padding: 4px;
-    margin: 0 auto;
+    font-size: 9pt;
+    color: lightblue;
+    border-top: 1px solid lightblue;
+    width: 100%;
+    padding-top: 10px;
+    margin: 10px;
 }
 
-#content {
+.content {
     padding: 10px;
     margin: 0 auto;
-    width: [% site.width %];
+    width: 90%;
 }
 
 h1.title {
@@ -45,17 +47,29 @@ h1.title {
 .sitetitle { 
     font-family: arial;
     text-decoration: none;
-    font-size: 24pt;
+    font-size: 28pt;
+    font-weight: 1000;
+    color: lightblue;
+    margin-bottom: 0px;   
+}
+
+.header_link:link {
+    font-family: arial;
+    font-size:14pt;
     font-weight: bold;
-    color: [% site.rgb.blue %];
-    margin-bottom: 0px;
-    
+    color: lightblue;
+    text-decoration: none;
+    margin-right: 20pt;
+}
+
+.header_link:visited {
+    color: lightblue;
 }
 
 .message {
-    color: [% site.col.message %];
+    color: red;
 }
 
 .error {
-    color: [% site.col.error %];
+    color: red;
 }

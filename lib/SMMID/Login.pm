@@ -41,7 +41,7 @@ use Moose;
 
 use Digest::MD5 qw(md5);
 use String::Random;
-
+use DateTime;
 
 our $LOGIN_COOKIE_NAME = 'smmid_session_id';
 our $LOGIN_PAGE        = '/user/login';
@@ -65,7 +65,7 @@ has 'login_cookie' => (isa => 'Str', is => 'rw');
 
 =head2 constructor new()
 
- Usage:        my $login = CXGN::Login->new($dbh)
+ Usage:        my $login = SMMID::Login->new( { schema => $schema, cookie_string )
  Desc:         creates a new login object
  Ret:          
  Args:         a database handle
@@ -73,25 +73,6 @@ has 'login_cookie' => (isa => 'Str', is => 'rw');
  Example:
 
 =cut
-
-# sub new {
-#     my $class = shift;
-#     my $dbh   = shift;
-#     my $self  = $class->SUPER::new($dbh);
-#     $self->set_sql()
-#       ;    #### This SQL should really be in the CXGN::People::Person object!
-
-#     foreach (@_) {
-#         if ( ref($_) eq "HASH" ) {
-
-#             #Process hash args here
-#             $self->{no_redirect} = $_->{NO_REDIRECT};
-#             last;
-#         }
-#     }
-#     $self->{conf_object} = $c || do{ require SGN::Context; SGN::Context->new };
-#     return $self;
-# }
 
 =head2 get_login_status
 
@@ -209,7 +190,8 @@ else it's the person ID if in scalar context, or (person ID, user type) in array
 
 sub has_session {
     my $self = shift;
-    
+
+    print STDERR "has_session()...\n";
     #if people are not allowed to be logged in, return
     if ( !$self->login_allowed() ) {
 	print STDERR "LOGIN NOT ALLOWED.\n";
@@ -221,17 +203,22 @@ sub has_session {
 	print STDERR "NO COOKIE\n";
         return;
     }
+    else {
+	print STDERR "We have a cookie!!!\n";
+    }
 
-    my ( $person_id, $user_type, $user_prefs, $expired ) =
-      $self->query_from_cookie($self->cookie());
+    my ( $dbuser_id, $user_type, $user_prefs, $expired ) =
+      $self->query_from_cookie($self->cookie_string());
 
     #if cookie string is not found, they are not logged in
-    unless ( $person_id and $user_type ) {
+    unless ( $dbuser_id ) {
+	print STDERR "We have no person id and user type( $dbuser_id)\n";
         return;
     }
 
     #if their cookie is good but their timestamp is old, they are not logged in
     if ($expired) {
+	print STDERR "The cookie is expired. Sorry!\n";
         return;
     }
 
@@ -240,27 +227,23 @@ sub has_session {
     ################################
 
     my $login_info = { 
-	person_id => $person_id,
-	cookie_string => $self->cookie(),
+	person_id => $dbuser_id,
+	cookie_string => $self->cookie_string(),
 	user_type => $user_type,
     };
 
-    $self->set_login_info($login_info);
-    # $self->{login_info}->{person_id}     = $person_id;
-    # $self->{login_info}->{cookie_string} = $cookie;
-    # $self->{login_info}->{user_type}     = $user_type;
-    # $self->{login_info}->{user_prefs}    = $user_prefs;
+    #$self->set_login_info($login_info);
 
-    $self->update_timestamp();
+    $self->update_timestamp($dbuser_id);
 
 #if they are trying to get both pieces of info, give it to them, in array context
     if (wantarray) {
-        return ( $person_id, $user_type );
+        return ( $dbuser_id, $user_type );
     }
 
     #or they just care about the login id
     else {
-        return $person_id;
+        return $dbuser_id;
     }
 }
 
@@ -268,25 +251,9 @@ sub query_from_cookie {
     my $self          = shift;
     my $cookie_string = shift;
 
-    # my $sth = $self->get_sql("user_from_cookie");
-
-    # "SELECT 
-    # 				sp_person_id,
-    # 				sgn_people.sp_roles.name as user_type,
-    # 				user_prefs,
-    # 				extract (epoch FROM current_timestamp-last_access_time)>? AS expired 
-    # 			FROM 
-    # 				sgn_people.sp_person JOIN sgn_people.sp_person_roles using(sp_person_id) join sgn_people.sp_roles using(sp_role_id) 
-    # 			WHERE 
-    # 				cookie_string=?
-    #                     ORDER BY sp_role_id
-    #                     LIMIT 1";
+    my $row = $self->user_from_cookie_string();
     
-    my $row = $self->schema()->resultset('SMID::Result::Dbuser')->find( { cookie_string => $self->cookie_string() } );
-
-    if (!$row) { return; }
-    
-    my @result = ($row->dbuser_id(), $row->user_type(), $row->current_timestamp());
+    my @result = ($row->dbuser_id(), $row->user_type(), $row->last_access_time());
 
     if (wantarray) {
         return @result;
@@ -294,6 +261,62 @@ sub query_from_cookie {
     else {
         return $result[0];
     }
+}
+
+sub user_from_cookie_string {
+    my $self = shift;
+    
+    my $row = $self->schema()->resultset('SMIDDB::Result::Dbuser')->find( { cookie_string => $self->cookie_string() } );
+    
+    if (!$row) { return; }
+
+    else {
+	return $row;
+    }
+
+}
+
+sub user_from_credentials {
+    my $self = shift;
+    my $username = shift;
+    my $password = shift;
+
+    my $encoded_password_h = $self->schema()
+	->storage
+	->dbh()
+	->prepare("SELECT crypt(?, dbuser.password) FROM dbuser");
+
+    $encoded_password_h->execute($password);
+
+    my ($encoded_password) = $encoded_password_h->fetchrow_array();
+	
+    print STDERR "ENCODED PASSWORD = $encoded_password\n";
+
+    if ($username) { 
+	
+	my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { username => { ilike => $username },  password => $encoded_password } );
+	
+	return $row;
+    }
+    return undef;
+}
+
+sub exists_user {
+    my $self = shift;
+    my $username = shift;
+
+    if ($username) { 
+	my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { username => { ilike => $username } }  );
+	
+	if ($row) {
+	    return $row;
+	}
+	else {
+	    return 0;
+	}
+    }
+    return 0;
+
 }
 
 sub login_allowed {
@@ -338,7 +361,10 @@ sub login_allowed {
 
 sub login_user {
     my $self = shift;
-    my ( $username, $password ) = @_;
+    my $username = shift;
+    my $password = shift;
+
+    print STDERR "Logging in user $username with password XXXXXXXX\n";
     my $login_info;    #information about whether login succeeded, and if not, why not
 
     if ( ! $username) {
@@ -349,26 +375,22 @@ sub login_user {
 	$login_info->{error} = "Please provide a password.";
     }
     elsif ( $self->login_allowed() ) {
-	print STDERR "LOGIN ALLOWED: PROCEEDING WITH LOGIN\n";
-#        my $sth = $self->get_sql("user_from_uname_pass");
-          # "	SELECT 
-	  # 			sp_person_id, disabled, user_prefs, first_name, last_name
-	  # 		FROM 
-	  # 			sgn_people.sp_person 
-	  # 		WHERE 
-	  # 			UPPER(username)=UPPER(?) 
-	  # 			AND (sp_person.password = crypt(?, sp_person.password))";
 
-	my $encoded_password_h = $self->schema()->storage->dbh()->prepare("
-	    SELECT crypt(?, dbuser.password) FROM dbuser");
-	$encoded_password_h->execute($password);
-	my ($encoded_password) = $encoded_password_h->fetchrow_array();
+	print STDERR "LOGIN ALLOWED: PROCEEDING WITH LOGIN\n";
+
+	# my $encoded_password_h = $self->schema()->storage->dbh()->prepare("
+	#     SELECT crypt(?, dbuser.password) FROM dbuser");
+	# $encoded_password_h->execute($password);
+	# my ($encoded_password) = $encoded_password_h->fetchrow_array();
 	
-	print STDERR "ENCODED PASSWORD = $encoded_password\n";
+	# print STDERR "ENCODED PASSWORD = $encoded_password\n";
 	
 	
-	my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { username => { ilike => $username },  password => $encoded_password } );
+	# my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { username => { ilike => $username },  password => $encoded_password } );
  
+
+	my $row = $self->user_from_credentials($username, $password);
+
 	print STDERR "NOW LOGGING IN USER $username\n";
         #my $num_rows = $sth->execute( $username, $password );
 	if (! $row) {
@@ -464,8 +486,22 @@ sub logout_user {
     my $cookie = $self->get_login_cookie();
     if ($cookie) {
         my $sth = $self->get_sql("logout");
-        $sth->execute($cookie);
-        CXGN::Cookie::set_cookie( $LOGIN_COOKIE_NAME, "" );
+	$sth->execute($cookie);
+
+	# "	UPDATE 
+	# 			sgn_people.sp_person 
+	# 		SET 
+	# 			cookie_string=null,
+	# 			last_access_time=current_timestamp 
+	# 		WHERE 
+	# 			cookie_string=?",
+
+	    my $row = $self->schema()->resultset("Dbuser")->find( { cookie_string => $cookie });
+
+	$row->update( { cookie_string => undef, last_access_time => $self->now() });
+
+	# controller needs to set the cookie
+        ###CXGN::Cookie::set_cookie( $LOGIN_COOKIE_NAME, "" );
     }
 }
 
@@ -483,11 +519,30 @@ sub logout_user {
 
 sub update_timestamp {
     my $self   = shift;
-    my $cookie = $self->cookie();
+    my $dbuser_id = shift;
+    
+    my $cookie = $self->cookie_string();
     if ($cookie) {
-        my $sth = $self->get_sql("refresh_cookie");
-        $sth->execute($cookie);
+        # my $sth = $self->get_sql("refresh_cookie");
+	
+        #   "	UPDATE 
+	# 			sgn_people.sp_person 
+	# 		SET 
+	# 			last_access_time=current_timestamp 
+	# 		WHERE 
+	# 			cookie_string=?",
+	
+	my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { dbuser_id => $dbuser_id });
+	$row->update( { last_access_time => $self->now() });
+	
     }
+}
+
+
+sub now {
+    my $self = shift;
+    my $now = DateTime->now();
+    return $now->ymd()."T".$now->hms();
 }
 
 # =head2 get_login_cookie

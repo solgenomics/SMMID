@@ -29,12 +29,18 @@ sub login : Path('/ajax/user/login') Args(0) {
     
     print STDERR "Goto URL = $goto_url\n";
 
-    my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema(), cookie => $cookie } );
-    my $login_info = $login->login_user($username, $password);
+#    my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema(), cookie => $cookie } );
+#    my $login_info = $login->login_user($username, $password);
 
-    if ($cookie ne $login_info->{cookie_string}) {
-	# set the new cookie
+    my $credentials = SMMID::Authentication::Credentials->new();
+    my ($user_row, $login_info) = $credentials->authenticate($c,'default', { username => $username, password => $password });
 
+
+    if ($login_info->{cookie_string}) {
+
+	# set the new cookie. The caller (controller)
+	# will actually need to set the cookie.
+	#
 	$c->response->cookies->{$LOGIN_COOKIE_NAME}->{value} = $login_info->{cookie_string};
     }
     
@@ -62,8 +68,11 @@ sub logout :Path('/ajax/user/logout') Args(0) {
     my $self = shift;
     my $c = shift;
 
+    my $LOGIN_COOKIE_NAME = $c->config->{login_cookie_name};
+    
     my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema() } );
-    $login->logout_user();
+    my $cookie = $login->logout_user();
+    $c->res->cookies->{$LOGIN_COOKIE_NAME}= $cookie;
 
     $c->stash->{rest} = { message => "User successfully logged out." };
 }
@@ -449,14 +458,27 @@ sub tempname {
 sub get_login_button_html :Path('/ajax/user/login_button_html') Args(0) {
     my $self = shift;
     my $c = shift;
+
+    select(STDERR);
+    $|=1;
+
+    print STDERR "Start button generate...\n";
+
+    eval { $c->user_exists('default') };
+    if ($@) {
+	print STDERR "THE ERROR IS :$@\n";
+    }
+    
+    my $html = "";
     eval {
+	print STDERR "IN EVAL...\n";
 	my $production_site = $c->config->{main_production_site_url};
-	my $html = "";
+
 	# if the site is a mirror, gray out the login/logout links
 	if( $c->config->{'is_mirror'} ) {
 	    print STDERR "generating login button for mirror site...\n";
 	    $html = <<HTML;
-	    <a style="line-height: 1.2; text-decoration: underline; background: none" href="$production_site" title="log in on main site">main site</a>
+	<a style="line-height: 1.2; text-decoration: underline; background: none" href="$production_site" title="log in on main site">main site</a>
 	} elsif ( $c->config->{disable_login} ) {
 	    <li class="dropdown">
 		<div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
@@ -466,11 +488,11 @@ sub get_login_button_html :Path('/ajax/user/login_button_html') Args(0) {
 
 HTML
 
-    } elsif ( $c->req->uri->path_query =~ "logout=yes") {
-	print STDERR "generating login button for logout...\n";
-	$html = <<HTML;
-  <li class="dropdown">
-      <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
+	} elsif ( $c->req->uri->path_query =~ "logout=yes") {
+	    print STDERR "generating login button for logout...\n";
+	    $html = <<HTML;
+    <li class="dropdown">
+    <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
 	<a href="/user/login">
           <button class="btn btn-primary" type="button" style="margin: 7px 7px 0px 0px">Login</button>
 	</a>
@@ -478,22 +500,23 @@ HTML
   </li>
 HTML
 
-} elsif ( $c->user_exists ) {
-    print STDERR "Generate login button for logged in user...\n";
-    my $sp_person_id = $c->user->get_object->get_sp_person_id;
-    my $username = $c->user->get_username();
-    $html = <<HTML;
-  <li>
+	} elsif ( $c->user_exists ) {
+	    print STDERR "Generate login button for logged in user...\n";
+	    my $sp_person_id = $c->user->get_object->get_sp_person_id;
+	    my $username = $c->user->get_username();
+	    $html = <<HTML;
+      <li>
       <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 3px 0px 0px">
-	<button id="navbar_profile" class="btn btn-primary" type="button" onclick='location.href="/solpeople/profile/$sp_person_id"' style="margin: 7px 0px 0px 0px" title="My Profile">$username</button>
-	<button id="navbar_lists" name="lists_link" class="btn btn-info" style="margin:7px 0px 0px 0px" type="button" title="Lists" onClick="show_lists();">
-        Lists <span class="glyphicon glyphicon-list-alt" ></span>
-	</button>
-	<button id="navbar_personal_calendar" name="personal_calendar_link" class="btn btn-primary" style="margin:7px 0px 0px 0px" type="button" title="Your Calendar">Calendar&nbsp;<span class="glyphicon glyphicon-calendar" ></span>
-	</button>
-	<button id="navbar_logout" class="btn btn-default glyphicon glyphicon-log-out" style="margin:6px 0px 0px 0px" type="button" onclick="logout();" title="Logout"></button>
-      </div>
-  </li>
+      <button id="navbar_profile" class="btn btn-primary" type="button" onclick='location.href="/solpeople/profile/$sp_person_id"' style="margin: 7px 0px 0px 0px" title="My Profile">$username</button>
+      <button id="navbar_lists" name="lists_link" class="btn btn-info" style="margin:7px 0px 0px 0px" type="button" title="Lists" onClick="show_lists();">
+      Lists <span class="glyphicon glyphicon-list-alt" ></span>
+      </button>
+      <button id="navbar_personal_calendar" name="personal_calendar_link" class="btn btn-primary" style="margin:7px 0px 0px 0px" type="button" title="Your Calendar">Calendar&nbsp;<span class="glyphicon glyphicon-calendar" ></span>
+																						       </button>
+																						       <button id="navbar_logout" class="btn btn-default glyphicon glyphicon-log-out" style="margin:6px 0px 0px 0px" type="button" onclick="logout();" title="Logout"></button>
+																						       </div>
+</li>
+
 HTML
 
   } else {
@@ -506,13 +529,20 @@ HTML
       </li>
  |;
 
-};
-	if ($@) {
-	    print STDERR "ERROR: $@\n";
-	    $c->stash->{rest} = { error => $@ };
 	}
-	return $c->stash->{rest} = { html => $html, logged_in => $c->user_exists };
+    };
+
+    print STDERR "HTML GENERATED!\n";
+    
+    if ($@) {
+	print STDERR "ERROR: $@\n";
+	$c->stash->{rest} = { error => $@ };
+	return;
     }
+    
+    $c->stash->{rest} = {
+	html => $html, logged_in => $c->user_exists
+    };
 }
 
 sub quick_create_user :Path('/ajax/user/quick_create_account') Args(0) {

@@ -36,6 +36,7 @@ use Catalyst qw(
                 SmartURI
                 Authentication
                 +SMMID::Authentication::Store
+                +SMMID::Authentication::User
                 Authorization::Roles
                 +SMMID::Role::Site::Exceptions
                 +SMMID::Role::Site::Files
@@ -61,13 +62,33 @@ my $logdir = File::Spec->catfile( File::Spec->rootdir,
 				);
 
 __PACKAGE__->config(
-		    name => 'SMMID',
-		    access_log => File::Spec->catfile( $logdir, 'access.log' ),
-		    error_log  => File::Spec->catfile( $logdir, 'error.log'  ),
-                    default_view => 'Mason',
-		    # our conf file is by default in /etc/cxgn/SMMID.conf
-		   ### 'Plugin::ConfigLoader' => { file => File::Spec->catfile( File::Spec->rootdir, 'etc', 'cxgn', 'SMMID.conf') },
-                   );
+    name => 'SMMID',
+    access_log => File::Spec->catfile( $logdir, 'access.log' ),
+    error_log  => File::Spec->catfile( $logdir, 'error.log'  ),
+    default_view => 'Mason',
+    # our conf file is by default in /etc/cxgn/SMMID.conf
+ #   'Plugin::ConfigLoader' => {
+#	file => File::Spec->catfile( File::Spec->rootdir, 'etc', 'cxgn', 'SMMID.conf')
+ #   },
+    
+    
+    'Plugin::Authentication' => {
+	default_realm => 'default',
+	default => {
+	    credential => {
+		class => '+SMMID::Authentication::Credentials',
+	    },
+ 	    
+	    store => {
+		class => "+SMMID::Authentication::Store",
+		user_class => "+SMMID::Authentication::User",
+		###		    role_column => 'roles',
+	    },
+	},
+
+    },
+    );
+
 
 # Start the application
 __PACKAGE__->setup();
@@ -122,70 +143,70 @@ require SMMIDDb;
 
 =cut
 
-sub configure_mod_perl {
-    my $class = shift;
-    my %args = @_;
+# sub configure_mod_perl {
+#     my $class = shift;
+#     my %args = @_;
 
-    exists $args{vhost}
-        or die "must pass 'vhost' argument to configure_mod_perl()\n";
+#     exists $args{vhost}
+#         or die "must pass 'vhost' argument to configure_mod_perl()\n";
 
-    require Apache2::ServerUtil;
-    require Apache2::ServerRec;
+#     require Apache2::ServerUtil;
+#     require Apache2::ServerRec;
 
-    my $app_name = $class;
-    my $cfg = $class->config;
-    -d $cfg->{home} or die <<EOM;
-FATAL: Catalyst could not figure out the home dir for $app_name, it
-guessed '$cfg->{home}', but that directory does not exist.  Aborting start.
-EOM
-    # add some other configuration to the web server
-    my $server = Apache2::ServerUtil->server;
-    $server = $server->next if $args{vhost}; #< vhost currently being
-                                             #configured should be first
-                                             #in the list
-    $server->add_config( $_ ) for map [ split /\n/, $_ ],
-        (
-         'ServerSignature Off',
+#     my $app_name = $class;
+#     my $cfg = $class->config;
+#     -d $cfg->{home} or die <<EOM;
+# FATAL: Catalyst could not figure out the home dir for $app_name, it
+# guessed '$cfg->{home}', but that directory does not exist.  Aborting start.
+# EOM
+#     # add some other configuration to the web server
+#     my $server = Apache2::ServerUtil->server;
+#     $server = $server->next if $args{vhost}; #< vhost currently being
+#                                              #configured should be first
+#                                              #in the list
+#     $server->add_config( $_ ) for map [ split /\n/, $_ ],
+#         (
+#          'ServerSignature Off',
 
-         #respond to all requests by looking in this directory...
-         "DocumentRoot $cfg->{home}",
+#          #respond to all requests by looking in this directory...
+#          "DocumentRoot $cfg->{home}",
 
-         #where to write error messages
-         "ErrorLog "._check_logfile( $cfg->{error_log} ),
-         "CustomLog "._check_logfile( $cfg->{access_log} ).' combined',
+#          #where to write error messages
+#          "ErrorLog "._check_logfile( $cfg->{error_log} ),
+#          "CustomLog "._check_logfile( $cfg->{access_log} ).' combined',
 
-         'ErrorDocument 500 "Internal server error: The server encountered an internal error or misconfiguration and was unable to complete your request. Feel free to contact us at sgn-feedback@sgn.cornell.edu and inform us of the error.',
-
-
-         # allow symlinks, allow access from anywhere
-         "<Directory />
-
-             Options +FollowSymLinks
-
-             Order allow,deny
-             Allow from all
-
-          </Directory>
-         ",
+#          'ErrorDocument 500 "Internal server error: The server encountered an internal error or misconfiguration and was unable to complete your request. Feel free to contact us at sgn-feedback@sgn.cornell.edu and inform us of the error.',
 
 
-         # set our application to handle most requests by default
-         "<Location />
-             SetHandler modperl
-             PerlResponseHandler SMMID
-          </Location>
-         ",
+#          # allow symlinks, allow access from anywhere
+#          "<Directory />
 
-         # except set up serving /static files directly from apache,
-         # bypassing any perl code
-         'Alias /static '.File::Spec->catdir( $cfg->{home}, 'root', 'static' ),
-         "<Location /static>
-             SetHandler  default-handler
-          </Location>
-         ",
-        );
+#              Options +FollowSymLinks
 
-}
+#              Order allow,deny
+#              Allow from all
+
+#           </Directory>
+#          ",
+
+
+#          # set our application to handle most requests by default
+#          "<Location />
+#              SetHandler modperl
+#              PerlResponseHandler SMMID
+#           </Location>
+#          ",
+
+#          # except set up serving /static files directly from apache,
+#          # bypassing any perl code
+#          'Alias /static '.File::Spec->catdir( $cfg->{home}, 'root', 'static' ),
+#          "<Location /static>
+#              SetHandler  default-handler
+#           </Location>
+#          ",
+#         );
+
+# }
 
 sub _check_logfile {
     my $file = File::Spec->catfile(@_);

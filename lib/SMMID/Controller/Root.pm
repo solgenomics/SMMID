@@ -33,19 +33,23 @@ sub auto : Private {
  
     # gluecode for logins
     #
-    unless( $c->config->{'disable_login'} ) {
-	my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema() });
+    #unless( $c->config->{'disable_login'} ) {
+    my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema() });
+
+    $login->cookie_string($c->req->cookies->{smmid_session_id}->value());
+    
+    if ( my $dbuser_id = $login->has_session())  {
+
+	print STDERR "We have a logged in user! :-)\n";
+	# my $dbuser = $c->model("SMIDDB")->find( { dbuser_id => $dbuser_id });
+	# print STDERR "Logging in user ".$dbuser->username()."\n";
 	
-        if ( my $dbuser_id = $login->has_session())  {
-
-            my $dbuser = $c->model("SMIDDB")->find( { dbuser_id => $dbuser_id });
-
-            $c->authenticate({
-                username => $dbuser->username(),
-                password => $dbuser->password(),
-            });
-        }
+	# $self->authenticate($c, 'default', {
+	#     username => $dbuser->username(),
+	#     password => $dbuser->password(),
+			   # });
     }
+    #}
     return 1;
 }
     
@@ -53,7 +57,7 @@ sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
     # Hello World
-    $c->stash->{template} = 'welcome.tt2';
+    $c->stash->{template} = 'index.mas';
 }
 
 sub default :Path {
@@ -63,8 +67,6 @@ sub default :Path {
     
 }
 
-
-
 sub contact :Path('/contact') :Args(0) { 
     my ($self, $c) = @_;
 }
@@ -73,6 +75,7 @@ sub about :Path('/about') :Args(0) {
     my ($self, $c) = @_;
 }
 
+    
 =head2 end
 
 Attempt to render a view, if needed.

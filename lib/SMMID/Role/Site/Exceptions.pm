@@ -160,7 +160,7 @@ sub _set_exception_response {
         template         => '/site/error/exception.mas',
 
         exception        => \@exceptions,
-        show_dev_message => !$self->get_conf('production_server'),
+        show_dev_message => !$self->config->{production_server},
         contact_email    => $self->config->{feedback_email},
     });
 
