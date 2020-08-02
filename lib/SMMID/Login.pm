@@ -483,7 +483,7 @@ sub login_user {
 
 sub logout_user {
     my $self   = shift;
-    my $cookie = $self->get_login_cookie();
+    my $cookie = $self->cookie_string();
     if ($cookie) {
         my $sth = $self->get_sql("logout");
 	$sth->execute($cookie);

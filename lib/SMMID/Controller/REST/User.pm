@@ -25,6 +25,8 @@ sub login : Path('/ajax/user/login') Args(0) {
     my $username = $c->req->param("username");
     my $password = $c->req->param("password");
     my $goto_url = $c->req->param("goto_url");
+    my $logout   = $c->req->param("logout");
+    
     my $cookie = $c->req->param($LOGIN_COOKIE_NAME);
     
     print STDERR "Goto URL = $goto_url\n";
@@ -459,36 +461,16 @@ sub get_login_button_html :Path('/ajax/user/login_button_html') Args(0) {
     my $self = shift;
     my $c = shift;
 
+    my $logout =  $c->req->param("logout");
+    
     select(STDERR);
     $|=1;
 
-    print STDERR "Start button generate...\n";
-
-    eval { $c->user_exists('default') };
-    if ($@) {
-	print STDERR "THE ERROR IS :$@\n";
-    }
-    
     my $html = "";
-    eval {
-	print STDERR "IN EVAL...\n";
-	my $production_site = $c->config->{main_production_site_url};
 
-	# if the site is a mirror, gray out the login/logout links
-	if( $c->config->{'is_mirror'} ) {
-	    print STDERR "generating login button for mirror site...\n";
-	    $html = <<HTML;
-	<a style="line-height: 1.2; text-decoration: underline; background: none" href="$production_site" title="log in on main site">main site</a>
-	} elsif ( $c->config->{disable_login} ) {
-	    <li class="dropdown">
-		<div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
-		<button class="btn btn-primary disabled" type="button" style="margin: 7px 7px 0px 0px">Login</button>
-		</div>
-		</li>
+    
 
-HTML
-
-	} elsif ( $c->req->uri->path_query =~ "logout=yes") {
+    if ($logout eq "yes") {
 	    print STDERR "generating login button for logout...\n";
 	    $html = <<HTML;
     <li class="dropdown">
@@ -500,49 +482,81 @@ HTML
   </li>
 HTML
 
-	} elsif ( $c->user_exists ) {
-	    print STDERR "Generate login button for logged in user...\n";
-	    my $sp_person_id = $c->user->get_object->get_sp_person_id;
-	    my $username = $c->user->get_username();
-	    $html = <<HTML;
-      <li>
-      <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 3px 0px 0px">
-      <button id="navbar_profile" class="btn btn-primary" type="button" onclick='location.href="/solpeople/profile/$sp_person_id"' style="margin: 7px 0px 0px 0px" title="My Profile">$username</button>
-      <button id="navbar_lists" name="lists_link" class="btn btn-info" style="margin:7px 0px 0px 0px" type="button" title="Lists" onClick="show_lists();">
-      Lists <span class="glyphicon glyphicon-list-alt" ></span>
-      </button>
-      <button id="navbar_personal_calendar" name="personal_calendar_link" class="btn btn-primary" style="margin:7px 0px 0px 0px" type="button" title="Your Calendar">Calendar&nbsp;<span class="glyphicon glyphicon-calendar" ></span>
-																						       </button>
-																						       <button id="navbar_logout" class="btn btn-default glyphicon glyphicon-log-out" style="margin:6px 0px 0px 0px" type="button" onclick="logout();" title="Logout"></button>
-																						       </div>
-</li>
+	    $c->stash->{rest} = { html => $html };
+	    return;
+	    
+    }
 
-HTML
-
-  } else {
-      print STDERR "generating regular login button..\n";
-      $html = qq |
-      <li class="dropdown">
-        <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
-            <button id="site_login_button" name="site_login_button" class="btn btn-primary" type="button" style="margin: 7px 7px 0px 0px; position-absolute: 10,10,100,10">Login</button>
-        </div>
-      </li>
- |;
-
-	}
-    };
-
-    print STDERR "HTML GENERATED!\n";
-    
-    if ($@) {
-	print STDERR "ERROR: $@\n";
-	$c->stash->{rest} = { error => $@ };
+    if ( $c->config->{disable_login} ) {
+	$html = qw | 
+	    <li class="dropdown">
+	    <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
+	    <button class="btn btn-primary disabled" type="button" style="margin: 7px 7px 0px 0px">Login</button>
+	    </div>
+	    </li>
+	    
+	    |;
+	
+	
+	$c->stash->{rest} = { html => $html };
 	return;
     }
+
+    if( $c->config->{'is_mirror'} ) {    
+	my $production_site = $c->config->{main_production_site_url};
+	
+	# if the site is a mirror, gray out the login/logout links
+	#
+	print STDERR "generating login button for mirror site...\n";
+	$html = qw | 
+	    <a style="line-height: 1.2; text-decoration: underline; background: none" href="$production_site" title="log in on main site">main site</a>
+
+	    |;
+
+	$c->stash->{rest} = { html => $html };
+	return;
+    }	    
+	
+    if ( $c->user() ) {
+	print STDERR "Generate login button for logged in user...\n";
+	my $sp_person_id = $c->user->get_object->dbuser_id();
+	my $username = $c->user->id();
+	$html = qw | 
+	    <li>
+	    <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 3px 0px 0px">
+	    <button id="navbar_profile" class="btn btn-primary" type="button" onclick='location.href="/solpeople/profile/$sp_person_id"' style="margin: 7px 0px 0px 0px" title="My Profile">$username</button>
+	    <button id="navbar_lists" name="lists_link" class="btn btn-info" style="margin:7px 0px 0px 0px" type="button" title="Lists" onClick="show_lists();">
+	    Lists <span class="glyphicon glyphicon-list-alt" ></span>
+	    </button>
+	    <button id="navbar_personal_calendar" name="personal_calendar_link" class="btn btn-primary" style="margin:7px 0px 0px 0px" type="button" title="Your Calendar">Calendar&nbsp;<span class="glyphicon glyphicon-calendar" ></span>
+																							     </button>
+																							     <button id="navbar_logout" class="btn btn-default glyphicon glyphicon-log-out" style="margin:6px 0px 0px 0px" type="button" onclick="logout();" title="Logout"></button>
+</div>
+</li>
+
+																							     |;
+
+
+	$c->stash->{rest} = { html => $html };
+	return;
+	
+    }
+
+    ### Generate regular login button
     
-    $c->stash->{rest} = {
+    print STDERR "generating regular login button..\n";
+    $html = qq |
+	<li class="dropdown">
+        <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
+	<button id="site_login_button" name="site_login_button" class="btn btn-primary" type="button" style="margin: 7px 7px 0px 0px; position-absolute: 10,10,100,10">Login</button>
+        </div>
+	</li>
+	|;
+
+       $c->stash->{rest} = {
 	html => $html, logged_in => $c->user_exists
-    };
+       };
+
 }
 
 sub quick_create_user :Path('/ajax/user/quick_create_account') Args(0) {

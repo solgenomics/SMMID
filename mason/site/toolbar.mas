@@ -1,6 +1,9 @@
 
 <!-- start toolbar -->
 
+<script type="text/javascript" src="/js/source/entries/toolbar.js" ></script>
+
+
   <div id="header" class="header" ><!-- BEGIN site/header -->
   <table width="100%" cellpadding="0" cellspacing="0"><tr><td><a href="/" class="sitetitle">SMID DB</a></td><td align="right">
   <table cellpadding="0"><tr style="margin-bottom:0px">
