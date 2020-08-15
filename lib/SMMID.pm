@@ -87,7 +87,15 @@ __PACKAGE__->config(
 	},
 
     },
-    );
+
+
+    'Plugin::Static::Simple' => {
+	dirs => [ '/static/js' ],
+	mime_types => {
+	    js => 'text/javascript',
+	}
+    }
+);
 
 
 # Start the application

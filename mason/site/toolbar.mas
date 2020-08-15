@@ -1,7 +1,8 @@
 
 <!-- start toolbar -->
 
-<script type="text/javascript" src="/js/source/entries/toolbar.js" ></script>
+<!-- script type="text/javascript" src="js/node_modules/jquery/dist/jquery.min.js"></script -->
+<!-- script type="text/javascript" src="/js/source/entries/toolbar.js" ></script -->
 
 
   <div id="header" class="header" ><!-- BEGIN site/header -->

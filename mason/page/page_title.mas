@@ -1,0 +1,7 @@
+
+<%args>
+$title
+</%args>
+
+<h1><% $title %></h1>
+

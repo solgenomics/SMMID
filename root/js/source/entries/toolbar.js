@@ -1,12 +1,12 @@
 
 
-jQuery(document).ready( function() {
-    alert("FETCHING LOGIN HTML...");
+$(document).ready( function() {
     $.ajax( {	
 	url: '/ajax/user/login_button_html',
-	error: function(r) { alert('Error! :-( '+r.responseText()) },
+	error: function(r) { alert('Error! :-( '+r.responseText + ')');  },
 	success: function(r) {
-	    $('#login_button_html').html(r.html);
+	    alert("HTML IS HERE "+r.html);
+	    $('#login_button_html_div').html(r.html);
 	}
     });
 });

@@ -20,6 +20,7 @@ sub login : Path('/ajax/user/login') Args(0) {
     my $self = shift;
     my $c = shift;
 
+    print STDERR "HELLO 2433\n";
     my $LOGIN_COOKIE_NAME = $c->config->{login_cookie_name};
     
     my $username = $c->req->param("username");
@@ -31,8 +32,8 @@ sub login : Path('/ajax/user/login') Args(0) {
     
     print STDERR "Goto URL = $goto_url\n";
 
-#    my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema(), cookie => $cookie } );
-#    my $login_info = $login->login_user($username, $password);
+    my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema() } );
+    my $login_info = $login->login_user($username, $password);
 
     my $credentials = SMMID::Authentication::Credentials->new();
     my ($user_row, $login_info) = $credentials->authenticate($c,'default', { username => $username, password => $password });
@@ -71,11 +72,15 @@ sub logout :Path('/ajax/user/logout') Args(0) {
     my $c = shift;
 
     my $LOGIN_COOKIE_NAME = $c->config->{login_cookie_name};
+    print STDERR "LOGIN COOKIE NAME = $LOGIN_COOKIE_NAME\n";
     
     my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema() } );
     my $cookie = $login->logout_user();
-    $c->res->cookies->{$LOGIN_COOKIE_NAME}= $cookie;
-
+    print STDERR "LOGOUT: COOKIE = $cookie\n";
+    $c->res->cookies->{$LOGIN_COOKIE_NAME} = undef;
+    delete($c->res->cookies->{$LOGIN_COOKIE_NAME});
+    $c->user(undef);
+    $c->logout();
     $c->stash->{rest} = { message => "User successfully logged out." };
 }
 
@@ -461,7 +466,7 @@ sub get_login_button_html :Path('/ajax/user/login_button_html') Args(0) {
     my $self = shift;
     my $c = shift;
 
-    my $logout =  $c->req->param("logout");
+#    my $logout =  $c->req->param("logout");
     
     select(STDERR);
     $|=1;
@@ -470,31 +475,28 @@ sub get_login_button_html :Path('/ajax/user/login_button_html') Args(0) {
 
     
 
-    if ($logout eq "yes") {
-	    print STDERR "generating login button for logout...\n";
-	    $html = <<HTML;
-    <li class="dropdown">
-    <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
-	<a href="/user/login">
-          <button class="btn btn-primary" type="button" style="margin: 7px 7px 0px 0px">Login</button>
-	</a>
-      </div>
-  </li>
-HTML
+#     if ($logout eq "yes") {
+# 	    print STDERR "generating login button for logout...\n";
+# 	    $html = <<HTML;
+#     <li class="dropdown">
+#     <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
+# 	<a href="/user/login">
+#           <button id="logouclass="btn btn-primary" type="button" style="margin: 7px 7px 0px 0px">Login</button>
+# 	</a>
+#       </div>
+#   </li>
+# HTML
 
-	    $c->stash->{rest} = { html => $html };
-	    return;
+# 	    $c->stash->{rest} = { html => $html };
+# 	    return;
 	    
-    }
+#     }
 
     if ( $c->config->{disable_login} ) {
 	$html = qw | 
-	    <li class="dropdown">
 	    <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
 	    <button class="btn btn-primary disabled" type="button" style="margin: 7px 7px 0px 0px">Login</button>
 	    </div>
-	    </li>
-	    
 	    |;
 	
 	
@@ -508,10 +510,7 @@ HTML
 	# if the site is a mirror, gray out the login/logout links
 	#
 	print STDERR "generating login button for mirror site...\n";
-	$html = qw | 
-	    <a style="line-height: 1.2; text-decoration: underline; background: none" href="$production_site" title="log in on main site">main site</a>
-
-	    |;
+	$html = qw | <a style="line-height: 1.2; text-decoration: underline; background: none" href="$production_site" title="log in on main site">main site</a> |;
 
 	$c->stash->{rest} = { html => $html };
 	return;
@@ -521,22 +520,14 @@ HTML
 	print STDERR "Generate login button for logged in user...\n";
 	my $sp_person_id = $c->user->get_object->dbuser_id();
 	my $username = $c->user->id();
-	$html = qw | 
-	    <li>
-	    <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 3px 0px 0px">
-	    <button id="navbar_profile" class="btn btn-primary" type="button" onclick='location.href="/solpeople/profile/$sp_person_id"' style="margin: 7px 0px 0px 0px" title="My Profile">$username</button>
-	    <button id="navbar_lists" name="lists_link" class="btn btn-info" style="margin:7px 0px 0px 0px" type="button" title="Lists" onClick="show_lists();">
-	    Lists <span class="glyphicon glyphicon-list-alt" ></span>
-	    </button>
-	    <button id="navbar_personal_calendar" name="personal_calendar_link" class="btn btn-primary" style="margin:7px 0px 0px 0px" type="button" title="Your Calendar">Calendar&nbsp;<span class="glyphicon glyphicon-calendar" ></span>
-																							     </button>
-																							     <button id="navbar_logout" class="btn btn-default glyphicon glyphicon-log-out" style="margin:6px 0px 0px 0px" type="button" onclick="logout();" title="Logout"></button>
-</div>
-</li>
-
-																							     |;
+	my $display_name = "Hi, ".$c->user->get_object()->first_name();
+	$html = <<; 
+	$display_name
+	&nbsp;
+	    <button id="navbar_logout" class="btn btn-primary" type="button" onclick="logout();" title="Logout">Logout</button>
 
 
+	print STDERR "GENERATED HTML = $html\n";
 	$c->stash->{rest} = { html => $html };
 	return;
 	
@@ -545,13 +536,7 @@ HTML
     ### Generate regular login button
     
     print STDERR "generating regular login button..\n";
-    $html = qq |
-	<li class="dropdown">
-        <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
-	<button id="site_login_button" name="site_login_button" class="btn btn-primary" type="button" style="margin: 7px 7px 0px 0px; position-absolute: 10,10,100,10">Login</button>
-        </div>
-	</li>
-	|;
+    $html = qq | <button id="site_login_button" name="site_login_button" class="btn btn-primary" type="button">Login</button> |;
 
        $c->stash->{rest} = {
 	html => $html, logged_in => $c->user_exists

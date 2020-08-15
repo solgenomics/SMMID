@@ -33,6 +33,7 @@
   "dependencies": {
     "bootstrap": "^4.5.0",
     "d3": "^5.9.2",
+    "datatables": "^1.10.18",
     "jquery": "^3.5.1"
   },
   "engines": {

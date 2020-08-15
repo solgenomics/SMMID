@@ -1,0 +1,76 @@
+
+<%args>
+$smid_id
+</%args>
+
+<script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="/js/source/entries/smid_detail.js" ></script>
+
+<link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css">
+
+<script>
+  
+    $(document).ready( function() {
+    alert("blablablabla");
+    populate_smid_data('<% $smid_id %>');
+    });
+</script>
+
+<& /page/page_title.mas, title=>"SMID Detail [id = $smid_id ]" &>
+
+<form class="form-horizontal" role="form" name="new_accessions_form" id="new_accessions_form">
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Formula </label>
+    <span class="col-sm-10" id="list_div" name="list_div">
+      <input id="formula" size="50" disabled />
+    </span>
+  </div>
+  <div class="form_group">
+    <label class="col-sm-2 control-label">Organisms</label>
+    <span class="col-sm-10" id="list_div" name="list_div">
+      <input id="organisms" size="50" disabled  />
+    </span>
+  </div>
+  <div class="form_group">
+    <label class="col-sm-2 control-label">SMID ID</label>
+    <span class="col-sm-10" id="list_div" name="list_div">
+      <input id="smid_id" size="50" disabled />
+    </span>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">SMILES</label>
+    <span class="col-sm-10">
+      <input id="smiles_string" size="50" disabled />
+    </span>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Curation status</label>
+    <span class="col-sm-10" id="list_div" name="list_div">
+      <input id="curation_status" size="50" disabled />
+    </span>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">Common name </label>
+    <span class="col-sm-10">
+      <input id="common_name" size="50" disabled />
+    </span>
+  </div>
+</form>
+
+<h2>Other identifiers</h2>
+<table id="smid_dbxref_data_table" class="display" style="width:100%">
+  <thead>
+    <tr>
+      <th>database</th>
+      <th>accession</th>
+      <th>link</th>
+    </tr>
+  </thead>
+</table>
+
+<h2>Results</h2>
+<div id="smid_results_data_table">
+  [loading...]
+</div>
+
+

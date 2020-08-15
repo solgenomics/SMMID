@@ -42,6 +42,7 @@ use Moose;
 use Digest::MD5 qw(md5);
 use String::Random;
 use DateTime;
+use DateTime::Format::ISO8601;
 
 our $LOGIN_COOKIE_NAME = 'smmid_session_id';
 our $LOGIN_PAGE        = '/user/login';
@@ -204,7 +205,7 @@ sub has_session {
         return;
     }
     else {
-	print STDERR "We have a cookie!!!\n";
+	print STDERR "We have a cookie (".$self->cookie_string().")!!!\n";
     }
 
     my ( $dbuser_id, $user_type, $user_prefs, $expired ) =
@@ -251,15 +252,39 @@ sub query_from_cookie {
     my $self          = shift;
     my $cookie_string = shift;
 
-    my $row = $self->user_from_cookie_string();
+    my @result = (undef, undef, undef, undef);
     
-    my @result = ($row->dbuser_id(), $row->user_type(), $row->last_access_time());
+    
+    my $row = $self->user_from_cookie_string();
 
+    my $expired = 0;
+    if ($row && $self->cookie_string()) { 
+	
+	@result = ($row->dbuser_id(), $row->user_type(), $row->user_prefs(), $row->last_access_time());
+
+	if ($result[2]) { 
+	    my $iso8601 = DateTime::Format::ISO8601->new;
+	    my $last_access_time = $iso8601->parse_datetime( $result[2] );
+	    
+	    my $current_time = DateTime->now();
+	    
+	    my $seconds_since_last_login = $current_time->epoch()-$last_access_time->epoch();
+	    
+	    print STDERR "SECONDS SINCE LAST LOGIN : $seconds_since_last_login\n";
+	    if ($seconds_since_last_login > $LOGIN_TIMEOUT) {
+		print STDERR "LOGOUT IS EXPIRED!\n";
+		$expired =1;
+	    }
+	}
+	
+
+    }
+    
     if (wantarray) {
-        return @result;
+        return ($result[0], $result[1], $result[2], $expired);
     }
     else {
-        return $result[0];
+        return $row->dbuser_id();
     }
 }
 
@@ -374,20 +399,7 @@ sub login_user {
     elsif (! $password) {
 	$login_info->{error} = "Please provide a password.";
     }
-    elsif ( $self->login_allowed() ) {
-
-	print STDERR "LOGIN ALLOWED: PROCEEDING WITH LOGIN\n";
-
-	# my $encoded_password_h = $self->schema()->storage->dbh()->prepare("
-	#     SELECT crypt(?, dbuser.password) FROM dbuser");
-	# $encoded_password_h->execute($password);
-	# my ($encoded_password) = $encoded_password_h->fetchrow_array();
-	
-	# print STDERR "ENCODED PASSWORD = $encoded_password\n";
-	
-	
-	# my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { username => { ilike => $username },  password => $encoded_password } );
- 
+    else { 
 
 	my $row = $self->user_from_credentials($username, $password);
 
@@ -415,6 +427,7 @@ sub login_user {
             $login_info->{account_disabled} = $disabled;
         }
         else {
+	    print STDERR "Generating new login cookie...\n";
             $login_info->{user_prefs} = $user_prefs;
             if ($person_id) {
                 my $new_cookie_string =
@@ -422,50 +435,23 @@ sub login_user {
                   ->randpattern(
 "ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
                   );
- #               $sth = $self->get_sql("cookie_string_exists");
- #               $sth->execute($new_cookie_string);
- #               if ( $sth->fetchrow_array()
- #                 )    #very unlikely--or we need a new random string generator
- #               {
- #                   $login_info->{duplicate_cookie_string} = 1;
- #               }
- #               else {
-                    # $sth = $self->get_sql("login");
-
-		    #           "	UPDATE 
-		    # 		sgn_people.sp_person 
-		    # 	SET 
-		    # 		cookie_string=?,
-		    # 		last_access_time=current_timestamp 
-		    # 	WHERE 
-		    # 		sp_person_id=?",
-
-                    #$sth->execute( $new_cookie_string, $person_id );
-
-		    my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { dbuser_id => $person_id });
-		    $row->update( 
-			{
-			    cookie_string => $new_cookie_string
-			});
-		    
-		    
-#                    SMMID::Cookie::set_cookie( $LOGIN_COOKIE_NAME,
- #                       $new_cookie_string );
-  #                  SMMID::Cookie::set_cookie( "user_prefs", $user_prefs );
-                    $login_info->{person_id}     = $person_id;
-                    $login_info->{first_name}     = $first_name;
-                    $login_info->{last_name}     = $last_name;
-                    $login_info->{cookie_string} = $new_cookie_string;
-		#}
+		my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { dbuser_id => $person_id });
+		$row->update( 
+		    {
+			cookie_string => $new_cookie_string
+		    });
+		
+		$login_info->{person_id}     = $person_id;
+		$login_info->{first_name}     = $first_name;
+		$login_info->{last_name}     = $last_name;
+		$login_info->{cookie_string} = $new_cookie_string;
             }
             else {
                 $login_info->{incorrect_password} = 1;
             }
         }
     }
-    else {
-        $login_info->{logins_disabled} = 1;
-    }
+
     $self->{login_info} = $login_info;
     return $login_info;
 }
@@ -485,20 +471,10 @@ sub logout_user {
     my $self   = shift;
     my $cookie = $self->cookie_string();
     if ($cookie) {
-        my $sth = $self->get_sql("logout");
-	$sth->execute($cookie);
-
-	# "	UPDATE 
-	# 			sgn_people.sp_person 
-	# 		SET 
-	# 			cookie_string=null,
-	# 			last_access_time=current_timestamp 
-	# 		WHERE 
-	# 			cookie_string=?",
 
 	    my $row = $self->schema()->resultset("Dbuser")->find( { cookie_string => $cookie });
 
-	$row->update( { cookie_string => undef, last_access_time => $self->now() });
+	$row->update( { cookie_string => "", last_access_time => $self->now() });
 
 	# controller needs to set the cookie
         ###CXGN::Cookie::set_cookie( $LOGIN_COOKIE_NAME, "" );

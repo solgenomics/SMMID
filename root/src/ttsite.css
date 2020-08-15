@@ -38,8 +38,8 @@ body {
     width: 90%;
 }
 
-h1.title {
-    padding: 4px;
+h1 {
+    padding: 20px;
     margin: 0px;
     text-decorations: none;
 }

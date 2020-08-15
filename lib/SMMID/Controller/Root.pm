@@ -36,13 +36,19 @@ sub auto : Private {
     #unless( $c->config->{'disable_login'} ) {
     my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema() });
 
-    $login->cookie_string($c->req->cookies->{smmid_session_id}->value());
+    if (exists($c->req->cookies->{smmid_session_id})) { 
+	$login->cookie_string($c->req->cookies->{smmid_session_id}->value());
+    }
     
     if ( my $dbuser_id = $login->has_session())  {
 
 	print STDERR "We have a logged in user! :-)\n";
-	# my $dbuser = $c->model("SMIDDB")->find( { dbuser_id => $dbuser_id });
-	# print STDERR "Logging in user ".$dbuser->username()."\n";
+	my $dbuser = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find( { dbuser_id => $dbuser_id });
+	print STDERR "The logged in user is ".$dbuser->username()."\n";
+
+	my $user = SMMID::Authentication::User->new();
+	$c->user($user);
+	$c->user()->set_object($dbuser);
 	
 	# $self->authenticate($c, 'default', {
 	#     username => $dbuser->username(),
@@ -75,6 +81,18 @@ sub about :Path('/about') :Args(0) {
     my ($self, $c) = @_;
 }
 
+
+sub browse :Path('/browse') Args(0) {
+    my $self = shift;
+    my $c = shift;
+}
+
+sub detail :Path('/smid') Args(1) {
+    my $self = shift;
+    my $c = shift;
+    $c->stash->{smid_id} = shift;
+    $c->stash->{template} = '/smid/detail.mas';
+}
     
 =head2 end
 
