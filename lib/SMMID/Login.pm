@@ -406,7 +406,7 @@ sub login_user {
 	print STDERR "NOW LOGGING IN USER $username\n";
         #my $num_rows = $sth->execute( $username, $password );
 	if (! $row) {
-	    $login_info->{error} = "No such user.";
+	    $login_info->{error} = "Incorrect password or user information.";
 	    return $login_info;
 	}
 

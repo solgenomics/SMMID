@@ -1,6 +1,7 @@
 
 <%args>
-$smid_id
+$compound_id => 0  # 0 means add new smid - show empty form
+$action => undef
 </%args>
 
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
@@ -8,17 +9,23 @@ $smid_id
 
 <link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css">
 
-<script>
-  
-    $(document).ready( function() {
-    alert("blablablabla");
-    populate_smid_data('<% $smid_id %>');
-    });
-</script>
-
-<& /page/page_title.mas, title=>"SMID Detail [id = $smid_id ]" &>
-
-<form class="form-horizontal" role="form" name="new_accessions_form" id="new_accessions_form">
+% if ($compound_id) {
+%  if ($action eq "edit") {
+<& /page/page_title.mas, title=>"Edit <span id=\"smid_title\">---</span>" &>
+% }
+% else { 
+<& /page/page_title.mas, title=>"Details for <span id=\"smid_title\">---</span>" &>
+% } }
+% else {
+  <& /page/page_title.mas, title=>"Enter new SMID" &>
+% }
+    <center></center>
+    <form class="form-horizontal" role="form" name="new_accessions_form" id="new_accessions_form">
+      <div class="form-group">
+    <label class="col-sm-2 control-label">DB ID: <% $compound_id %> </label>
+    <span class="col-sm-10" id="list_div" name="list_div">
+      &nbsp;
+    </span>
   <div class="form-group">
     <label class="col-sm-2 control-label">Formula </label>
     <span class="col-sm-10" id="list_div" name="list_div">
@@ -57,20 +64,44 @@ $smid_id
   </div>
 </form>
 
-<h2>Other identifiers</h2>
+% if (!$compound_id) { 
+<button id="add_new_smid_button" class="btn btn-primary" >Add new SMID</button>
+% }
+
+% if ($action eq "edit") {
+<button id="update_smid_button" class="btn btn-primary">Update SMID</button>
+% }
+
+% if ($compound_id) { 
+<h2>Other identifiers & supporting data</h2>
 <table id="smid_dbxref_data_table" class="display" style="width:100%">
   <thead>
     <tr>
-      <th>database</th>
-      <th>accession</th>
-      <th>link</th>
+      <th>Database</th>
+      <th>Synonym</th>
+      <th>Link</th>
     </tr>
   </thead>
 </table>
 
-<h2>Results</h2>
-<div id="smid_results_data_table">
-  [loading...]
-</div>
+<button id="add_dbxref_button" disabled="true" class="btn btn-primary">Add Dbxref</button>
+%}
 
 
+
+<script>
+  $(document).ready( function() {
+  var smid_id = <% $compound_id %>;
+  var action = '<% $action %>';
+  alert('action = '+action);
+   if (smid_id === 0) { 
+      make_fields_editable();
+  }
+  else {
+     populate_smid_data('<% $compound_id %>');
+     if (action === 'edit') {
+       make_fields_editable();
+     }
+  }
+});
+</script>

@@ -1,12 +1,10 @@
 
 <!-- start toolbar -->
 
-<!-- script type="text/javascript" src="js/node_modules/jquery/dist/jquery.min.js"></script -->
-<!-- script type="text/javascript" src="/js/source/entries/toolbar.js" ></script -->
-
-
-  <div id="header" class="header" ><!-- BEGIN site/header -->
-  <table width="100%" cellpadding="0" cellspacing="0"><tr><td><a href="/" class="sitetitle">SMID DB</a></td><td align="right">
+<script type="text/javascript" src="/js/source/entries/toolbar.js" ></script>
+									     
+<div id="header" class="header" ><!-- BEGIN site/header -->
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td><a href="/" class="sitetitle">SMID DB</a></td><td align="right">
   <table cellpadding="0"><tr style="margin-bottom:0px">
   <td>
     <a href="/" class="header_link">Home</a>
@@ -19,8 +17,8 @@
     
     <a href="/contact" class="header_link">Contact</a>
     
-    <span id="login_button_html_div"><button name="site_login_button" class="btn btn-primary" type="button">Login</button></span></a>
-
+    <!-- span id="login_button_html_div"><button name="site_login_button" class="btn btn-primary" type="button">Login</button></span></a -->
+   <span id="login_button_html_div">[No login info]</span>
   </td>
   <td>
   &nbsp;

@@ -16,11 +16,10 @@ __PACKAGE__->config(
    );
 
 
-sub login : Path('/ajax/user/login') Args(0) {
+sub login : Path('/rest/user/login') Args(0) {
     my $self = shift;
     my $c = shift;
 
-    print STDERR "HELLO 2433\n";
     my $LOGIN_COOKIE_NAME = $c->config->{login_cookie_name};
     
     my $username = $c->req->param("username");
@@ -67,7 +66,7 @@ sub login : Path('/ajax/user/login') Args(0) {
     }
 }
 
-sub logout :Path('/ajax/user/logout') Args(0) {
+sub logout :Path('/rest/user/logout') Args(0) {
     my $self = shift;
     my $c = shift;
 
@@ -84,7 +83,22 @@ sub logout :Path('/ajax/user/logout') Args(0) {
     $c->stash->{rest} = { message => "User successfully logged out." };
 }
 
-sub new_account :Path('/ajax/user/new') Args(0) {
+sub has_login : Path('/rest/user/has_login') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    if ($c->user()) {
+	print STDERR "has_login: user present...\n";
+	$c->stash->{rest} = { user => $c->user()->get_object()->dbuser_id(), role => $c->user()->get_object()->user_type() };
+    }
+    else {
+	print STDERR "No user found.\n";
+	$c->stash->{rest} = { user => undef, role => undef };
+    }
+
+}
+
+sub new_account :Path('/rest/user/new') Args(0) {
     my $self = shift;
     my $c = shift;
 
@@ -197,7 +211,7 @@ CXGN::Contact::send_email($subject,$body,$email_address);
 }
 
 
-sub change_account_info_action :Path('/ajax/user/update') Args(0) {
+sub change_account_info_action :Path('/rest/user/update') Args(0) {
     my $self = shift;
     my $c = shift;
 
@@ -336,7 +350,7 @@ END_HEREDOC
    CXGN::Contact::send_email($subject, $body, $private_email);
 }
 
-sub reset_password :Path('/ajax/user/reset_password') Args(0) {
+sub reset_password :Path('/rest/user/reset_password') Args(0) {
     my $self = shift;
     my $c = shift;
 
@@ -373,7 +387,7 @@ sub reset_password :Path('/ajax/user/reset_password') Args(0) {
     };
 }
 
-sub process_reset_password_form :Path('/ajax/user/process_reset_password') Args(0) {
+sub process_reset_password_form :Path('/rest/user/process_reset_password') Args(0) {
     my $self = shift;
     my $c = shift;
 
@@ -462,7 +476,7 @@ sub tempname {
     return $rand_string;
 }
 
-sub get_login_button_html :Path('/ajax/user/login_button_html') Args(0) {
+sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
     my $self = shift;
     my $c = shift;
 
@@ -544,7 +558,7 @@ sub get_login_button_html :Path('/ajax/user/login_button_html') Args(0) {
 
 }
 
-sub quick_create_user :Path('/ajax/user/quick_create_account') Args(0) {
+sub quick_create_user :Path('/rest/user/quick_create_account') Args(0) {
     my $self = shift;
     my $c = shift;
 

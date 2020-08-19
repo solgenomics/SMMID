@@ -39,10 +39,25 @@ body {
 }
 
 h1 {
+    text-align: center;
+    color: darkgrey;
+    font-family: arial;
+    font-weight: 1000;
+    font-size: 24pt;
     padding: 20px;
-    margin: 0px;
     text-decorations: none;
 }
+
+h2 {
+    text-align: center;
+    color: darkgrey;
+    font-family: arial;
+    font-weight: 1000;
+    font-size: 18pt;
+    padding: 20px;
+    text-decorations: none;
+}
+
 
 .sitetitle { 
     font-family: arial;
@@ -51,6 +66,11 @@ h1 {
     font-weight: 1000;
     color: lightblue;
     margin-bottom: 0px;   
+}
+
+.sitetitle:hover {
+    text-decoration: none;
+    color: lightblue;
 }
 
 .header_link:link {

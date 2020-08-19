@@ -1,0 +1,18 @@
+
+<%args>
+</%args>
+
+<& /page/page_title.mas, title=>"Browse SMIDs" &>
+
+<script src="/js/source/entries/browse.js"></script>
+
+<a href="/smid/">Add a new SMID...</a><br />
+<div id="browse_smid_data_div">
+<cente>[loading...]</center>
+</div>
+
+<script>
+  $(document).ready( function() {
+     browse_html();
+  });
+</script>

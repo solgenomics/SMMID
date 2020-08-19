@@ -5,7 +5,7 @@
 
 
 <div>
-<h2>Welcome to the <i>C. elegans</i> Small Molecule Identifier Database (SMID DB)</h2>
+<h1>Welcome to the <i>C. elegans</i> Small Molecule Identifier Database (SMID DB)</h1>
 <br />
 <b>SMIDs</b> are <u><b>S</u></b>mall <u><b>M</u></b>olecule <u><b>Id</u></b>entifiers that aim to make life easier for describing biogenic small molecules 
 in metabolomic and genomic applications. Conceptually, they represent gene-style identifiers for small molecules newly identified in the nematode <i>C. elegans</i>.     <br /><br />

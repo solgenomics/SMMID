@@ -82,18 +82,14 @@ sub about :Path('/about') :Args(0) {
 }
 
 
-sub browse :Path('/browse') Args(0) {
+
+sub download :Path('/download') Args(0) {
     my $self = shift;
     my $c = shift;
+
+    $c->stash->{template} = '/download.mas';
 }
 
-sub detail :Path('/smid') Args(1) {
-    my $self = shift;
-    my $c = shift;
-    $c->stash->{smid_id} = shift;
-    $c->stash->{template} = '/smid/detail.mas';
-}
-    
 =head2 end
 
 Attempt to render a view, if needed.

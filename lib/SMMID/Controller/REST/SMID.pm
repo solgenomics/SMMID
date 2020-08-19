@@ -44,14 +44,44 @@ sub rest : Chained('/') PathPart('rest') CaptureArgs(0) {
 
 
 
-sub browse :Chained('rest') PathPart('browse') :Args(0) { 
+sub browse :Chained('rest') PathPart('browse') Args(0) { 
     my ($self, $c) = @_;
 
     print STDERR "found rest/browse...\n";
-    # generate DataTable here
+
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search();
+
+
+    my @data;
+    while (my $r = $rs->next()) {
+	push @data, [ $r->compound_id(), $r->smid_id(), $r->formula(), $r->smiles() ];
+    }
+
+    $c->stash->{rest} = { data => \@data };
+}
+
+sub browse_format :Chained('rest') PathPart('browse') Args(1) {
+    my $self = shift;
+    my $c = shift;
+    my $format = shift;
+
+    $self->browse($c);
+
+    if ($format eq "html") {
+	my $html = "<table border=\"1\" width=\"100%\" cellpadding=\"10\" >\n";
+	foreach my $smid (@{$c->stash->{rest}->{data}}) {
+	    $html .= "<tr><td><a href=\"/smid/$smid->[0]\">$smid->[1]</a></td><td>$smid->[2]</td><td>$smid->[3]</td></tr>\n";
+	}
+	$html .= "</table>\n";
+
+	$c->stash->{rest} = { html => $html };
+    }
+
+    if ($format eq "datatable") {
+	#...
+    }
     
 
-    
 }
 
 
@@ -62,15 +92,14 @@ sub compound :Chained('rest') PathPart('compound') CaptureArgs(1) {
 
     my $smid_id = shift;
 
-    
     $c->stash->{smid_id} = $smid_id;
 }
 
-sub create_smid {
-    my $self = shift;
-    my $c = shift;
-
-}
+#sub create_smid {
+ #   my $self = shift;
+  #  my $c = shift;
+   # $c->stash->{template} = 
+#}
 
 
 sub detail :Chained('compound') PathPart('details') Args(0) {
@@ -85,7 +114,8 @@ sub detail :Chained('compound') PathPart('details') Args(0) {
     }
 
     my $data;
-    $data->{smid_id} = $s->compound_id();
+    $data->{smid_id} = $s->smid_id();
+    $data->{compound_id} = $s->compound_id();
     $data->{formula}= $s->formula();
     #$data->{synonyms} = $s->synonyms();
     #$data->{molecular_weight} = $s->molecular_weight();
@@ -101,21 +131,22 @@ sub detail :Chained('compound') PathPart('details') Args(0) {
 }
 
 
-sub compound_dbxref :Chained('compound') PathPart('dbxref') Args(0) {
+sub compound_dbxref :Chained('compound') PathPart('dbxrefs') Args(0) {
     my $self = shift;
     my $c = shift;
 
-    my $rs = $c->model("SMIDDB")->resultset("dbxref")->search( { join => { 'compound_dbxref' => { compound_id => $c->stash->{smid_id} } } } );
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbxref")->search(  { 'compound_dbxrefs.compound_id' => $c->stash->{smid_id} }, { join => 'compound_dbxrefs' , { join => 'db'  }});
 
-    my $data = [];
+    my $data = undef;
     
     while (my $dbxref = $rs->next()) {
-	push @$data, [ $dbxref->db_id(), $dbxref->accession(), $dbxref->description() ];
+	print STDERR "Retrieved: ". $dbxref->dbxref_id()."...\n";
+	push @$data, [ $dbxref->db->name(), $dbxref->accession(), join("",  $dbxref->db->urlprefix(), $dbxref->db->url(), $dbxref->accession()) ];
     }
     $c->stash->{rest} = { data => $data};
 }
 
-sub compound_results : Chained('compound') PathPart('results') Args(0) {
+sub compound_results : Chained('detail') PathPart('results') Args(0) {
     my $self = shift;
     my $c = shift;
 
