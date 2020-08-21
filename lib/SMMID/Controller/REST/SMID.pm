@@ -15,7 +15,7 @@ __PACKAGE__->config(
 
 =head1 NAME
 
-SMMID::Controller::Compound - Catalyst Controller
+SMMID::Controller::REST::SMID - REST-based controller to manage SMIDs
 
 =head1 DESCRIPTION
 
@@ -25,24 +25,9 @@ Catalyst Controller.
 
 =cut
 
-
-=head2 index 
-
-=cut
-
-#sub index :Path :Args(0) {
-#    my ( $self, $c ) = @_;
-
-    #$c->response->body('Matched SMMID::Controller::Compound in Compound.');
-#}
-
-
-
 sub rest : Chained('/') PathPart('rest') CaptureArgs(0) {
     print STDERR "found rest...\n";
 }
-
-
 
 sub browse :Chained('rest') PathPart('browse') Args(0) { 
     my ($self, $c) = @_;
@@ -50,7 +35,6 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
     print STDERR "found rest/browse...\n";
 
     my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search();
-
 
     my @data;
     while (my $r = $rs->next()) {
@@ -84,32 +68,126 @@ sub browse_format :Chained('rest') PathPart('browse') Args(1) {
 
 }
 
-
-
-sub compound :Chained('rest') PathPart('compound') CaptureArgs(1) {
-    my $self = shift;
+sub store :Chained('rest') PathPart('smid/store') Args(0) {
+    my $self  = shift;
     my $c = shift;
 
-    my $smid_id = shift;
+    if (! $c->user()) {
+	$c->stash->{rest} = { error => "Login required for updating SMIDs." };
+	return;
+    }
+    
+    my $smid_id = $c->req->param("smid_id");
+    my $smiles_string = $c->req->param("smiles_string");
+    my $formula = $c->req->param("formula");
+    my $organisms = $c->req->param("organisms");
+    my $curation_status = $c->req->param("curation_status");
 
-    $c->stash->{smid_id} = $smid_id;
+    my $errors = "";
+    if (!$smid_id) { $errors .= "Need smid id. "; }
+    if (!$smiles_string) { $errors .= "Need smiles_string. "; }
+    if (!$formula) { $errors .= "Need formula. "; }
+
+    if ($errors) {
+	$c->stash->{rest} = { error => $errors };
+	return;
+    }
+    
+    my $row = {
+	smid_id => $smid_id,
+	formula => $formula,
+	smiles => $smiles_string,
+	organisms => $organisms,
+	curation_status => $curation_status,
+    };
+
+    my $compound_id;
+    eval { 
+	my $new = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->new($row);
+	$new->insert();
+	$compound_id = $new->compound_id();
+    };
+
+    if ($@) {
+	$c->stash->{rest} = { error => "Sorry, an error occurred storing the smid ($@)" };
+	return;
+    }
+
+    $c->stash->{rest} = {
+	compound_id => $compound_id,
+	message => "Successfully stored the smid $smid_id"
+    };
+    
 }
 
-#sub create_smid {
- #   my $self = shift;
-  #  my $c = shift;
-   # $c->stash->{template} = 
-#}
-
-
-sub detail :Chained('compound') PathPart('details') Args(0) {
+sub smid :Chained('rest') PathPart('smid') CaptureArgs(1) {
     my $self = shift;
     my $c = shift;
 
-    my $s = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $c->stash->{smid_id} });
+    my $compound_id = shift;
+
+    $c->stash->{compound_id} = $compound_id;
+}
+
+
+sub update :Chained('smid') PathPart('update') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    if (! $c->user()) {
+	$c->stash->{rest} = { error => "Login required for updating SMIDs." };
+	return;
+    }
+    
+    my $compound_id = $c->stash->{compound_id};
+    my $smid_id = $c->req->param("smid_id");
+    my $smiles_string = $c->req->param("smiles_string");
+    my $formula = $c->req->param("formula");
+    my $organisms = $c->req->param("organisms");
+    my $curation_status = $c->req->param("curation_status");
+
+    my $errors = "";
+    if (!$compound_id) {  $errors .= "Need compound id. "; }
+    if (!$smid_id) { $errors .= "Need smid id. "; }
+    if (!$smiles_string) { $errors .= "Need smiles_string. "; }
+    if (!$formula) { $errors .= "Need formula. "; }
+
+    if ($errors) {
+	$c->stash->{rest} = { error => $errors };
+	return;
+    }
+    
+    my $data = {
+	smid_id => $smid_id,
+	formula => $formula,
+	smiles => $smiles_string,
+	organisms => $organisms,
+	curation_status => $curation_status,
+    };
+
+    eval { 
+	my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id });
+	$row->update($data);
+    };
+
+    if ($@) {
+	$c->stash->{rest} = { error => "Sorry, an error occurred storing the smid ($@)" };
+	return;
+    }
+
+    $c->stash->{rest} ={ message => "Successfully stored the smid $smid_id" };
+    
+}
+
+
+sub detail :Chained('smid') PathPart('details') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    my $s = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $c->stash->{compound_id} });
 
     if (! $s) {
-	$c->stash->{rest} = { error => "Can't find smid with id ".$c->stash->{smid_id}."\n" };
+	$c->stash->{rest} = { error => "Can't find smid with id ".$c->stash->{compound_id}."\n" };
 	return;
     }
 
@@ -117,9 +195,9 @@ sub detail :Chained('compound') PathPart('details') Args(0) {
     $data->{smid_id} = $s->smid_id();
     $data->{compound_id} = $s->compound_id();
     $data->{formula}= $s->formula();
-    #$data->{synonyms} = $s->synonyms();
+    $data->{organisms} = $s->organisms();
     #$data->{molecular_weight} = $s->molecular_weight();
-    $data->{SMILES} = $s->smiles();
+    $data->{smiles_string} = $s->smiles();
     $data->{curation_status} = $s->curation_status();
 
     #my $formatted_formula= $s->get_molecular_formula();
@@ -131,27 +209,29 @@ sub detail :Chained('compound') PathPart('details') Args(0) {
 }
 
 
-sub compound_dbxref :Chained('compound') PathPart('dbxrefs') Args(0) {
+sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
     my $self = shift;
     my $c = shift;
 
-    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbxref")->search(  { 'compound_dbxrefs.compound_id' => $c->stash->{smid_id} }, { join => 'compound_dbxrefs' , { join => 'db'  }});
-
-    my $data = undef;
+    my $rs;
+    if ($c->stash->{compound_id}) { 
+	$rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbxref")->search(  { 'compound_dbxrefs.compound_id' => $c->stash->{compound_id} }, { join => 'compound_dbxrefs' , { join => 'db'  }});
+    }
+    else {
+	$c->stash->{rest} = { data => [] };
+	return;
+    }
     
+    my $data = [];
+
+    my $delete_link = "<font color=\"red\">X</font>";
     while (my $dbxref = $rs->next()) {
 	print STDERR "Retrieved: ". $dbxref->dbxref_id()."...\n";
-	push @$data, [ $dbxref->db->name(), $dbxref->accession(), join("",  $dbxref->db->urlprefix(), $dbxref->db->url(), $dbxref->accession()) ];
+	push @$data, [ $dbxref->db->name(), $dbxref->accession(), join("",  $dbxref->db->urlprefix(), $dbxref->db->url(), $dbxref->accession()), $delete_link ];
     }
     $c->stash->{rest} = { data => $data};
 }
 
-sub compound_results : Chained('detail') PathPart('results') Args(0) {
-    my $self = shift;
-    my $c = shift;
-
-    $c->stash->{rest} = { data => "soon" };
-}
 
 =head1 AUTHOR
 

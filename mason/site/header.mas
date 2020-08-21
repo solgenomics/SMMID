@@ -25,6 +25,6 @@
       
     <& /site/toolbar.mas &>
 
-      <div class="content">
+      <div id="content" class="content">
 
 <!-- end header -->

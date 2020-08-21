@@ -1,0 +1,88 @@
+
+package SMMID::Controller::REST::Dbxref;
+
+use Moose;
+
+BEGIN{ extends 'Catalyst::Controller::REST'; }
+
+__PACKAGE__->config(
+    default   => 'application/json',
+    stash_key => 'rest',
+    map       => { 'application/json' => 'JSON' },
+   );
+
+
+sub store_dbxref :Path('/rest/dbxref/store') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    if (! $c->user()) {
+	$c->stash->{rest} = { error => "You need to be logged in to store dbxrefs. Sorry." };
+	return;
+    }
+
+    my $dbuser_id = $c->user()->get_object()->dbuser_id();
+    my $compound_id = $c->req->param("compound_id");
+    my $db_id = $c->req->param("db_id");
+    my $accession = $c->req->param("accession");
+    my $version = $c->req->param("version");
+    my $description = $c->req->param("description");
+
+    my $errors = "";
+    if (! $compound_id) {  $errors .= "Need a compound id. "; }
+    if (! $db_id) { $errors .= "Need a db_id. "; }
+    if (! $accession) { $errors .= "Need an accession. "; }
+
+    if ($errors) {
+	$c->stash->{rest} = { error => $errors };
+	return;
+    }
+    
+    my $row = {
+	db_id => $db_id,
+	accession => $accession,
+	version => $version,
+	description => $description,
+    };
+
+    my $dbxref_id;
+    
+    eval { 
+	my $dbxref = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbxref")->new($row);
+	$dbxref->insert();
+	$dbxref_id = $dbxref->dbxref_id();
+	
+	print STDERR "COMPOUND_ID $compound_id, DBXREF_ID $dbxref_id, DBUSER_ID $dbuser_id\n";
+	my $compound_dbxref = $c->model("SMIDDB")->resultset("SMIDDB::Result::CompoundDbxref")->new(
+	    {
+		compound_id => $compound_id,
+		dbxref_id => $dbxref_id,
+		dbuser_id => $dbuser_id,
+	    });
+
+	my $compound_dbxref_id = $compound_dbxref ->insert();
+	
+    };
+    if ($@) {
+	$c->stash->{rest} = { error => $@ };
+	return;
+    }
+    
+    $c->stash->{rest} = { success => 1, dbxref_id => $dbxref_id };
+}
+
+sub get_db_html_select :Path('/rest/db/select') Args(0) {
+    my $self = shift;
+    my $c = shift;
+    my $div_name = $c->req->param('div_name');
+    
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Db")->search( { } );
+
+    my $html = "<select id=\"$div_name\" name=\"$div_name\"  >";
+    while (my $row = $rs->next()) {
+	$html .= '<option value="'.$row->db_id().'">'.$row->name().'</option>';
+    }
+    $html .= "</select>";
+    
+    $c->stash->{rest} = { html => $html };
+}

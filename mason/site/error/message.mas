@@ -1,0 +1,8 @@
+
+<@args>
+$message
+</@args>
+
+<div id="message" class="message">
+  <% $message %>
+</div>

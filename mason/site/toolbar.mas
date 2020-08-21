@@ -2,35 +2,68 @@
 <!-- start toolbar -->
 
 <script type="text/javascript" src="/js/source/entries/toolbar.js" ></script>
-									     
+
 <div id="header" class="header" ><!-- BEGIN site/header -->
-<table width="100%" cellpadding="0" cellspacing="0"><tr><td><a href="/" class="sitetitle">SMID DB</a></td><td align="right">
-  <table cellpadding="0"><tr style="margin-bottom:0px">
-  <td>
-    <a href="/" class="header_link">Home</a>
-    
-    <a href="/about" class="header_link">About</a>
-    
-    <a href="/browse" class="header_link">Browse</a>
-    
-    <a href="/download" class="header_link">Download</a>
-    
-    <a href="/contact" class="header_link">Contact</a>
-    
-    <!-- span id="login_button_html_div"><button name="site_login_button" class="btn btn-primary" type="button">Login</button></span></a -->
-   <span id="login_button_html_div">[No login info]</span>
-  </td>
-  <td>
-  &nbsp;
-  </td>
-  <td >
-  <form action="/search" style="margin-bottom:0px">
-  <input name="term" size="10" />
-  <input type="submit" value="search" />
-  </form>
-  </td>
-  </tr></table>
+  <table width="100%" cellpadding="0" cellspacing="0"><tr><td><a href="/" class="sitetitle">SMID DB</a></td><td align="right">
+	<table cellpadding="0"><tr style="margin-bottom:0px">
+	    <td>
+	      <a href="/" class="header_link">Home</a>
+	      
+	      <a href="/about" class="header_link">About</a>
+	      
+	      <a href="/browse" class="header_link">Browse</a>
+	      
+	      <a href="/download" class="header_link">Download</a>
+	      
+	      <a href="/contact" class="header_link">Contact</a>
+	      
+	      <span id="login_button_html_div">Login</span>
+	    </td>
+	    <td>
+	      &nbsp;
+	    </td>
+	    <td >
+	      <form action="/search" style="margin-bottom:0px">
+		<input name="term" size="10" />
+		<input type="submit" value="search" />
+	      </form>
+	    </td>
+	</tr></table>
   </td></tr></table>
+  
+  
+  <div id="working_modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Working...</h5>
+      </div>
+      <div class="modal-body">
+<center><img src="/static/images/life_game.gif" /></center>
+	<div id="working_further_information"></div>
+      </div>
+    </div>
   </div>
+</div>
+  
+  <div id="error_message_modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Error</h5>
+        <!-- button type="button" class="close" data-dismiss="modal" aria-label="Close" -->
+        <!-- <span aria-hidden="true">&times;</span -->
+        <!-- /button -->
+      </div>
+      <div class="modal-body">
+        <div id="error_message">....</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+  
+</div>
 
 <!-- end toolbar -->

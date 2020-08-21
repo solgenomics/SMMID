@@ -11,10 +11,11 @@ $action => undef
 
 % if ($compound_id) {
 %  if ($action eq "edit") {
-<& /page/page_title.mas, title=>"Edit <span id=\"smid_title\">---</span>" &>
+<& /page/page_title.mas, title=>"Edit <span id=\"smid_title\">---</span> " &>
 % }
 % else { 
-<& /page/page_title.mas, title=>"Details for <span id=\"smid_title\">---</span>" &>
+  <& /page/page_title.mas, title=>"Details for <span id=\"smid_title\">---</span> <font size=\"3\">[<a href=\"/smid/$compound_id/edit\">Edit</a>]</font>" &>
+   
 % } }
 % else {
   <& /page/page_title.mas, title=>"Enter new SMID" &>
@@ -22,7 +23,7 @@ $action => undef
     <center></center>
     <form class="form-horizontal" role="form" name="new_accessions_form" id="new_accessions_form">
       <div class="form-group">
-    <label class="col-sm-2 control-label">DB ID: <% $compound_id %> </label>
+    <label class="col-sm-2 control-label">DB ID: <span id="compound_id"><% $compound_id %></span> </label>
     <span class="col-sm-10" id="list_div" name="list_div">
       &nbsp;
     </span>
@@ -65,11 +66,15 @@ $action => undef
 </form>
 
 % if (!$compound_id) { 
-<button id="add_new_smid_button" class="btn btn-primary" >Add new SMID</button>
+<button id="add_new_smid_button" class="btn btn-primary" disabled="true" >Add new SMID</button>
 % }
 
 % if ($action eq "edit") {
 <button id="update_smid_button" class="btn btn-primary">Update SMID</button>
+<button id="cancel_update_button" class="btn btn-normal" >Cancel</button>
+<script>
+  $('#cancel_update_button').click(function(e) { e.preventDefault(); location.href="/smid/+<% $compound_id %>"; });
+  </script>
 % }
 
 % if ($compound_id) { 
@@ -80,21 +85,57 @@ $action => undef
       <th>Database</th>
       <th>Synonym</th>
       <th>Link</th>
+      <th>Delete</th>
     </tr>
   </thead>
 </table>
 
+% if ($action eq "edit") { 
 <button id="add_dbxref_button" disabled="true" class="btn btn-primary">Add Dbxref</button>
+% }
 %}
 
 
 
+  <div id="add_dbxref_dialog" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Database Reference</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+	<form>
+	  <div class="form-group">
+	    <label for="db_id_select_div">Database</label>
+	    <span id="db_id_select_div">[Database Select]</span>
+	  </div>
+	  <div class="form-group">
+	    <label for="accession">Accession</label>
+	    <input type="input" class="form-control" id="accession" placeholder="Accession">
+	  </div>
+	  <div class="form-group">
+	    <label for="description">Description</label>
+	    <input type="input" class="form-control" id="description" placeholder="Description (optional)">
+	  </div>
+	</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	<button id="save_dbxref_button" type="button" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   $(document).ready( function() {
-  var smid_id = <% $compound_id %>;
+  var compound_id = <% $compound_id %>;
   var action = '<% $action %>';
-  alert('action = '+action);
-   if (smid_id === 0) { 
+
+   if (compound_id === 0) { 
       make_fields_editable();
   }
   else {

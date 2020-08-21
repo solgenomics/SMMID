@@ -86,8 +86,12 @@ h2 {
     color: lightblue;
 }
 
-.message {
-    color: red;
+.error_message {
+    border: 1px;
+    background-color: red;
+    font-color: green;
+    margin: auto;
+    padding: 100px;
 }
 
 .error {

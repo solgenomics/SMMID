@@ -9,3 +9,16 @@ $(document).ready( function() {
 	}
     });
 });
+
+function show_working_dialog() {
+    $('#working_modal').modal("show");
+}
+
+function hide_working_dialog() {
+    $('#working_modal').modal("hide");
+}
+
+function error_message(message) {
+    $('#error_message_modal').modal("show");
+    $('#error_message').html(message);
+}
