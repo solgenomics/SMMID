@@ -78,6 +78,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     }
     
     my $smid_id = $c->req->param("smid_id");
+    my $iupac_name = $c->req->param("iupac_name");
     my $smiles_string = $c->req->param("smiles_string");
     my $formula = $c->req->param("formula");
     my $organisms = $c->req->param("organisms");
@@ -85,6 +86,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 
     my $errors = "";
     if (!$smid_id) { $errors .= "Need smid id. "; }
+    if (!$iupac_name) { $errors .= "Need a IUPAC name. "; }
     if (!$smiles_string) { $errors .= "Need smiles_string. "; }
     if (!$formula) { $errors .= "Need formula. "; }
 
@@ -98,7 +100,11 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 	formula => $formula,
 	smiles => $smiles_string,
 	organisms => $organisms,
+	iupac_name => $iupac_name,
 	curation_status => $curation_status,
+	create_date => 'now()',
+	last_modified_date => 'now()',
+	
     };
 
     my $compound_id;
@@ -144,10 +150,12 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     my $smiles_string = $c->req->param("smiles_string");
     my $formula = $c->req->param("formula");
     my $organisms = $c->req->param("organisms");
+    my $iupac_name = $c->req->param("iupac_name");
     my $curation_status = $c->req->param("curation_status");
 
     my $errors = "";
     if (!$compound_id) {  $errors .= "Need compound id. "; }
+    if (!$iupac_name) { $errors .= "Need IUPAC name. "; }
     if (!$smid_id) { $errors .= "Need smid id. "; }
     if (!$smiles_string) { $errors .= "Need smiles_string. "; }
     if (!$formula) { $errors .= "Need formula. "; }
@@ -162,7 +170,9 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	formula => $formula,
 	smiles => $smiles_string,
 	organisms => $organisms,
+	iupac_name => $iupac_name,
 	curation_status => $curation_status,
+	last_modified_date => 'now()',
     };
 
     eval { 
@@ -196,16 +206,15 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     $data->{compound_id} = $s->compound_id();
     $data->{formula}= $s->formula();
     $data->{organisms} = $s->organisms();
-    #$data->{molecular_weight} = $s->molecular_weight();
+    $data->{iupac_name} = $s->iupac_name();
     $data->{smiles_string} = $s->smiles();
     $data->{curation_status} = $s->curation_status();
-
-    #my $formatted_formula= $s->get_molecular_formula();
-    #$formatted_formula=~s/(\d+)/\<sub\>$1\<\/sub\>/g;
-    #print STDERR "FORMATTED FORMULA = $formatted_formula\n";
+    $data->{last_modified_date} = $s->last_modified_date();
+    $data->{create_date} = $s->create_date();
+    $data->{curator_id} = $s->curator_id();
+    $data->{last_curated_time} = $s->last_curated_time();
 
     $c->stash->{rest} = { data => $data };
-
 }
 
 

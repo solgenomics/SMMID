@@ -20,53 +20,62 @@ $action => undef
 % else {
   <& /page/page_title.mas, title=>"Enter new SMID" &>
 % }
-    <center></center>
+
+<!-- SMID input/output form -->
+
     <form class="form-horizontal" role="form" name="new_accessions_form" id="new_accessions_form">
       <div class="form-group">
-    <label class="col-sm-2 control-label">DB ID: <span id="compound_id"><% $compound_id %></span> </label>
-    <span class="col-sm-10" id="list_div" name="list_div">
-      &nbsp;
-    </span>
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Formula </label>
-    <span class="col-sm-10" id="list_div" name="list_div">
-      <input id="formula" size="50" disabled />
-    </span>
-  </div>
-  <div class="form_group">
-    <label class="col-sm-2 control-label">Organisms</label>
-    <span class="col-sm-10" id="list_div" name="list_div">
-      <input id="organisms" size="50" disabled  />
-    </span>
-  </div>
-  <div class="form_group">
-    <label class="col-sm-2 control-label">SMID ID</label>
-    <span class="col-sm-10" id="list_div" name="list_div">
-      <input id="smid_id" size="50" disabled />
-    </span>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label">SMILES</label>
-    <span class="col-sm-10">
-      <input id="smiles_string" size="50" disabled />
-    </span>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Curation status</label>
-    <span class="col-sm-10" id="list_div" name="list_div">
-      <input id="curation_status" size="50" disabled />
-    </span>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label">Common name </label>
-    <span class="col-sm-10">
-      <input id="common_name" size="50" disabled />
-    </span>
-  </div>
-</form>
-
+	<label class="col-sm-2 control-label">DB ID: <span id="compound_id"><% $compound_id %></span> </label>
+	<span class="col-sm-10" id="list_div" name="list_div">
+	  <div id="modification_history">&nbsp;</div>
+	</span>
+      </div>
+      <div class="form-group">
+	<label class="col-sm-2 control-label">SMID ID</label>
+	<span class="col-sm-10" id="list_div" name="list_div">
+	  <input id="smid_id" size="50" disabled />
+	</span>
+      </div>
+      <div class="form-group">
+	<label class="col-sm-2 control-label">IUPAC name</label>
+	<span class="col-sm-10" id="list_div" name="list_div">
+	  <input id="iupac_name" size="50" disabled />
+	</span>
+      </div>
+      <div class="form-group">
+	<label class="col-sm-2 control-label">Formula</label>
+	<span class="col-sm-10" id="list_div" name="list_div">
+	  <input id="formula" size="50" disabled />
+	</span>
+      </div>
+      <div class="form-group">
+	<label class="col-sm-2 control-label">Organisms</label>
+	<span class="col-sm-10" id="list_div" name="list_div">
+	  <input id="organisms" size="50" disabled  />
+	</span>
+      </div>
+      <div class="form-group">
+	<label class="col-sm-2 control-label">SMILES</label>
+	<span class="col-sm-10">
+	  <input id="smiles_string" size="50" disabled />
+	</span>
+      </div>
+      <div class="form-group">
+	<label class="col-sm-2 control-label">Curation status</label>
+	<span class="col-sm-10" id="list_div" name="list_div">
+	  <input id="curation_status" size="50" disabled />
+	</span>
+      </div>
+      <div class="form-group">
+	<label class="col-sm-2 control-label">Common name </label>
+	<span class="col-sm-10">
+	  <input id="common_name" size="50" disabled />
+	</span>
+      </div>
+    </form>
+    
 % if (!$compound_id) { 
-<button id="add_new_smid_button" class="btn btn-primary" disabled="true" >Add new SMID</button>
+    <button id="add_new_smid_button" class="btn btn-primary" disabled="true" >Add new SMID</button>
 % }
 
 % if ($action eq "edit") {
@@ -77,8 +86,11 @@ $action => undef
   </script>
 % }
 
-% if ($compound_id) { 
+
+% if ($compound_id) {
+
 <h2>Other identifiers & supporting data</h2>
+
 <table id="smid_dbxref_data_table" class="display" style="width:100%">
   <thead>
     <tr>
@@ -93,11 +105,51 @@ $action => undef
 % if ($action eq "edit") { 
 <button id="add_dbxref_button" disabled="true" class="btn btn-primary">Add Dbxref</button>
 % }
-%}
+
+<h2>HPLC-MS data</h2>
+
+<table id="smid_hplc_ms_table" class="display" style="width:100%">
+  <thead>
+    <tr>
+      <th>Facility</th>
+      <th>Method T=type</th>
+      <th>Retention time</th>
+      <th>Ionization mode</th>
+      <th>Adducts detected</th>
+      <th>Scan number</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+</table>
+
+% if ($action eq "edit") { 
+<button id="add_hplc_ms_button" disabled="true" class="btn btn-primary">Add HPLC-MS data</button>
+% }
+
+<h2>MS spectra</h2>
+
+<table id="smid_ms_spectra_table" class="display" style="width:100%">
+  <thead>
+    <tr>
+      <th>Facility</th>
+      <th>Ionization mode</th>
+      <th>Collision energy</th>
+      <th>Spectrum</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+</table>
+
+%  if ($action eq "edit") { 
+<button id="add_ms_spectrum_button" disabled="true" class="btn btn-primary">Add MS spectrum</button>
+%  }
 
 
+% } # if (compound_id)...
 
-  <div id="add_dbxref_dialog" class="modal" tabindex="-1" role="dialog">
+<!-- Add Dbxref dialog -->
+
+<div id="add_dbxref_dialog" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -130,8 +182,98 @@ $action => undef
   </div>
 </div>
 
+<!-- Add HPLC MS analysis dialog -->
+
+<div id="add_hplc_ms_dialog" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add HPLC-MS Analysis</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+	<form>
+	  <div class="form-group">
+	    <label for="hplc_ms_method_type">Method type</label>
+	    <input type="input" class="form-control" id="hplc_ms_method_type" placeholder="method type">
+	  </div>
+	  <div class="form-group">
+	    <label for="hplc_ms_retention_time">Retention time</label>
+	    <input type="input" class="form-control" id="hplc_ms_retention_time" placeholder="Retention time">
+	  </div>
+	  <div class="form-group">
+	    <label for="hplc_ms_ionization_mode">Ionization mode</label>
+	    <input type="input" class="form-control" id="hplc_ms_ionization_mode" placeholder="Ionization mode">
+	  </div>
+	  <div class="form-group">
+	    <label for="hplc_ms_retention_time">Retention time</label>
+	    <input type="input" class="form-control" id="hplc_ms_retention_time" placeholder="Retention time">
+	  </div>
+	  <div class="form-group">
+	    <label for="hplc_ms_adducts_detected">Adducts detected</label>
+	    <input type="input" class="form-control" id="hplc_ms_adducts_detected" placeholder="Adducts detected">
+	  </div>
+	  <div class="form-group">
+	    <label for="hplc_ms_scan_number">Scan number</label>
+	    <input type="input" class="form-control" id="hplc_ms_scan_number" placeholder="Scan number">
+	  </div>
+	</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	<button id="save_hplc_ms_button" type="button" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add MS spectrum dialog -->
+
+<div id="add_ms_spectrum_dialog" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add MS spectrum</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+	<form>
+	  <div class="form-group">
+	    <label for="ms_spectrum_ionization_mode">Ionization mode</label>
+	    <input type="input" class="form-control" id="ms_spectrum_ionization_mode" placeholder="Ionization mode">
+	  </div>
+	  <div class="form-group">
+	    <label for="ms_spectrum_adduct_fragmented">Retention time</label>
+	    <input type="input" class="form-control" id="ms_spectrum_adduct_fragmented" placeholder="Adduct fragmented">
+	  </div>
+	  <div class="form-group">
+	    <label for="ms_spectrum_collision_energy">Collision energy</label>
+	    <input type="input" class="form-control" id="ms_spectrum_collision_energy" placeholder="Collision energy">
+	  </div>
+	  <div class="form-group">
+	    <label for="ms_spectrum_mz_intensity">M/Z intensity relative_intensity</label>
+	    <textarea cols="50" rows="10" type="input" class="form-control" id="ms_spectrum_mz_intensity" placeholder="M/Z intensity relative_intensity"></textarea>
+	  </div>
+	</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	<button id="save_ms_spectrum_button" type="button" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- script -->
+
 <script>
   $(document).ready( function() {
+  alert("HELLO2");
   var compound_id = <% $compound_id %>;
   var action = '<% $action %>';
 
@@ -144,5 +286,5 @@ $action => undef
        make_fields_editable();
      }
   }
-});
+  });
 </script>

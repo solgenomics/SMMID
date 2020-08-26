@@ -21,9 +21,10 @@ create table dbuser (
 
 create table compound (
        compound_id serial primary key,
+       smid_id varchar(100) unique not null,		
        formula text unique not null,
+       iupac_name text not null,
        organisms text,
-       smid_id varchar(100) unique not null,
        smiles text  unique not null,
        curation_status varchar(100),
        dbuser_id bigint references dbuser,
