@@ -1,9 +1,8 @@
 
 function make_fields_editable() {
-    alert("HELLO");
+
     has_login().then( function(r) {
 	if (r.user !==null) {
-	    alert("Make fields editable...");
 	    $('#smid_id').prop('disabled', false);
 	    $('#smiles_string').prop('disabled', false);
 	    $('#curation_status').val('unverified');
@@ -27,8 +26,8 @@ function make_fields_editable() {
 		    }
 		    else {
 			alert(r.message);
+			location.href="/smid/"+r.compound_id;
 		    }
-		    location.href="/smid/"+r.compound_id;
 		}, function(e) { alert('An error occurred. '+e.responseText) });			    
 	    });
 
@@ -38,7 +37,13 @@ function make_fields_editable() {
 		event.preventDefault();
 		edit_hplc_ms_data();
 	    });
-
+	    
+	    // $('#save_ms_spectrum_button').click( function(event) {
+	    // 	event.preventDefault();
+	    // 	store_ms_spectrum_data();
+	    // });
+	    
+	    
 	    $('#add_ms_spectrum_button').prop('disabled', false);
 
 	    $('#add_ms_spectrum_button').click( function(event) {
@@ -55,6 +60,7 @@ function make_fields_editable() {
 		    }
 		    else {
 			alert(r.message);
+			location.href="/smid/"+r.compound_id;
 		    }}, function(e) { alert('An error occurred.' + e.responseText) });
 	    });
 
@@ -92,11 +98,42 @@ function edit_dbxref_info() {
 
 function edit_hplc_ms_data() {
     $('#add_hplc_ms_dialog').modal("show");
-    
+
+    $('#save_hplc_ms_button').click(function(event) {
+	event.preventDefault();
+	store_hplc_ms_data().then(
+	    function(r) {
+		if (r.error) { alert(r.error); }
+		else {
+		    alert("Successfully stored HPLC MS data.");
+		    $('#add_hplc_ms_dialog').modal("hide");
+		    $('#smid_hplc_ms_table').DataTable().ajax.reload();
+		}
+	    },
+	    function(e) { alert("Error! "+e.responseText); }
+	);
+    });
 }
 
 function edit_ms_spectrum() {
     $('#add_ms_spectrum_dialog').modal("show");
+
+    $('#save_ms_spectrum_button').click(function(event) { 
+	store_ms_spectrum_data().then(
+	    function(r) {
+		if (r.error) {
+		    alert(r.error);
+		}
+		else {
+		    alert("Successfully stored MS spectrum data.");
+		    $('#add_ms_spectrum_dialog').modal("hide");
+		    $('#smid_ms_spectra_table').DataTable().ajax.reload();
+		}
+	    },
+	    function(e) { alert("Error! "+e.responseText); }
+	);
+    });
+
 }
 
 
@@ -107,6 +144,7 @@ function store_smid() {
 	data: {
 	    'smid_id': $('#smid_id').val(),
 	    'smiles_string' : $('#smiles_string').val(),
+	    'iupac_name' : $('#iupac_name').val(),
 	    'formula': $('#formula').val(),
 	    'organisms': $('#organisms').val(),
 	    'curation_status' : $('#curation_status').val(),
@@ -154,7 +192,42 @@ function store_dbxref() {
 	}
     });
 }
-    
+
+function store_hplc_ms_data() {
+
+    alert("STORING DATA...");
+    return $.ajax( {
+	url: '/rest/experiment/store',
+	data: {
+	    'compound_id' : $('#compound_id').html(),
+	    'experiment_type': 'hplc_ms',
+	    'hplc_ms_description': $('#hplc_ms_description').val(),
+	    'hplc_ms_method_type': $('#hplc_ms_method_type').val(),
+	    'hplc_ms_retention_time' : $('#hplc_ms_retention_time').val(),
+	    'hplc_ms_ionization_mode' : $('#hplc_ms_ionization_mode').val(),
+	    'hplc_ms_adducts_detected' : $('#hplc_ms_adducts_detected').val(),
+	    'hplc_ms_scan_number' : $('#hplc_ms_scan_number').val()
+	}
+    });
+}
+
+function store_ms_spectrum_data() {
+
+    return $.ajax( {
+	url: '/rest/experiment/store',
+	data: {
+	    'compound_id' : $('#compound_id').html(),
+	    'experiment_type' : 'ms_spectrum',
+	    'ms_spectrum_description' : $('#ms_spectrum_description').val(),
+	    'ms_spectrum_ionization_mode' : $('#ms_spectrum_ionization_mode').val(),
+	    'ms_spectrum_adduct_fragmented' : $('#ms_spectrum_adduct_fragmented').val(),
+	    'ms_spectrum_collision_energy' : $('#ms_spectrum_collision_energy').val(),
+	    'ms_spectrum_mz_intensity' : $('#ms_spectrum_mz_intensity').val()
+	}
+    });
+}
+
+
 function populate_smid_data(compound_id) { 
     $.ajax( {
 	url: '/rest/smid/'+compound_id+'/details',
@@ -169,13 +242,15 @@ function populate_smid_data(compound_id) {
 		$('#formula').val(r.data.formula);
 		$('#iupac_name').val(r.data.iupac_name);
 		$('#smid_title').html(r.data.smid_id);
-		$('#modification_history').html( "CREATION INFO");
-//		    'Created: '+r.data.creation_date+' Last modified: '+r.data.last_modification_date);
+		$('#modification_history').html('<font size="2">Created: '+r.data.creation_date+' Last modified: '+r.data.last_modification_date+'</font>');
 	    }
 	}
     });
     
     $('#smid_dbxref_data_table').DataTable( {
+	searching: false,
+	paging: false,
+	info: false,
 	"ajax": {
 	    url: '/rest/smid/'+compound_id+'/dbxrefs'
 	}
@@ -183,14 +258,20 @@ function populate_smid_data(compound_id) {
     } );
 
     $('#smid_hplc_ms_table').DataTable( {
+	searching: false,
+	paging: false,
+	info: false,
 	"ajax": {
-	    url: '/rest/smid/'+compound_id+'/hplc_ms'
+	    url: '/rest/smid/'+compound_id+'/results?experiment_type=hplc_ms'
 	}
     });
 
     $('#smid_ms_spectra_table').DataTable( {
+	searching: false,
+	paging: false,
+	info: false,
 	"ajax": {
-	    url: '/rest/smid/'+compound_id+'/ms_spectra'
+	    url: '/rest/smid/'+compound_id+'/results?experiment_type=ms_spectrum'
 	}
     });
 }

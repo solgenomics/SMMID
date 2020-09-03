@@ -52,7 +52,7 @@ __PACKAGE__->table("experiment");
   data_type: 'timestamp'
   is_nullable: 1
 
-=head2 user_id
+=head2 dbuser_id
 
   data_type: 'bigint'
   is_foreign_key: 1
@@ -86,6 +86,17 @@ __PACKAGE__->table("experiment");
   is_nullable: 1
   size: 100
 
+=head2 data
+   
+  data: 'jsonb',
+  is_nullable: 1
+
+=head2 compound_id
+
+  data_type: 'bigint'
+  is_foreign_key: 1
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -100,7 +111,7 @@ __PACKAGE__->add_columns(
   { data_type => "timestamp", is_nullable => 1 },
   "create_date",
   { data_type => "timestamp", is_nullable => 1 },
-  "user_id",
+  "dbuser_id",
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
   "operator",
   { data_type => "varchar", is_nullable => 1, size => 100 },
@@ -111,7 +122,11 @@ __PACKAGE__->add_columns(
   "notes",
   { data_type => "text", is_nullable => 1 },
   "experiment_type",
-  { data_type => "varchar", is_nullable => 1, size => 100 },
+    { data_type => "varchar", is_nullable => 1, size => 100 },
+    "data",
+    { data_type => "jsonb" },
+    "compound_id",
+    { data_type => "bigint", is_foreign_key => 1, is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -137,16 +152,27 @@ Related object: L<SMIDDB::Result::Dbuser>
 =cut
 
 __PACKAGE__->belongs_to(
-  "user",
+  "dbuser",
   "SMIDDB::Result::Dbuser",
-  { dbuser_id => "user_id" },
+  { dbuser_id => "dbuser_id" },
   {
     is_deferrable => 0,
     join_type     => "LEFT",
     on_delete     => "NO ACTION",
     on_update     => "NO ACTION",
   },
-);
+    );
+
+__PACKAGE__->belongs_to(
+    "compound",
+    "SMIDDB::Result::Compound",
+    { compound_id => "compound_id" },
+    { is_deferrabel => 0,
+      join_type => "LEFT",
+      on_delete => "NO ACTION",
+      on_update => "NO ACTION",
+    },
+    );
 
 
 # Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-07-25 00:15:28

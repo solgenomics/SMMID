@@ -66,12 +66,6 @@ $action => undef
 	  <input id="curation_status" size="50" disabled />
 	</span>
       </div>
-      <div class="form-group">
-	<label class="col-sm-2 control-label">Common name </label>
-	<span class="col-sm-10">
-	  <input id="common_name" size="50" disabled />
-	</span>
-      </div>
     </form>
     
 % if (!$compound_id) { 
@@ -102,7 +96,8 @@ $action => undef
   </thead>
 </table>
 
-% if ($action eq "edit") { 
+% if ($action eq "edit") {
+<br />
 <button id="add_dbxref_button" disabled="true" class="btn btn-primary">Add Dbxref</button>
 % }
 
@@ -122,7 +117,8 @@ $action => undef
   </thead>
 </table>
 
-% if ($action eq "edit") { 
+% if ($action eq "edit") {
+<br />
 <button id="add_hplc_ms_button" disabled="true" class="btn btn-primary">Add HPLC-MS data</button>
 % }
 
@@ -140,7 +136,8 @@ $action => undef
   </thead>
 </table>
 
-%  if ($action eq "edit") { 
+%  if ($action eq "edit") {
+<br />
 <button id="add_ms_spectrum_button" disabled="true" class="btn btn-primary">Add MS spectrum</button>
 %  }
 
@@ -208,10 +205,6 @@ $action => undef
 	    <input type="input" class="form-control" id="hplc_ms_ionization_mode" placeholder="Ionization mode">
 	  </div>
 	  <div class="form-group">
-	    <label for="hplc_ms_retention_time">Retention time</label>
-	    <input type="input" class="form-control" id="hplc_ms_retention_time" placeholder="Retention time">
-	  </div>
-	  <div class="form-group">
 	    <label for="hplc_ms_adducts_detected">Adducts detected</label>
 	    <input type="input" class="form-control" id="hplc_ms_adducts_detected" placeholder="Adducts detected">
 	  </div>
@@ -273,7 +266,7 @@ $action => undef
 
 <script>
   $(document).ready( function() {
-  alert("HELLO2");
+
   var compound_id = <% $compound_id %>;
   var action = '<% $action %>';
 

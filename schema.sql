@@ -66,18 +66,20 @@ create table experiment (
        experiment_type varchar(100),
        run_date timestamp without time zone,
        create_date timestamp without time zone,
-       user_id bigint references dbuser,
-       operator varchar(100)
+       dbuser_id bigint references dbuser,
+       operator varchar(100),
+       compound_id bigint references compound not null
        );
 
-create table result (
-       result_id serial primary key,
-       name varchar(100),
-       description text,
-       notes text,
-       data jsonb not null,
-       dbuser_id bigint references dbuser,
-       create_date timestamp without time zone,
-       modified_date timestamp without time zone
-       );
+-- create table result (
+--        result_id serial primary key,
+--        method_type varchar(100) not null,
+--        name varchar(100),
+--        description text,
+--        notes text,
+--        data jsonb not null,
+--        dbuser_id bigint references dbuser,
+--        create_date timestamp without time zone,
+--        modified_date timestamp without time zone
+--        );
 

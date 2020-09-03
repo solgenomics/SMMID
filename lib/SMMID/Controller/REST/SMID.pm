@@ -52,7 +52,9 @@ sub browse_format :Chained('rest') PathPart('browse') Args(1) {
     $self->browse($c);
 
     if ($format eq "html") {
-	my $html = "<table border=\"1\" width=\"100%\" cellpadding=\"10\" >\n";
+	my $html = "<table border=\"1\" width=\"100%\" cellpadding=\"10\" >\n
+	<thead><th>SMID ID</th><th>Formula</th><th>SMILES</th></thead>\n";
+
 	foreach my $smid (@{$c->stash->{rest}->{data}}) {
 	    $html .= "<tr><td><a href=\"/smid/$smid->[0]\">$smid->[1]</a></td><td>$smid->[2]</td><td>$smid->[3]</td></tr>\n";
 	}
@@ -79,6 +81,8 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     
     my $smid_id = $c->req->param("smid_id");
     my $iupac_name = $c->req->param("iupac_name");
+
+    print STDERR "IUPAC name = $iupac_name\n";
     my $smiles_string = $c->req->param("smiles_string");
     my $formula = $c->req->param("formula");
     my $organisms = $c->req->param("organisms");
@@ -185,7 +189,10 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	return;
     }
 
-    $c->stash->{rest} ={ message => "Successfully stored the smid $smid_id" };
+    $c->stash->{rest} ={
+	compound_id => $compound_id,
+	message => "Successfully stored the smid $smid_id"
+    };
     
 }
 
@@ -236,10 +243,39 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
     my $delete_link = "<font color=\"red\">X</font>";
     while (my $dbxref = $rs->next()) {
 	print STDERR "Retrieved: ". $dbxref->dbxref_id()."...\n";
-	push @$data, [ $dbxref->db->name(), $dbxref->accession(), join("",  $dbxref->db->urlprefix(), $dbxref->db->url(), $dbxref->accession()), $delete_link ];
+	my $url = join("",  $dbxref->db->urlprefix(), $dbxref->db->url(), $dbxref->accession());
+	push @$data, [ $dbxref->db->name(), $dbxref->accession(), "<a href=\"$url\">$url</a>" , $delete_link ];
     }
-    $c->stash->{rest} = { data => $data};
+    $c->stash->{rest} = { data => $data };
 }
+
+sub results : Chained('smid') PathPart('results') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    my $experiment_type = $c->req->param("experiment_type");
+    
+    
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( { compound_id => $c->stash->{compound_id}, experiment_type => $experiment_type } );
+
+    print STDERR "Retrieved ".$rs->count()." rows...\n";
+    my @data;
+    while (my $row = $rs->next()) { 
+	if ($experiment_type eq "hplc_ms") {
+	    my $json = $row->data();
+	    my $hash = JSON::Any->decode($json);
+	    push @data, [ $hash->{hplc_ms_method_type}, $hash->{hplc_ms_retention_time}, $hash->{hplc_ms_ionization_mode}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_scan_number}, "X" ];
+	}
+	if ($experiment_type eq "ms_spectrum") {
+	    my $json = $row->data();
+	    my $hash = JSON::Any->decode($json);
+	    push @data, [ $hash->{ms_spectrum_ionization_energy}, $hash->{ms_spectrum_adduct_fragmented}, $hash->{ms_spectrum_mz_intensity}, "X" ];
+	}
+    }
+
+    $c->stash->{rest} = { data => \@data };
+}
+
 
 
 =head1 AUTHOR
