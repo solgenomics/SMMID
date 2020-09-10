@@ -10,6 +10,8 @@ function make_fields_editable() {
 	    $('#organisms').prop('disabled', false);
 	    $('#iupac_name').prop('disabled', false);
 	    $('#add_dbxref_button').prop('disabled', false);
+	    $('#description').prop('disabled', false);
+	    $('#synonyms').prop('disabled', false);
 	    $('#add_dbxref_button').click(
 		function(event) {
 		    event.preventDefault();
@@ -148,7 +150,9 @@ function store_smid() {
 	    'formula': $('#formula').val(),
 	    'organisms': $('#organisms').val(),
 	    'curation_status' : $('#curation_status').val(),
-	    'organisms': $('#organisms').val()
+	    'organisms': $('#organisms').val(),
+	    'description': $('#description').val(),
+	    'synonyms': $('#synonyms').val()
 	}
     });
 }
@@ -164,7 +168,10 @@ function update_smid() {
 	    'formula': $('#formula').val(),
 	    'curation_status' : $('#curation_status').val(),
 	    'iupac_name' : $('#iupac_name').val(),
-	    'organisms': $('#organisms').val()
+	    'organisms': $('#organisms').val(),
+	    'description': $('#description').val(),
+	    'synonyms': $('#synonyms').val()
+
 	}
     });
 }
@@ -191,6 +198,31 @@ function store_dbxref() {
 	    'description': $('#description').val()
 	}
     });
+}
+
+function delete_dbxref(dbxref_id) {
+
+    var yes = confirm("Are you sure you want to delete the dbxref with id "+dbxref_id+"?");
+    if (yes) {
+
+	$.ajax( {
+	    url : '/rest/dbxref/delete',
+	    data: {
+		'dbxref_id' : dbxref_id,
+	    },
+	    error : function(e) { alert("An error occurred!"+e.responseText); },
+	    success: function(r) {
+		if (r.error) {
+		    alert(r.error)
+		}
+		else {
+		    alert(r.message)
+		    $('#smid_dbxref_data_table').DataTable().ajax.reload();
+		}
+	    }
+	    
+	});
+    }
 }
 
 function store_hplc_ms_data() {
@@ -242,7 +274,9 @@ function populate_smid_data(compound_id) {
 		$('#formula').val(r.data.formula);
 		$('#iupac_name').val(r.data.iupac_name);
 		$('#smid_title').html(r.data.smid_id);
-		$('#modification_history').html('<font size="2">Created: '+r.data.creation_date+' Last modified: '+r.data.last_modification_date+'</font>');
+		$('#description').val(r.data.description);
+		$('#synonyms').val(r.data.synonyms);
+		$('#modification_history').html('<font size="2">Created: '+r.data.create_date+' Last modified: '+r.data.last_modified_date+'</font>');
 	    }
 	}
     });

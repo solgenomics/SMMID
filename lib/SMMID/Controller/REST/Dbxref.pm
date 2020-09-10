@@ -43,6 +43,7 @@ sub store_dbxref :Path('/rest/dbxref/store') Args(0) {
 	accession => $accession,
 	version => $version,
 	description => $description,
+	dbuser_id => $dbuser_id,
     };
 
     my $dbxref_id;
@@ -58,6 +59,7 @@ sub store_dbxref :Path('/rest/dbxref/store') Args(0) {
 		compound_id => $compound_id,
 		dbxref_id => $dbxref_id,
 		dbuser_id => $dbuser_id,
+		curation_status => "unverified",
 	    });
 
 	my $compound_dbxref_id = $compound_dbxref ->insert();
@@ -70,6 +72,50 @@ sub store_dbxref :Path('/rest/dbxref/store') Args(0) {
     
     $c->stash->{rest} = { success => 1, dbxref_id => $dbxref_id };
 }
+
+sub delete_dbxref :Path('/rest/dbxref/delete') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    my $dbxref_id = $c->req->param("dbxref_id");
+
+    print STDERR "delete_dbxref...\n";
+    if (! $c->user()) {
+	$c->stash->{rest} = { error => "You need to be logged in to delete dbxrefs. Sorry." };
+	return;
+    }
+
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::CompoundDbxref")->search( { dbxref_id => $dbxref_id } );
+
+    if ($rs->count() == 0) {
+	print STDERR "dbxref with $dbxref_id not found\n";
+	$c->stash->{rest} = { error => "No such dbxref_id exists ($dbxref_id)" };
+	return;
+    }
+    
+    my $user_id = $c->user()->get_object()->dbuser_id();
+
+    my $row = $rs->next(); # there is only one
+    
+    if ( ($user_id != $row->dbuser_id()) && ($c->user()->get_object()->user_type() ne "curator") ) {
+	print STDERR "Insufficent privileges.\n";
+	$c->stash->{rest} = { error => "You are not authorized to delete this entry. Sorry" };
+	return;
+    }
+
+    eval {
+	print STDERR "Deleting dbxref $dbxref_id...\n";
+	$rs->delete();
+    };
+
+    if ($@) {
+	$c->stash->{rest} = { error => "An error occurred. ($@)" };
+	return;
+    }
+
+    $c->stash->{rest} = { message => "The dbxref entry with the id $dbxref_id has been successfully deleted." };
+}
+
 
 sub get_db_html_select :Path('/rest/db/select') Args(0) {
     my $self = shift;

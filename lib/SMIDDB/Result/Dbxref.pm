@@ -15,18 +15,6 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
-=head1 COMPONENTS LOADED
-
-=over 4
-
-=item * L<DBIx::Class::InflateColumn::DateTime>
-
-=back
-
-=cut
-
-__PACKAGE__->load_components("InflateColumn::DateTime");
-
 =head1 TABLE: C<dbxref>
 
 =cut
@@ -65,6 +53,12 @@ __PACKAGE__->table("dbxref");
   data_type: 'text'
   is_nullable: 1
 
+=head2 dbuser_id
+
+  data_type: 'bigint'
+  is_foreign_key: 1
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -83,6 +77,8 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 255 },
   "description",
   { data_type => "text", is_nullable => 1 },
+  "dbuser_id",
+  { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -134,9 +130,29 @@ __PACKAGE__->belongs_to(
   },
 );
 
+=head2 dbuser
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-07-25 00:15:28
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:MSGdTjY0MUfUEOE29jg8dg
+Type: belongs_to
+
+Related object: L<SMIDDB::Result::Dbuser>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "dbuser",
+  "SMIDDB::Result::Dbuser",
+  { dbuser_id => "dbuser_id" },
+  {
+    is_deferrable => 0,
+    join_type     => "LEFT",
+    on_delete     => "NO ACTION",
+    on_update     => "NO ACTION",
+  },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-09-04 17:41:53
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:6Znxhl85Z19ZtuLqj3Sy4g
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

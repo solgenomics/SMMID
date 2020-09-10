@@ -1,12 +1,12 @@
 use utf8;
-package SMIDDB::Result::CompoundDbxref;
+package SMIDDB::Result::CompoundImage;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
 
 =head1 NAME
 
-SMIDDB::Result::CompoundDbxref
+SMIDDB::Result::CompoundImage
 
 =cut
 
@@ -15,20 +15,20 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
-=head1 TABLE: C<compound_dbxref>
+=head1 TABLE: C<compound_image>
 
 =cut
 
-__PACKAGE__->table("compound_dbxref");
+__PACKAGE__->table("compound_image");
 
 =head1 ACCESSORS
 
-=head2 compound_dbxref_id
+=head2 compound_image_id
 
   data_type: 'integer'
   is_auto_increment: 1
   is_nullable: 0
-  sequence: 'compound_dbxref_compound_dbxref_id_seq'
+  sequence: 'compound_image_compound_image_id_seq'
 
 =head2 compound_id
 
@@ -36,16 +36,21 @@ __PACKAGE__->table("compound_dbxref");
   is_foreign_key: 1
   is_nullable: 1
 
-=head2 dbxref_id
+=head2 image_id
 
   data_type: 'bigint'
   is_foreign_key: 1
   is_nullable: 1
 
-=head2 dbuser_id
+=head2 curator_id
 
   data_type: 'bigint'
   is_foreign_key: 1
+  is_nullable: 1
+
+=head2 last_curated_time
+
+  data_type: 'timestamp'
   is_nullable: 1
 
 =head2 curation_status
@@ -54,52 +59,39 @@ __PACKAGE__->table("compound_dbxref");
   is_nullable: 1
   size: 100
 
-=head2 curator_id
-
-  data_type: 'bigint'
-  is_foreign_key: 1
-  is_nullable: 1
-
-=head2 last_curatated_time
-
-  data_type: 'timestamp'
-  is_nullable: 1
-
 =cut
 
 __PACKAGE__->add_columns(
-  "compound_dbxref_id",
+  "compound_image_id",
   {
     data_type         => "integer",
     is_auto_increment => 1,
     is_nullable       => 0,
-    sequence          => "compound_dbxref_compound_dbxref_id_seq",
+    sequence          => "compound_image_compound_image_id_seq",
   },
   "compound_id",
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
-  "dbxref_id",
+  "image_id",
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
-  "dbuser_id",
-  { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
-  "curation_status",
-  { data_type => "varchar", is_nullable => 1, size => 100 },
   "curator_id",
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
-  "last_curatated_time",
+  "last_curated_time",
   { data_type => "timestamp", is_nullable => 1 },
+  "curation_status",
+  { data_type => "varchar", is_nullable => 1, size => 100 },
 );
 
 =head1 PRIMARY KEY
 
 =over 4
 
-=item * L</compound_dbxref_id>
+=item * L</compound_image_id>
 
 =back
 
 =cut
 
-__PACKAGE__->set_primary_key("compound_dbxref_id");
+__PACKAGE__->set_primary_key("compound_image_id");
 
 =head1 RELATIONS
 
@@ -143,38 +135,18 @@ __PACKAGE__->belongs_to(
   },
 );
 
-=head2 dbuser
+=head2 image
 
 Type: belongs_to
 
-Related object: L<SMIDDB::Result::Dbuser>
+Related object: L<SMIDDB::Result::Image>
 
 =cut
 
 __PACKAGE__->belongs_to(
-  "dbuser",
-  "SMIDDB::Result::Dbuser",
-  { dbuser_id => "dbuser_id" },
-  {
-    is_deferrable => 0,
-    join_type     => "LEFT",
-    on_delete     => "NO ACTION",
-    on_update     => "NO ACTION",
-  },
-);
-
-=head2 dbxref
-
-Type: belongs_to
-
-Related object: L<SMIDDB::Result::Dbxref>
-
-=cut
-
-__PACKAGE__->belongs_to(
-  "dbxref",
-  "SMIDDB::Result::Dbxref",
-  { dbxref_id => "dbxref_id" },
+  "image",
+  "SMIDDB::Result::Image",
+  { image_id => "image_id" },
   {
     is_deferrable => 0,
     join_type     => "LEFT",
@@ -185,7 +157,7 @@ __PACKAGE__->belongs_to(
 
 
 # Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-09-04 17:41:53
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:gxllFjk+s4vTMpvv3nd3EA
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:JEJgqKe/iPnnjx7Re2inew
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

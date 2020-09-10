@@ -15,18 +15,6 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
-=head1 COMPONENTS LOADED
-
-=over 4
-
-=item * L<DBIx::Class::InflateColumn::DateTime>
-
-=back
-
-=cut
-
-__PACKAGE__->load_components("InflateColumn::DateTime");
-
 =head1 TABLE: C<compound>
 
 =cut
@@ -101,6 +89,16 @@ __PACKAGE__->table("compound");
   data_type: 'text'
   is_nullable: 0
 
+=head2 synonyms
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 description
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -130,9 +128,13 @@ __PACKAGE__->add_columns(
   "create_date",
   { data_type => "timestamp", is_nullable => 1 },
   "last_modified_date",
-    { data_type => "timestamp", is_nullable => 1 },
-  "iupac_name", 
-    { iupac_name => "text", is_nullable => 0 },
+  { data_type => "timestamp", is_nullable => 1 },
+  "iupac_name",
+  { data_type => "text", is_nullable => 0 },
+  "synonyms",
+  { data_type => "text", is_nullable => 1 },
+  "description",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -202,6 +204,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 compound_images
+
+Type: has_many
+
+Related object: L<SMIDDB::Result::CompoundImage>
+
+=cut
+
+__PACKAGE__->has_many(
+  "compound_images",
+  "SMIDDB::Result::CompoundImage",
+  { "foreign.compound_id" => "self.compound_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 curator
 
 Type: belongs_to
@@ -242,9 +259,24 @@ __PACKAGE__->belongs_to(
   },
 );
 
+=head2 experiments
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-07-25 00:15:28
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:AMvsLUh4TN+NuSdrJY0PJA
+Type: has_many
+
+Related object: L<SMIDDB::Result::Experiment>
+
+=cut
+
+__PACKAGE__->has_many(
+  "experiments",
+  "SMIDDB::Result::Experiment",
+  { "foreign.compound_id" => "self.compound_id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-09-04 17:41:53
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+HeVslA836wmXQLRmozVVQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

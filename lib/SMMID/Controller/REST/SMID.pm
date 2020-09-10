@@ -78,6 +78,8 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 	$c->stash->{rest} = { error => "Login required for updating SMIDs." };
 	return;
     }
+
+    my $user_id = $c->user()->get_object()->dbuser_id();
     
     my $smid_id = $c->req->param("smid_id");
     my $iupac_name = $c->req->param("iupac_name");
@@ -86,6 +88,8 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $smiles_string = $c->req->param("smiles_string");
     my $formula = $c->req->param("formula");
     my $organisms = $c->req->param("organisms");
+    my $description = $c->req->param("description");
+    my $synonyms = $c->req->param("synonyms");
     my $curation_status = $c->req->param("curation_status");
 
     my $errors = "";
@@ -106,9 +110,11 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 	organisms => $organisms,
 	iupac_name => $iupac_name,
 	curation_status => $curation_status,
+	dbuser_id => $user_id,
+	description => $description,
+	synonyms => $synonyms,
 	create_date => 'now()',
 	last_modified_date => 'now()',
-	
     };
 
     my $compound_id;
@@ -148,14 +154,32 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	$c->stash->{rest} = { error => "Login required for updating SMIDs." };
 	return;
     }
-    
+
     my $compound_id = $c->stash->{compound_id};
+    my $smid_row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id } );
+
+    if (! $smid_row) {
+	$c->stash->{rest} = { error => "The SMID with id $compound_id does not exist." };
+	return;
+    }
+
+    my $user_id = $c->user()->get_object()->dbuser_id();
+    my $smid_owner_id = $smid_row->dbuser_id();
+
+
+    if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
+	$c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
+	return;
+    }
+    
     my $smid_id = $c->req->param("smid_id");
     my $smiles_string = $c->req->param("smiles_string");
     my $formula = $c->req->param("formula");
     my $organisms = $c->req->param("organisms");
     my $iupac_name = $c->req->param("iupac_name");
     my $curation_status = $c->req->param("curation_status");
+    my $synonyms = $c->req->param("synonyms");
+    my $description = $c->req->param("description");
 
     my $errors = "";
     if (!$compound_id) {  $errors .= "Need compound id. "; }
@@ -176,12 +200,13 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	organisms => $organisms,
 	iupac_name => $iupac_name,
 	curation_status => $curation_status,
+	description => $description,
+	synonyms => $synonyms,
 	last_modified_date => 'now()',
     };
 
     eval { 
-	my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id });
-	$row->update($data);
+	$smid_row->update($data);
     };
 
     if ($@) {
@@ -220,6 +245,8 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     $data->{create_date} = $s->create_date();
     $data->{curator_id} = $s->curator_id();
     $data->{last_curated_time} = $s->last_curated_time();
+    $data->{description} = $s->description();
+    $data->{synonyms} = $s->synonyms();
 
     $c->stash->{rest} = { data => $data };
 }
@@ -240,9 +267,10 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
     
     my $data = [];
 
-    my $delete_link = "<font color=\"red\">X</font>";
+
     while (my $dbxref = $rs->next()) {
 	print STDERR "Retrieved: ". $dbxref->dbxref_id()."...\n";
+	my $delete_link = "<a href=\"javascript:delete_dbxref(".$dbxref->dbxref_id().")\" ><font color=\"red\">X</font></a>";
 	my $url = join("",  $dbxref->db->urlprefix(), $dbxref->db->url(), $dbxref->accession());
 	push @$data, [ $dbxref->db->name(), $dbxref->accession(), "<a href=\"$url\">$url</a>" , $delete_link ];
     }
@@ -269,7 +297,7 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 	if ($experiment_type eq "ms_spectrum") {
 	    my $json = $row->data();
 	    my $hash = JSON::Any->decode($json);
-	    push @data, [ $hash->{ms_spectrum_ionization_energy}, $hash->{ms_spectrum_adduct_fragmented}, $hash->{ms_spectrum_mz_intensity}, "X" ];
+	    push @data, [ "?", $hash->{ms_spectrum_ionization_energy}, $hash->{ms_spectrum_adduct_fragmented}, $hash->{ms_spectrum_mz_intensity}, "X" ];
 	}
     }
 

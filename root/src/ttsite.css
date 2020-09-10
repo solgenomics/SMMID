@@ -97,3 +97,16 @@ h2 {
 .error {
     color: red;
 }
+
+input {
+    color: darkblue;
+    background: lightgrey;
+}
+
+input:disabled {
+    border: none;
+    color: black;
+    background: white;
+}
+
+
