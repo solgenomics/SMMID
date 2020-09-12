@@ -507,11 +507,7 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
 #     }
 
     if ( $c->config->{disable_login} ) {
-	$html = qw | 
-	    <div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" >
-	    <button class="btn btn-primary disabled" type="button" style="margin: 7px 7px 0px 0px">Login</button>
-	    </div>
-	    |;
+	$html =  '<div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" > <button class="btn btn-primary disabled" type="button" style="margin: 7px 7px 0px 0px">Login</button> </div>';
 	
 	
 	$c->stash->{rest} = { html => $html };
@@ -524,7 +520,7 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
 	# if the site is a mirror, gray out the login/logout links
 	#
 	print STDERR "generating login button for mirror site...\n";
-	$html = qw | <a style="line-height: 1.2; text-decoration: underline; background: none" href="$production_site" title="log in on main site">main site</a> |;
+	$html = qq| <a style="line-height: 1.2; text-decoration: underline; background: none" href="$production_site" title="log in on main site">main site</a> |;
 
 	$c->stash->{rest} = { html => $html };
 	return;
@@ -535,10 +531,11 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
 	my $sp_person_id = $c->user->get_object->dbuser_id();
 	my $username = $c->user->id();
 	my $display_name = "Hi, ".$c->user->get_object()->first_name();
-	$html = <<; 
+	$html = qq|
 	$display_name
 	&nbsp;
 	    <button id="navbar_logout" class="btn btn-primary" type="button" onclick="logout();" title="Logout">Logout</button>
+|;
 
 
 	print STDERR "GENERATED HTML = $html\n";
