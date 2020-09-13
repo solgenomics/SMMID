@@ -13,7 +13,7 @@ SMMID - Catalyst based application
 package SMMID;
 
 use Moose;
-
+use Data::Dumper;
 use Catalyst::Runtime '5.70';
 
 # Set flags and add plugins for the application
@@ -62,14 +62,16 @@ my $logdir = File::Spec->catfile( File::Spec->rootdir,
 				);
 
 __PACKAGE__->config(
-    name => 'SMMID',
+    name => 'smmid',
     access_log => File::Spec->catfile( $logdir, 'access.log' ),
     error_log  => File::Spec->catfile( $logdir, 'error.log'  ),
     default_view => 'Mason',
+    #root => 'static',
+
     # our conf file is by default in /etc/cxgn/SMMID.conf
- #   'Plugin::ConfigLoader' => {
-#	file => File::Spec->catfile( File::Spec->rootdir, 'etc', 'cxgn', 'SMMID.conf')
- #   },
+    'Plugin::ConfigLoader' => {
+	#file => File::Spec->catfile( File::Spec->rootdir, __PACKAGE__->config->{home}.'/../../smmid_local.conf')
+    },
     
     
     'Plugin::Authentication' => {
@@ -90,12 +92,20 @@ __PACKAGE__->config(
 
 
     'Plugin::Static::Simple' => {
-	dirs => [ '/static/js' ],
-	mime_types => {
-	    js => 'text/javascript',
-	}
+	dirs => [ 'js', 'tempfiles', 'static' ],
     }
 );
+
+after 'setup_finalize' => sub {
+    my $self = shift;
+
+    $self->config->{basepath} = $self->config->{home};
+
+    # all files written by web server should be group-writable
+    umask 000002;
+};
+
+
 
 
 # Start the application
@@ -103,7 +113,8 @@ __PACKAGE__->setup();
 
 # also load SMMIDDb, since it won't be found by the regular Catalyst
 # requires
-require SMMIDDb;
+
+#require SMMIDDB;
 
 
 =head1 CLASS METHODS

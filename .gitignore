@@ -2,3 +2,5 @@ logs/
 *~
 _build
 smmid_local.conf
+root/js/node_modules
+root/js/package-lock.json
