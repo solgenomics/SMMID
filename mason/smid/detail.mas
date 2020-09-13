@@ -39,13 +39,13 @@ $action => undef
       <div class="form-group">
 	<label class="col-sm-2 control-label">IUPAC name</label>
 	<span class="col-sm-10" id="list_div" name="list_div">
-	  <input id="iupac_name" size="50" disabled />
+	  <input id="iupac_name" size="100" disabled />
 	</span>
       </div>
             <div class="form-group">
 	<label class="col-sm-2 control-label">Formula</label>
 	<span class="col-sm-10" id="list_div" name="list_div">
-	  <input id="formula" size="50" disabled />
+	  <input id="formula" size="100" disabled />
 	</span>
       </div>
 
@@ -58,7 +58,7 @@ $action => undef
       <div class="form-group">
 	<label class="col-sm-2 control-label">Description</label>
 	<span class="col-sm-10" id="list_div" name="list_div">
-	  <input id="description" size="50" disabled />
+	  <input id="description" size="100" disabled />
 	</span>
       </div>
       <div class="form-group">
