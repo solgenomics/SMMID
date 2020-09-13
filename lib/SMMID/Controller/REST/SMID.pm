@@ -270,9 +270,20 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
 
     while (my $dbxref = $rs->next()) {
 	print STDERR "Retrieved: ". $dbxref->dbxref_id()."...\n";
+
+	my $db_name = "";
+	my $display_url = "";
+	
+	if ($dbxref->db()) {
+	    $db_name = $dbxref->db->name();
+	    my $url = $dbxref->db->url();
+	    my $urlprefix = $dbxref->db->urlprefix();
+	    $display_url = join("",  $urlprefix, $url, $dbxref->accession());
+	}
+	    
 	my $delete_link = "<a href=\"javascript:delete_dbxref(".$dbxref->dbxref_id().")\" ><font color=\"red\">X</font></a>";
-	my $url = join("",  $dbxref->db->urlprefix(), $dbxref->db->url(), $dbxref->accession());
-	push @$data, [ $dbxref->db->name(), $dbxref->accession(), "<a href=\"$url\">$url</a>" , $delete_link ];
+
+	push @$data, [ $db_name, $dbxref->accession(), $display_url , $delete_link ];
     }
     $c->stash->{rest} = { data => $data };
 }
