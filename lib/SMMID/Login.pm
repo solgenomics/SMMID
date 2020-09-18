@@ -163,7 +163,7 @@ sub verify_session {
             if ( $user_must_be_type ne $user_type )
             {            #if they are not the required type, send them away
 
-                return;;
+                return;
             }
         }
     }
@@ -309,7 +309,7 @@ sub user_from_credentials {
     my $encoded_password_h = $self->schema()
 	->storage
 	->dbh()
-	->prepare("SELECT crypt(?, dbuser.password) FROM dbuser");
+	->prepare("SELECT crypt('$password', gen_salt('bf'))");
 
     $encoded_password_h->execute($password);
 
