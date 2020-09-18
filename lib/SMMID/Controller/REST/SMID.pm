@@ -303,12 +303,12 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 	if ($experiment_type eq "hplc_ms") {
 	    my $json = $row->data();
 	    my $hash = JSON::Any->decode($json);
-	    push @data, [ $hash->{hplc_ms_method_type}, $hash->{hplc_ms_retention_time}, $hash->{hplc_ms_ionization_mode}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_scan_number}, "X" ];
+	    push @data, [ $hash->{hplc_ms_author}, $hash->{hplc_ms_method_type}, $hash->{hplc_ms_retention_time}, $hash->{hplc_ms_ionization_mode}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_scan_number}, $hash->{hplc_ms_link}, "X" ];
 	}
 	if ($experiment_type eq "ms_spectrum") {
 	    my $json = $row->data();
 	    my $hash = JSON::Any->decode($json);
-	    push @data, [ "?", $hash->{ms_spectrum_ionization_energy}, $hash->{ms_spectrum_adduct_fragmented}, $hash->{ms_spectrum_mz_intensity}, "X" ];
+	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_energy}, $hash->{ms_spectrum_adduct_fragmented}, $hash->{ms_spectrum_mz_intensity}, $hash->{ms_specturm_link},  "X" ];
 	}
     }
 
