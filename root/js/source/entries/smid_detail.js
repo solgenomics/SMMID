@@ -227,18 +227,20 @@ function delete_dbxref(dbxref_id) {
 
 function store_hplc_ms_data() {
 
-    alert("STORING DATA...");
     return $.ajax( {
 	url: '/rest/experiment/store',
 	data: {
 	    'compound_id' : $('#compound_id').html(),
 	    'experiment_type': 'hplc_ms',
+	    'hplc_ms_author' : $('#hplc_ms_author').val(),
 	    'hplc_ms_description': $('#hplc_ms_description').val(),
 	    'hplc_ms_method_type': $('#hplc_ms_method_type').val(),
 	    'hplc_ms_retention_time' : $('#hplc_ms_retention_time').val(),
 	    'hplc_ms_ionization_mode' : $('#hplc_ms_ionization_mode').val(),
 	    'hplc_ms_adducts_detected' : $('#hplc_ms_adducts_detected').val(),
-	    'hplc_ms_scan_number' : $('#hplc_ms_scan_number').val()
+	    'hplc_ms_scan_number' : $('#hplc_ms_scan_number').val(),
+	    'hplc_ms_link' : $('#hplc_ms_link').val()
+	    
 	}
     });
 }
@@ -250,11 +252,13 @@ function store_ms_spectrum_data() {
 	data: {
 	    'compound_id' : $('#compound_id').html(),
 	    'experiment_type' : 'ms_spectrum',
+	    'ms_spectrum_author' : $('#ms_spectrum_author').val(),
 	    'ms_spectrum_description' : $('#ms_spectrum_description').val(),
 	    'ms_spectrum_ionization_mode' : $('#ms_spectrum_ionization_mode').val(),
 	    'ms_spectrum_adduct_fragmented' : $('#ms_spectrum_adduct_fragmented').val(),
 	    'ms_spectrum_collision_energy' : $('#ms_spectrum_collision_energy').val(),
-	    'ms_spectrum_mz_intensity' : $('#ms_spectrum_mz_intensity').val()
+	    'ms_spectrum_mz_intensity' : $('#ms_spectrum_mz_intensity').val(),
+	    'ms_spectrum_link' : $('#ms_spectrum_link').val()
 	}
     });
 }
