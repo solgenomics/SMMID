@@ -306,22 +306,20 @@ sub user_from_credentials {
     my $username = shift;
     my $password = shift;
 
-    my $encoded_password_h = $self->schema()
-	->storage
-	->dbh()
-	->prepare("SELECT crypt('$password', gen_salt('bf'))");
-
-    $encoded_password_h->execute($password);
-
-    my ($encoded_password) = $encoded_password_h->fetchrow_array();
+    if ($username && $password) { 
+	my $user_h = $self->schema()
+	    ->storage
+	    ->dbh()
+	    ->prepare("SELECT dbuser_id FROM dbuser WHERE username=? and password=crypt(?, password)");
 	
-    print STDERR "ENCODED PASSWORD = $encoded_password\n";
+	$user_h->execute($username, $password);
 
-    if ($username) { 
-	
-	my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { username => { ilike => $username },  password => $encoded_password } );
-	
-	return $row;
+
+	if (my ($user_id) = $user_h->fetchrow_array()) { 
+	    my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { dbuser_id => $user_id } );
+	    
+	    return $row;
+	}
     }
     return undef;
 }
