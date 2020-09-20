@@ -13,3 +13,5 @@ cpanm -L ../local-lib/ Catalyst::Model::DBIC::Schema
 cpanm -L ../local-lib/ Catalyst::View::HTML::Mason
 cpanm -L ../local-lib/ Tie::UrlEncoder
 cpanm -L ../local-lib/ DBD::Pg
+cpanm -L ../local-lib/ Try::Tiny
+cpanm -L ../local-lib/ JSON::Any
