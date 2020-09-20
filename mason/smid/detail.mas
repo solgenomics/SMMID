@@ -70,7 +70,7 @@ $action => undef
       <div class="form-group">
 	<label class="col-sm-2 control-label">SMILES</label>
 	<span class="col-sm-10">
-	  <input id="smiles_string" size="50" disabled />
+	  <textarea id="smiles_string" rows="4" cols="50" disabled="disabled"></textarea>
 	</span>
       </div>
       <div class="form-group">
@@ -121,7 +121,7 @@ $action => undef
     <tr>
       <th>Author</th>
       <th>Method</th>
-      <th>Retention time</th>
+      <th>Retention time [min]</th>
       <th>Ionization mode</th>
       <th>Adducts detected</th>
       <th>Scan number</th>
@@ -136,15 +136,16 @@ $action => undef
 <button id="add_hplc_ms_button" disabled="true" class="btn btn-primary">Add HPLC-MS data</button>
 % }
 
-<h2>MS spectra</h2>
+<h2>MS/MS spectra</h2>
 
 <table id="smid_ms_spectra_table" class="display" style="width:100%">
   <thead>
     <tr>
       <th>Author</th>
       <th>Ionization mode</th>
-      <th>Collision energy</th>
-      <th>Spectrum</th>
+      <th>Collision energy [eV]</th>
+      <th>Adduct fragmented</th>
+      <th>MZ intensity</th>
       <th>Link</th>
       <th></th>
     </tr>
@@ -222,7 +223,12 @@ $action => undef
 	  </div>
 	  <div class="form-group">
 	    <label for="hplc_ms_ionization_mode">Ionization mode</label>
-	    <input type="input" class="form-control" id="hplc_ms_ionization_mode" placeholder="Ionization mode">
+	    <select id="hplc_ms_ionization_mode"> 
+	      <option>positive</option>
+	      <option>negative</option>
+	      </select>
+		    
+	    <!-- input type="input" class="form-control" id="hplc_ms_ionization_mode" placeholder="Ionization mode"> -->
 	  </div>
 	  <div class="form-group">
 	    <label for="hplc_ms_adducts_detected">Adducts detected</label>
@@ -267,25 +273,27 @@ $action => undef
 
 	  <div class="form-group">
 	    <label for="ms_spectrum_ionization_mode">Ionization mode</label>
-	    <input type="input" class="form-control" id="ms_spectrum_ionization_mode" placeholder="Ionization mode">
+	    <select id="ms_spectrum_ionization_mode"> 
+	      <option>positive</option>
+	      <option>negative</option>
+	      </select>
 	  </div>
 	  <div class="form-group">
-	    <label for="ms_spectrum_adduct_fragmented">Retention time</label>
-	    <input type="input" class="form-control" id="ms_spectrum_adduct_fragmented" placeholder="Adduct fragmented">
-	  </div>
-	  <div class="form-group">
-	    <label for="ms_spectrum_collision_energy">Collision energy</label>
+	    <label for="ms_spectrum_collision_energy">Collision energy [eV]</label>
 	    <input type="input" class="form-control" id="ms_spectrum_collision_energy" placeholder="Collision energy">
 	  </div>
 	  <div class="form-group">
+	    <label for="ms_spectrum_adduct_fragmented">Adducts fragmented</label>
+	    <input type="input" class="form-control" id="ms_spectrum_adduct_fragmented" placeholder="Adducts fragmented">
+	  </div>
+	  <div class="form-group">
 	    <label for="ms_spectrum_mz_intensity">M/Z intensity relative_intensity</label>
-	    <textarea cols="50" rows="10" type="input" class="form-control" id="ms_spectrum_mz_intensity" placeholder="M/Z intensity relative_intensity"></textarea>
+	    <textarea cols="50" rows="10" class="form-control" id="ms_spectrum_mz_intensity" placeholder="M/Z intensity relative_intensity"></textarea>
 	  </div>
 	  <div class="form-group">
 	    <label for="ms_spectrum_link">Link</label>
 	    <input type="input" class="form-control" id="ms_spectrum_link" placeholder="URL">
 	  </div>
-		  
 	</form>
       </div>
       <div class="modal-footer">

@@ -34,7 +34,7 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
 
     print STDERR "found rest/browse...\n";
 
-    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search();
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search( {}, { order_by => { -asc => 'smid_id' } } );
 
     my @data;
     while (my $r = $rs->next()) {
@@ -308,7 +308,7 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 	if ($experiment_type eq "ms_spectrum") {
 	    my $json = $row->data();
 	    my $hash = JSON::Any->decode($json);
-	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_energy}, $hash->{ms_spectrum_adduct_fragmented}, $hash->{ms_spectrum_mz_intensity}, $hash->{ms_specturm_link},  "X" ];
+	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, $hash->{ms_spectrum_mz_intensity}, $hash->{ms_spectrum_link},  "X" ];
 	}
     }
 
