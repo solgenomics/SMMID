@@ -8,7 +8,7 @@
 
 <a href="/smid/">Add a new SMID...</a><br />
 <div id="browse_smid_data_div">
-<cente>[loading...]</center>
+<center>[loading...]</center>
 </div>
 
 <script>

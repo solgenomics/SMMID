@@ -8,15 +8,18 @@
 	<table cellpadding="0"><tr style="margin-bottom:0px">
 	    <td>
 	      <a href="/" class="header_link">Home</a>
-	      
+
 	      <a href="/about" class="header_link">About</a>
-	      
+
 	      <a href="/browse" class="header_link">Browse</a>
-	      
+
+        <!-- Insterting a curator tab here. Don't know how to make it do anything yet. -->
+        <a href="/curator" class="header_link">Curator</a>
+
 	      <a href="/download" class="header_link">Download</a>
-	      
+
 	      <a href="/contact" class="header_link">Contact</a>
-	      
+
 	      <span id="login_button_html_div">Login</span>
 	    </td>
 	    <td>
@@ -30,8 +33,8 @@
 	    </td>
 	</tr></table>
   </td></tr></table>
-  
-  
+
+
   <div id="working_modal" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -45,7 +48,7 @@
     </div>
   </div>
 </div>
-  
+
   <div id="error_message_modal" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -62,8 +65,8 @@
   </div>
 </div>
 
-  
-  
+
+
 </div>
 
 <!-- end toolbar -->
