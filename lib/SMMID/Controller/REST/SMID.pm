@@ -34,7 +34,7 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
 
     print STDERR "found rest/browse...\n";
 
-    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search();
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search( {}, { order_by => { -asc => 'smid_id' } } );
 
     my @data;
     while (my $r = $rs->next()) {
@@ -315,9 +315,20 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
 
     while (my $dbxref = $rs->next()) {
 	print STDERR "Retrieved: ". $dbxref->dbxref_id()."...\n";
+
+	my $db_name = "";
+	my $display_url = "";
+	
+	if ($dbxref->db()) {
+	    $db_name = $dbxref->db->name();
+	    my $url = $dbxref->db->url();
+	    my $urlprefix = $dbxref->db->urlprefix();
+	    $display_url = join("",  $urlprefix, $url, $dbxref->accession());
+	}
+	    
 	my $delete_link = "<a href=\"javascript:delete_dbxref(".$dbxref->dbxref_id().")\" ><font color=\"red\">X</font></a>";
-	my $url = join("",  $dbxref->db->urlprefix(), $dbxref->db->url(), $dbxref->accession());
-	push @$data, [ $dbxref->db->name(), $dbxref->accession(), "<a href=\"$url\">$url</a>" , $delete_link ];
+
+	push @$data, [ $db_name, $dbxref->accession(), $display_url , $delete_link ];
     }
     $c->stash->{rest} = { data => $data };
 }
@@ -337,12 +348,12 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 	if ($experiment_type eq "hplc_ms") {
 	    my $json = $row->data();
 	    my $hash = JSON::Any->decode($json);
-	    push @data, [ $hash->{hplc_ms_method_type}, $hash->{hplc_ms_retention_time}, $hash->{hplc_ms_ionization_mode}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_scan_number}, "X" ];
+	    push @data, [ $hash->{hplc_ms_author}, $hash->{hplc_ms_method_type}, $hash->{hplc_ms_retention_time}, $hash->{hplc_ms_ionization_mode}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_scan_number}, $hash->{hplc_ms_link}, "X" ];
 	}
 	if ($experiment_type eq "ms_spectrum") {
 	    my $json = $row->data();
 	    my $hash = JSON::Any->decode($json);
-	    push @data, [ "?", $hash->{ms_spectrum_ionization_energy}, $hash->{ms_spectrum_adduct_fragmented}, $hash->{ms_spectrum_mz_intensity}, "X" ];
+	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, $hash->{ms_spectrum_mz_intensity}, $hash->{ms_spectrum_link},  "X" ];
 	}
     }
 
