@@ -12,6 +12,7 @@
     <title>SMID-DB</title>
     <& /site/google_analytics.mas &>
       <script type="text/javascript" src="/js/node_modules/jquery/dist/jquery.min.js"></script>
+      <script type="text/javascript" src="/js/node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
       <script type="text/javascript" src="/js/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
       <link rel="stylesheet" href="/js/node_modules/bootstrap/dist/css/bootstrap.css" />
       <link rel="stylesheet" href="/src/ttsite.css"  />

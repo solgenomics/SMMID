@@ -101,6 +101,8 @@ after 'setup_finalize' => sub {
 
     $self->config->{basepath} = $self->config->{home};
 
+    
+    
     # all files written by web server should be group-writable
     umask 000002;
 };

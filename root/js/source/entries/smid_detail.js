@@ -1,5 +1,5 @@
 
-function make_fields_editable() {
+function make_fields_editable(compound_id) {
 
     has_login().then( function(r) {
 	if (r.user !==null) {
@@ -17,6 +17,8 @@ function make_fields_editable() {
 		    event.preventDefault();
 		    edit_dbxref_info();	
 		});
+
+	    if (compound_id) { embed_compound_images(compound_id, 'medium', 'smid_structure_images'); }
 	    
 	    $('#add_new_smid_button').prop('disabled', false);
 	    
@@ -40,12 +42,6 @@ function make_fields_editable() {
 		edit_hplc_ms_data();
 	    });
 	    
-	    // $('#save_ms_spectrum_button').click( function(event) {
-	    // 	event.preventDefault();
-	    // 	store_ms_spectrum_data();
-	    // });
-	    
-	    
 	    $('#add_ms_spectrum_button').prop('disabled', false);
 
 	    $('#add_ms_spectrum_button').click( function(event) {
@@ -53,7 +49,6 @@ function make_fields_editable() {
 		edit_ms_spectrum();
 	    });
 	   
-	    
 	    $('#update_smid_button').click( function(event) {
 		event.preventDefault();
 		update_smid().then( function(r) {
@@ -65,8 +60,12 @@ function make_fields_editable() {
 			location.href="/smid/"+r.compound_id;
 		    }}, function(e) { alert('An error occurred.' + e.responseText) });
 	    });
+	    
+	    $('#smid_structure_upload_div').attr("visible", "true");
 
-
+	    $('#input_image_file_upload').fileupload( {
+		url : '/rest/image/upload'
+	    });
 	}
 	else {
 	    login_dialog();
@@ -170,7 +169,8 @@ function update_smid() {
 	    'iupac_name' : $('#iupac_name').val(),
 	    'organisms': $('#organisms').val(),
 	    'description': $('#description').val(),
-	    'synonyms': $('#synonyms').val()
+	    'synonyms': $('#synonyms').val(),
+	    //'input_image_file_upload' : $('input_image_file_upload').val(),
 
 	}
     });
@@ -224,6 +224,41 @@ function delete_dbxref(dbxref_id) {
 	});
     }
 }
+
+function delete_image(image_id, compound_id) {
+    var yes = confirm("Are you sure you want to delete the image with id "+image_id+"?");
+    if (yes) {
+	$.ajax( {
+	    url : '/rest/image/'+image_id+'/delete',
+	    success: function(r) {
+		if (r.error) {
+		    alert('Error: '+r.error);
+		}
+		else {
+		    embed_compound_images(compound_id, 'medium', 'smid_structure_images');
+		    alert("Image deleted.");
+		}
+	    },	
+	    error : function(r) { alert("an error occurred"); }
+	});
+    }
+}
+
+function embed_compound_images(compound_id, image_size, div_name) {
+
+    $.ajax( {
+	url : '/rest/smid/'+compound_id+'/images/'+image_size,
+	error: function(e) { alert('Image retrieve protocol error.'+e.responseText); },
+	success: function(r) {
+            if (r.error) { alert('Image retrieve error. '+r.error); }
+            else {
+		alert(r.html);
+		$('#'+div_name).html(r.html);
+            }
+	}
+    });
+}
+
 
 function store_hplc_ms_data() {
 
@@ -281,7 +316,10 @@ function populate_smid_data(compound_id) {
 		$('#description').val(r.data.description);
 		$('#synonyms').val(r.data.synonyms);
 		$('#modification_history').html('<font size="2">Created: '+r.data.create_date+' Last modified: '+r.data.last_modified_date+'</font>');
+		
+
 	    }
+
 	}
     });
     

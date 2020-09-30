@@ -316,6 +316,31 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 }
 
 
+sub compound_images :Chained('smid') PathPart('images') Args(1) {
+    my $self = shift;
+    my $c = shift;
+    my $size = shift;
+
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::CompoundImage")->search( { compound_id => $c->stash->{compound_id} });
+    
+    my @source_tags;
+    while (my $row = $rs->next()) {
+	my $image = SMMID::Image->new( { schema => $c->model("SMIDDB"), image_id => $row->image_id() });
+
+	my $delete_link = "";
+	if ($c->user()) {
+	    $delete_link = "<a href=\"javascript:delete_image(".$row->image_id().", ".$c->stash->{compound_id}.")\">X</a>";
+	}
+
+	
+	my $file = "medium";	
+	if ($size =~ m/thumbnail|small|medium|large/) { $file = $size.".png"; }
+	my $image_full_url =  "/".$c->config->{image_url}."/".$image->image_subpath()."/".$file;
+	push @source_tags, "<img src=\"$image_full_url\" />$delete_link";
+    }
+    print STDERR "returning images for compound ".$c->stash->{compound_id} ." with size $size.\n";
+    $c->stash->{rest} = { html => \@source_tags };
+}
 
 =head1 AUTHOR
 

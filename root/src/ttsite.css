@@ -60,7 +60,7 @@ h2 {
 
 
 .sitetitle { 
-    font-family: arial;
+    font-family: fira sans ultra;
     text-decoration: none;
     font-size: 28pt;
     font-weight: 1000;
@@ -109,4 +109,14 @@ input:disabled {
     background: white;
 }
 
+textarea {
+    color: darkblue;
+    background: lightgrey;
+}
+
+textarea:disabled {
+    border: none;
+    color: black;
+    background: white;
+}
 

@@ -59,6 +59,20 @@ __PACKAGE__->table("image");
   is_foreign_key: 1
   is_nullable: 1
 
+
+=head2 md5sum
+
+
+=head2 image_taken_timestamp
+
+
+
+=head2 copyright
+
+  data_type: 'Str',
+  is_foreign_key: 0
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -72,13 +86,33 @@ __PACKAGE__->add_columns(
   "image_location",
   { data_type => "varchar", is_nullable => 1, size => 200 },
   "name",
-  { data_type => "varchar", is_nullable => 1, size => 100 },
+    { data_type => "varchar", is_nullable => 1, size => 100 },
+    "file_ext",
+    { date_type => "varchar", size => 20, is_nullable => 1},
   "description",
   { data_type => "text", is_nullable => 1 },
   "type",
   { data_type => "varchar", is_nullable => 1, size => 20 },
   "dbuser_id",
-  { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
+    { data_type => "bigint", is_foreign_key => 1, is_nullable => 1 },
+
+    "md5sum",
+    {data_type => "varchar", size => 100, is_nullable => 0},
+    "original_filename",
+    { date_type => "varchar", size => 255, is_nullable => 0},
+    "image_taken_timestamp",
+    { data_type => "varchar", size=> 100,  is_nullable => 0 },
+
+    "copyright",
+    { data_type => "text", is_nullable => 1 },
+    "dbuser_id",
+    { data_type => "Int", is_nullable => 0 },
+    "create_date",
+    { data_type => "Str", is_nullable => 0 },
+    "modified_date",
+    { data_type => "Str", is_nullable => 0},
+    "obsolete",
+    { data_type => 'boolean', is_nullable => 0 }
 );
 
 =head1 PRIMARY KEY

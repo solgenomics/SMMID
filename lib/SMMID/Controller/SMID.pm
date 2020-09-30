@@ -42,5 +42,20 @@ sub edit :Chained('smid') PathPart('edit') Args(0) {
     $c->stash->{template} = '/smid/detail.mas';
 }
 
+sub add_image :Chained('smid') PathPart('image') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::CompoundImage")->search( { compound_id => $c->stash->{compound_id} });
+
+    my @image_ids;
+    while (my $row = $rs->next()) {
+	push @image_ids, $row->image_id();
+    }
+    
+    $c->stash->{image_ids} = \@image_ids;
+    $c->stash->{template} = '/image/index.mas';
+}
+
 
 'SMMID::Controller::SMID';

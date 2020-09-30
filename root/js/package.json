@@ -31,10 +31,13 @@
     "webpack-command": "^0.4.2"
   },
   "dependencies": {
+    "blueimp-file-upload": "^10.31.0",
     "bootstrap": "^4.5.2",
     "d3": "^5.9.2",
     "datatables": "^1.10.18",
-    "jquery": "^3.5.1"
+    "jquery": "^3.5.1",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-dist": "^1.12.1"
   },
   "engines": {
     "node": ">=10.6.0",
