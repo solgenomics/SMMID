@@ -1,0 +1,43 @@
+
+<%args>
+@image_ids
+</%args>
+
+
+<& /page/page_title.mas, title => "Image <span id=\"image_title\">---</span>" &>
+
+<script src="/js/source/entries/image_detail.js"></script>
+
+<div id="image_div">[Loading...]</div>
+
+
+<label for="input-res-1">File Gallery</label>
+<div class="file-loading">
+  <input id="input_image_file_upload" name="input_image_file_upload" type="file" multiple>
+</div>
+
+<script>
+
+  init_images();
+
+  $(document).ready(function() {
+  //  $("#input_image_file_upload").fileinput({
+  //    uploadUrl: "/rest/image/upload",
+  //    enableResumableUpload: true,
+  //    initialPreviewAsData: true,
+  //    maxFileCount: 5,
+  //    theme: 'fas',
+  //    //deleteUrl: '/site/file-delete',
+  //    fileActionSettings: {
+  //    showZoom: function(config) {
+  //    if (config.type === 'pdf' || config.type === 'image') {
+  //       return true;
+  //    }
+  //    return false;
+  //   }
+  //  }
+  //  });
+  });
+
+  
+</script>

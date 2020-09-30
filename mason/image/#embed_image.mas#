@@ -1,0 +1,30 @@
+
+<%args>
+$image_id
+$size => "medium"
+</%args>
+
+<div id="embed_image_div"></div>
+
+
+<script>
+
+$(document).ready( {
+
+  embed_compound_images(<% $compound_id %>, <% $size %>);
+
+  function embed_image(compound_id, size) {
+    $.ajax( {
+      url : '/rest/compound/'+compound_id'/images/'+size,
+      error: function(e) { alert('An error occurred'); },
+      success: function(r) {
+        if (r.error) { alert(r.error); }
+        else { 
+          $('#embed_image_div').html(r.html);
+        }
+      }
+    });
+  }
+});
+
+</script>
