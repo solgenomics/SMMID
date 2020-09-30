@@ -196,8 +196,8 @@ $action => undef
 	    <span id="db_id_select_div">[Database Select]</span>
 	  </div>
 	  <div class="form-group">
-	    <label for="accession">Accession</label>
-	    <input type="input" class="form-control" id="accession" placeholder="Accession">
+	    <label for="accession">Identifier</label>
+	    <input type="input" class="form-control" id="accession" placeholder="Identifier">
 	  </div>
 	  <div class="form-group">
 	    <label for="description">Description</label>
