@@ -252,7 +252,6 @@ function embed_compound_images(compound_id, image_size, div_name) {
 	success: function(r) {
             if (r.error) { alert('Image retrieve error. '+r.error); }
             else {
-		alert(r.html);
 		$('#'+div_name).html(r.html);
             }
 	}

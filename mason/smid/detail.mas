@@ -330,8 +330,6 @@ $action => undef
 
   var compound_id = <% $compound_id %>;
 
-  alert("compound id in mas: "+compound_id);
-  
   var action = '<% $action %>';
 
   if (compound_id === 0) { 
