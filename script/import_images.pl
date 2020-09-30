@@ -7,12 +7,12 @@ use File::Basename;
 use SMMID::Image;
 use SMIDDB;
 
-our ($opt_H, $opt_D);
-getopts('H:D:');
+our ($opt_H, $opt_D, $opt_p);
+getopts('H:D:p:');
 
 my $image_source_dir = shift;
 
-my $schema = SMIDDB->connect("dbi:Pg:dbname=$opt_D;host=$opt_H;user=postgres;password=postgres");
+my $schema = SMIDDB->connect("dbi:Pg:dbname=$opt_D;host=$opt_H;user=postgres;password=$opt_p");
 
 my @images = glob("$image_source_dir/*");
 
