@@ -22,9 +22,10 @@ body {
 }
 
 .footer {
+    font: fira sans;
     background-color: white;
     text-align: left;
-    font-size: 9pt;
+    font-size: 11pt;
     color: lightblue;
     border-top: 1px solid lightblue;
     width: 100%;
@@ -74,7 +75,7 @@ h2 {
 }
 
 .header_link:link {
-    font-family: fira sans;
+    font-family: fira sans ultra;
     font-size:14pt;
     font-weight: bold;
     color: lightblue;
