@@ -6,6 +6,12 @@
   url('/src/fonts/firasans-regular-webfont.woff') format('woff')
 }
 
+@font-face {
+  font-family: 'fira sans ultra';
+  src: url('/src/fonts/firasans-ultra-webfont.woff2') format('woff2'),
+  url('/src/fonts/firasans-ultra-webfont.woff') format('woff')
+}
+
 
 html {
     height: 100%;
