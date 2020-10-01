@@ -17,9 +17,32 @@ sub smid :Chained('/') PathPart('smid') CaptureArgs(1) {
     $c->stash->{compound_id} = shift;
 }
 
+
 sub detail :Chained('smid') PathPart('') Args(0) {
     my $self = shift;
     my $c = shift;
+
+    $c->stash->{template} = '/smid/detail.mas';
+}
+
+# compatibility with old site
+sub smid_old : Chained('/') PathPart('detail') Args(1) { 
+    my $self = shift;
+    my $c = shift;
+    my $smid_id = shift;
+
+    my $row = $c->model('SMIDDB')->resultset("SMIDDB::Result::Compound")->find( { smid_id => $smid_id });
+
+    my $compound_id;
+    if ($row) {
+	$compound_id = $row->compound_id();
+    }
+    else {
+	$c->stash->{template} = '/message.mas';
+	$c->stash->{message} = "The specified SMID does not exist.";
+	return;
+    }
+    $c->stash->{compound_id} = $compound_id;
 
     $c->stash->{template} = '/smid/detail.mas';
 }
