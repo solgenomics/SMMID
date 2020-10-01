@@ -16,6 +16,7 @@ function make_fields_editable() {
 		function(event) {
 		    event.preventDefault();
 		    edit_dbxref_info();
+        
 		});
 
 	    $('#add_new_smid_button').prop('disabled', false);
@@ -240,7 +241,7 @@ function store_hplc_ms_data() {
 	    'hplc_ms_adducts_detected' : $('#hplc_ms_adducts_detected').val(),
 	    'hplc_ms_scan_number' : $('#hplc_ms_scan_number').val(),
 	    'hplc_ms_link' : $('#hplc_ms_link').val()
-	    
+
 	}
     });
 }

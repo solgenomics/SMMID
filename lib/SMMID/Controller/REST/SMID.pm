@@ -54,7 +54,7 @@ sub curator : Chained('rest') PathPart('curator') Args(0) {
 
   my @data;
   while (my $r = $rs->next()) {
-push @data, [ $r->compound_id(), $r->smid_id(), $r->formula(), $r->smiles()];
+push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), "<button id=\"curate_smid\" disabled=\"false\" class=\"btn btn-primary\">Approve and Curate</button>"];
   }
 
   $c->stash->{rest} = { data => \@data };
@@ -70,6 +70,9 @@ sub curator_format :Chained('rest') PathPart('curator') Args(1) {
     $self->curator($c);
 
     if ($format eq "html") {
+
+      print STDERR "found the curator html...\n";
+
 	     my $html = "<table border=\"1\" width=\"100%\" cellpadding=\"10\" >\n
 	      <thead><th>SMID ID</th><th>Formula</th><th>SMILES</th><th><a width=\"50\"></a>Status</th></thead>\n";
 
@@ -82,8 +85,10 @@ sub curator_format :Chained('rest') PathPart('curator') Args(1) {
     }
 
     if ($format eq "datatable") {
-	#...
-      #my $datatable = @{$c->stash->{rest}->{data}};
+	    #...
+      print STDERR "found the curator data...\n";
+
+      my @data = $c->stash->{rest}->{data};
     }
 
 
@@ -318,14 +323,14 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
 
 	my $db_name = "";
 	my $display_url = "";
-	
+
 	if ($dbxref->db()) {
 	    $db_name = $dbxref->db->name();
 	    my $url = $dbxref->db->url();
 	    my $urlprefix = $dbxref->db->urlprefix();
 	    $display_url = join("",  $urlprefix, $url, $dbxref->accession());
 	}
-	    
+
 	my $delete_link = "<a href=\"javascript:delete_dbxref(".$dbxref->dbxref_id().")\" ><font color=\"red\">X</font></a>";
 
 	push @$data, [ $db_name, $dbxref->accession(), $display_url , $delete_link ];
