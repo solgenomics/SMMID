@@ -5,7 +5,7 @@
 
 
 <div>
-<h1>Welcome to the <i>C. elegans</i> Small Molecule Identifier Database (SMID DB)</h1>
+<h1>Welcome to the <i>C. elegans</i> Small Molecule Identifier Database<br />(SMID DB)</h1>
 <br />
 
 
@@ -13,6 +13,8 @@
 in metabolomic and genomic applications.     <br /><br />
 
 
+<table>
+  <tr><td>
 <a href="/browse"><b>Browse SMIDs</b></a><br /><br />
 
 <b>Search SMIDs <br/></b>(example: ascr#3)<br />
@@ -24,15 +26,19 @@ in metabolomic and genomic applications.     <br /><br />
 <a href="/howtocite">How to cite SMID DB</a><br /><br />
 <a href="/contact">Contact us</a><br /><br />
 
+    </td><td>
+<a href="//smid-db.org/detail/ascr%233/"><img src="/static/images/ascr3smiddb.png"></a>
+
+</td></tr></table>
+      
 
 <br />
-<b>SMID-DB.org is managed by <a href="https://btiscience.org/schroeder/Members.html">Tyler Schwertfeger</a>. Please report any errors to <b><a href="mailto:smid-db@cornell.edu">smid-db@cornell.edu</a></b>. <br/><br/><br/>
+SMID-DB.org is managed by <a href="https://btiscience.org/schroeder/Members.html">Tyler Schwertfeger</a>. Please report any errors to <b><a href="mailto:smid-db@cornell.edu">smid-db@cornell.edu</a>. <br/><br/><br/>
 
 </div>
 <div id="content2">
 
 
-<a href="//smid-db.org/detail/ascr%233/"><img src="/static/images/ascr3smiddb.png"></a>
 
 
 
