@@ -1,4 +1,12 @@
 
+
+@font-face {
+  font-family: 'fira sans';
+  src: url('/src/fonts/firasans-regular-webfont.woff2') format('woff2'),
+  url('/src/fonts/firasans-regular-webfont.woff') format('woff')
+}
+
+
 html {
     height: 100%;
 }
