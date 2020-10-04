@@ -24,80 +24,173 @@ $action => undef
 
 <!-- SMID input/output form -->
 
-      <div class="form-group">
-	<label class="col-sm-2 control-label">Structure</label>
-	<span class="col-sm-10" id="list_div" name="list_div">
-	  <span id="smid_structure_images" size="50">[no structure available]</span>
-	</span>
-      </div>
-
-% if ($action eq "edit") { 
-      <label for="input_image_file_upload" class="col-sm-2 control-label">Upload image</label>
-      <span class="file-loading col-sm-10" id="list_div" name="list_div">
-	<form>
-	  <input type="hidden" name="compound_id" value="<% $compound_id %>" />
-	  <input id="input_image_file_upload" name="input_image_file_upload" data-url="/rest/upload/image" method="POST" type="file"><button id="start_upload_button" name="start_upload_button"  class="btn btn-small">Upload</button>
-	  </form>
-      </span>
+    <form name="new_accessions_form" id="new_accessions_form">
+      <center>
+     <table width="90%">
+       <tr><td width="200">
+	   <label class="align-top col-sm-2 control-label" for="smid_structure_images">Structure</label>
+	 </td><td>
+	   <span id="smid_structure_images" size="50">[no structure available]</span>
+       </td></tr>
+       
+% if ($action eq "edit") {
+       <tr>
+	 <td>
+	    <label for="input_image_file_upload" class="col-sm-2 control-label">Upload image</label>
+	    <span class="file-loading col-sm-10" id="list_div" name="list_div">
+	 </td>
+	 <td>
+	   <form>
+	     <input type="hidden" name="compound_id" value="<% $compound_id %>" />
+	     <input id="input_image_file_upload" name="input_image_file_upload" data-url="/rest/upload/image" method="POST" type="file"><button id="start_upload_button" name="start_upload_button"  class="btn btn-small">Upload</button>
+	   </form>
+	 </td>
+       </tr>
+	  
 % }
+       <tr>
+	 <td>
+	    <label class="col-sm-2 control-label">DB ID: <span id="compound_id"><% $compound_id %></span> </label>
+	 </td><td>
+	   <span id="modification_history">&nbsp;</span>
+	 <td>
+       </tr>
 
-    <form class="form-horizontal" role="form" name="new_accessions_form" id="new_accessions_form">
-      <div class="form-group">
-	<label class="col-sm-2 control-label">DB ID: <span id="compound_id"><% $compound_id %></span> </label>
-	<span class="col-sm-10" id="list_div" name="list_div">
-	  <span id="modification_history">&nbsp;</span>
-	</span>
-      </div>
-      <div class="form-group">
-	<label class="col-sm-2 control-label">SMID ID</label>
-	<span class="col-sm-10" id="list_div" name="list_div">
-	  <input id="smid_id" size="50" disabled />
-	</span>
-      </div>
-      <div class="form-group">
-	<label class="col-sm-2 control-label">IUPAC name</label>
-	<span class="col-sm-10" id="list_div" name="list_div">
-	  <textarea id="iupac_name" size="100" cols="80" disabled></textarea>
-	</span>
-      </div>
-            <div class="form-group">
-	<label class="col-sm-2 control-label">Formula</label>
-	<span class="col-sm-10" id="list_div" name="list_div">
-	  <textarea id="formula" size="100" cols="80" disabled></textarea>
-	</span>
-      </div>
+       <tr>
+	 <td colspan="2">
+	   <hr />
+	 </td>
+       </tr>
+       <tr>
+	 <td>
+	   <label>SMID ID</label>
+	 </td>
+	 <td>
+	   <input id="smid_id" size="60" disabled />
+	 </td>
+       </tr>
 
-      <div class="form-group">
-	<label class="col-sm-2 control-label">Synonyms</label>
-	<span class="col-sm-10" id="list_div" name="list_div">
-	  <input id="synonyms" size="50" disabled />
-	</span>
-      </div>
-      <div class="form-group">
-	<label class="col-sm-2 control-label">Description</label>
-	<span class="col-sm-10" id="list_div" name="list_div">
-	  <textarea id="description" size="100" disabled cols="80"></textarea>
-	</span>
-      </div>
-      <div class="form-group">
-	<label class="col-sm-2 control-label">Organisms</label>
-	<span class="col-sm-10" id="list_div" name="list_div">
-	  <input id="organisms" size="50" disabled  />
-	</span>
-      </div>
-      <div class="form-group">
-	<label class="col-sm-2 control-label">SMILES</label>
-	<span class="col-sm-10">
-	  <textarea id="smiles_string" rows="4" cols="50" disabled="disabled"></textarea>
-	</span>
-      </div>
-      <div class="form-group">
-	<label class="col-sm-2 control-label">Curation status</label>
-	<span class="col-sm-10" id="list_div" name="list_div">
-	  <input id="curation_status" size="50" disabled />
-	</span>
-      </div>
+       <tr>
+	 <td colspan="2">
+	   <hr />
+	 </td>
+       </tr>
+
+       <tr>
+	 <td>
+	   <label for="iupac_name">IUPAC name</label>
+	 </td>
+	 <td style="word-wrap: break-word">
+	   <span id="iupac_name_static_div"></span>
+	   <span id="iupac_name_input_div">
+	     <textarea id="iupac_name" cols="60" rows="4" disabled></textarea>
+	   </span>
+	 </td>
+       </tr>
+
+       <tr>
+	 <td colspan="2">
+	   <hr />
+	 </td>
+       </tr>
+
+       <tr>
+	 <td>
+	   <label for="formula">Formula</label>
+	 </td>
+	 <td>
+	   <span id="formula_static_div"></span>
+	   <span id="formula_input_div">
+	     <textarea id="formula" cols="60" rows="4" disabled></textarea>
+	   </span>
+	 </td>
+       </tr>
+
+       <tr>
+	 <td colspan="2">
+	   <hr />
+	 </td>
+       </tr>
+	  
+       <tr>
+	 <td>
+	   <label>Synonyms</label>
+	 </td>
+	 <td>
+	   <input id="synonyms" size="60" disabled />
+	 </td>
+       </tr>
+
+       <tr>
+	 <td colspan="2">
+	   <hr />
+	 </td>
+       </tr>
+
+       <tr>
+	 <td>
+	   <label>Description</label>
+	 </td>
+	 <td style="word-wrap: break-word">
+	   <span id="description_static_div">
+	     <span id="description_static_content_div">[??]</span>
+	   </span>
+	   <span id="description_input_div">
+	     <textarea id="description" cols="60" rows="3">[?]</textarea>
+	   </span>
+	 </td>
+       </tr>
+
+       <tr>
+	 <td colspan="2">
+	   <hr />
+	 </td>
+       </tr>
+       
+       <tr>
+	 <td>
+	    <label>Organisms</label>
+	  </td>
+	  <td>
+	    <span id="organisms_static_div" visibility="visible"></span>
+	    <span id="organisms_input_div" visibility="hidden">
+	      <input id="organisms" size="60" disabled  />
+	    </span>
+	  </td>
+
+       <tr>
+	 <td colspan="2">
+	   <hr />
+	 </td>
+       </tr>
+       
+       <tr>
+	 <td>
+	    <label>SMILES</label>
+	 </td>
+	 <td>
+	   <textarea id="smiles_string" rows="3" cols="60" disabled="disabled"></textarea>
+	 </td>
+       </tr>
+       
+       <tr>
+	 <td colspan="2">
+	   <hr />
+	 </td>
+       </tr>
+
+       <tr>
+	 <td>
+	   <label>Curation status</label>
+	 </td>
+	 <td>
+	   <input id="curation_status" size="20" disabled />
+	 </td>
+       </tr>
+     </table>
+     </center>
     </form>
+    
     
 % if (!$compound_id) { 
     <button id="add_new_smid_button" class="btn btn-primary" disabled="true" >Add new SMID</button>

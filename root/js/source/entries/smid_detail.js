@@ -6,11 +6,19 @@ function make_fields_editable(compound_id) {
 	    $('#smid_id').prop('disabled', false);
 	    $('#smiles_string').prop('disabled', false);
 	    $('#curation_status').val('unverified');
+	    $('#formula_input_div').show();
+	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
 	    $('#organisms').prop('disabled', false);
+	    $('#organisms_static_div').hide();
+	    $('#organisms_input_div').css('visibility', 'visible');
+	    $('#iupac_name_static_div').hide();
+	    $('#iupac_name_input_div').show();
 	    $('#iupac_name').prop('disabled', false);
 	    $('#add_dbxref_button').prop('disabled', false);
 	    $('#description').prop('disabled', false);
+	    $('#description_input_div').show();
+	    $('#description_static_div').hide();
 	    $('#synonyms').prop('disabled', false);
 	    $('#add_dbxref_button').click(
 		function(event) {
@@ -307,12 +315,32 @@ function populate_smid_data(compound_id) {
 	    else {
 		$('#smid_id').val(r.data.smid_id);
 		$('#smiles_string').val(r.data.smiles_string);
+
+		$('#organisms_static_div').css('visibility', 'visible');
+		$('#organisms_static_div').html(r.data.organisms);
 		$('#organisms').val(r.data.organisms);
+		$('#organisms_input_div').css('visibility', 'hidden');
+
 		$('#curation_status').val(r.data.curation_status);
+
+		$('#formula_static_div').css('visibility', 'visible');
+		$('#formula_static_div').html(r.data.formula);
+		$('#formula_input_div').hide();
 		$('#formula').val(r.data.formula);
+
+		$('#iupac_name_static_div').show();
+		$('#iupac_name_static_div').html(r.data.iupac_name);
 		$('#iupac_name').val(r.data.iupac_name);
+		$('#iupac_name_input_div').hide();
+		
+		
 		$('#smid_title').html(r.data.smid_id);
-		$('#description').val(r.data.description);
+
+		$('#description_static_div').show();
+		$('#description_static_content_div').html(r.data.description);
+		$('#description_input_div').hide();
+		$('#description').html(r.data.description);
+		
 		$('#synonyms').val(r.data.synonyms);
 		$('#modification_history').html('<font size="2">Created: '+r.data.create_date+' Last modified: '+r.data.last_modified_date+'</font>');
 		

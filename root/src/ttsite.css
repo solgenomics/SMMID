@@ -19,12 +19,12 @@ html {
 
 body { 
     background-color: white;
-    font-family: arial;
+    font-family: fira sans;
     color: dark grey;
     margin: 10px;
     padding: 10px;
     height: 100%;
-    font-face: arial;
+    font-face: fira sans;
 }
 
 .header {
@@ -89,7 +89,7 @@ h2 {
 }
 
 .header_link:link {
-    font-family: fira sans ultra;
+    font-family: fira sans;
     font-size:14pt;
     font-weight: bold;
     color: lightblue;
@@ -122,6 +122,7 @@ input:disabled {
     border: none;
     color: black;
     background: white;
+    font-weight: bold;
 }
 
 textarea {
@@ -133,5 +134,42 @@ textarea:disabled {
     border: none;
     color: black;
     background: white;
+    font-weight: bold;
 }
 
+hr {
+    background-color: lightblue;
+}
+
+.css-grid-table,
+.css-grid-table-header,
+.css-grid-table-body {
+display: grid;
+}
+
+.css-grid-table {
+grid-template-rows: 24px 72px;
+width: 80%;
+}
+
+.css-grid-table-header,
+.css-grid-table-body {
+grid-template-columns: auto auto minmax(150px, 25%);
+line-height: 24px; 
+}
+
+.css-grid-table-header {
+grid-column-gap: 2px;
+grid-template-rows: auto;
+}
+
+.css-grid-table-body {
+//    grid-template-rows: auto auto;
+    background-color:rgb(100,0,0);
+}
+
+.css-grid-table-header div {
+text-align: center;
+font-weight: bold;
+background-color: rgb(191, 191, 191);
+}
