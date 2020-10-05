@@ -70,6 +70,17 @@ sub browse_format :Chained('rest') PathPart('browse') Args(1) {
 
 }
 
+sub clean {
+    my $self = shift;
+    my $str = shift;
+
+    # remove script tags
+    $str =~ s/\<script\>//gi;
+    $str =~ s/\<\/script\>//gi;
+
+    return $str;
+}
+    
 sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $self  = shift;
     my $c = shift;
@@ -81,16 +92,19 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 
     my $user_id = $c->user()->get_object()->dbuser_id();
     
-    my $smid_id = $c->req->param("smid_id");
-    my $iupac_name = $c->req->param("iupac_name");
+    my $smid_id = $self->clean($c->req->param("smid_id"));
+    my $iupac_name = $self->clean($c->req->param("iupac_name"));
 
     print STDERR "IUPAC name = $iupac_name\n";
-    my $smiles_string = $c->req->param("smiles_string");
-    my $formula = $c->req->param("formula");
-    my $organisms = $c->req->param("organisms");
-    my $description = $c->req->param("description");
-    my $synonyms = $c->req->param("synonyms");
-    my $curation_status = $c->req->param("curation_status");
+    my $smiles_string = $self->clean($c->req->param("smiles_string"));
+
+    print STDERR "SMILES = $smiles_string\n";
+    
+    my $formula = $self->clean($c->req->param("formula"));
+    my $organisms = $self->clean($c->req->param("organisms"));
+    my $description = $self->clean($c->req->param("description"));
+    my $synonyms = $self->clean($c->req->param("synonyms"));
+    my $curation_status = $self->clean($c->req->param("curation_status"));
 
     my $errors = "";
     if (!$smid_id) { $errors .= "Need smid id. "; }
@@ -172,14 +186,14 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	return;
     }
     
-    my $smid_id = $c->req->param("smid_id");
-    my $smiles_string = $c->req->param("smiles_string");
-    my $formula = $c->req->param("formula");
-    my $organisms = $c->req->param("organisms");
-    my $iupac_name = $c->req->param("iupac_name");
-    my $curation_status = $c->req->param("curation_status");
-    my $synonyms = $c->req->param("synonyms");
-    my $description = $c->req->param("description");
+    my $smid_id = $self->clean($c->req->param("smid_id"));
+    my $smiles_string = $self->clean($c->req->param("smiles_string"));
+    my $formula = $self->clean($c->req->param("formula"));
+    my $organisms = $self->clean($c->req->param("organisms"));
+    my $iupac_name = $self->clean($c->req->param("iupac_name"));
+    my $curation_status = $self->clean($c->req->param("curation_status"));
+    my $synonyms = $self->clean($c->req->param("synonyms"));
+    my $description = $self->clean($c->req->param("description"));
 
     my $errors = "";
     if (!$compound_id) {  $errors .= "Need compound id. "; }
