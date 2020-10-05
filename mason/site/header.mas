@@ -16,9 +16,9 @@
       <script type="text/javascript" src="/js/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
       <link rel="stylesheet" href="/js/node_modules/bootstrap/dist/css/bootstrap.css" />
       <link rel="stylesheet" href="/src/ttsite.css"  />
-      <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+      <!-- link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css?family=Fira+Sans+Ultra" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css?family=Fira+Bold" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css?family=Fira+Bold" rel="stylesheet" -->
       
     <& /site/login_dialog.mas &>
   </head>
