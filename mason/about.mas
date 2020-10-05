@@ -74,14 +74,19 @@ class of compounds.
 
  </p></div> </ul><div id="content2"> <br/>
 
-<img src="/static/structures/ascr%231.png" /> <br/>
+  <!-- & /image/embed_image.mas, image_id => ?, size => "medium" &>
+<img src="/static/structures/ascr%231.png" /> <br/ -->
 </div> <div id="content1"><ul>
 
 <li><a href="//www.smmid.org/detail/ascr%234/"<b>ascr#4</b></a>:"nematone-1" or "5R-(3'-O-beta-D-glucosyl-tetrahydro-3'R,5'R-dihydroxy-6'Smethyl-2H-pyran-2'R-yloxy)-2-hexanone" </li>
 
  </div> </ul><div id="content2"> <br/>
 
-<img src="/static/structures/ascr%234.png" /> <br/>
+  <div id="image_example1"></div>
+  
+  <& /image/embed_image.mas, image_id => 510, size => "small", div=>"image_example1"  &>
+
+<!-- img src="/static/structures/ascr%234.png" /> <br/ -->
 </div> <div id="content3">
 
 <br/>Similarly, steroids called <b><i>dafachronic acids</b></i> that regulate <i>C. elegans</i> development have been assigned the four-letter SMID "<b>dafa</b>":<br/>
@@ -90,14 +95,20 @@ class of compounds.
 
  </div> </ul><div id="content2"> <br/>
 
-<img src="/static/structures/dafa%231.png" /> <br/>
+  <div id="image_example2"></div>
+ <& /image/embed_image.mas, image_id => 561, size => "small", div=>"image_example2"  &>
+  
+<!-- img src="/static/structures/dafa%231.png" /> <br/ -->
 </div> <div id="content1"><ul>
 
 <li><a href="//www.smmid.org/detail/dafa%232/"<b>dafa#2</b></a>:("delta7-dafachronic acid" or "3-keto-7,(5a)-cholestenoic acid") </li>
 
  </div></ul> <div id="content2"> <br/>
 
-<img src="/static/structures/dafa%232.png" /> <br/>
+   <div id="image_example3"></div>
+ <& /image/embed_image.mas, image_id => 562, size => "small", div=>"image_example3"  &>
+
+<!-- img src="/static/structures/dafa%232.png" /> <br/ -->
 </div> <div id="content3">
 
 
