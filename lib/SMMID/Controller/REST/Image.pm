@@ -1,7 +1,7 @@
 
 =head1 NAME
 
-    SMMID::Controller::AJAX::Image - image ajax requests
+    SMMID::Controller::REST::Image - image ajax requests
 
 =head1 DESCRIPTION
 
@@ -60,21 +60,12 @@ sub basic_rest_image_POST {
     $c->stash->{image_id} = shift;
 
     $c->stash->{image} = SMMID::Image->new({ schema => $c->model("SMIDDB"), image_id => $c->stash->{image_id} });
-}
-
-# endpoint /rest/image/<image_id>
-#    
-sub image_info :Chained('basic_rest_image') PathPart('') Args(0) ActionClass('REST') {}
-
-sub image_info_GET { 
-    my $self = shift;
-    my $c = shift;
-
+    
     if (! $c->stash->{image}->image_id()) {
 	$c->stash->{rest} = { error => 'The specified image does not exist.' };
 	return;
     }
-
+    
     my $image = $c->stash->{image};
     my $dir = $c->config->{image_url}."/".$image->image_subpath();
     
@@ -89,8 +80,21 @@ sub image_info_GET {
 	dbuser_id => $image->dbuser_id(),
         md5sum => $image->md5sum(),	    
     };
+
+    $c->stash->{response} = $response;
+    print STDERR "END basic_rest_image\n";
+}
+
+# endpoint /rest/image/<image_id>
+#    
+sub image_info :Chained('basic_rest_image') PathPart('') Args(0) ActionClass('REST') {}
+
+sub image_info_GET { 
+    my $self = shift;
+    my $c = shift;
+
     
-    $c->stash->{rest} = $response;
+    $c->stash->{rest} = $c->stash->{response};
 }
 
 sub source_tag {
@@ -195,7 +199,7 @@ sub image_metadata_update_POST {
 #         my @cvterms = $image->get_cvterms();
 #         # Process cvterms
 #         my @cvterm_names;
-#         foreach (@cvterms) {
+#         foreach1 (@cvterms) {
 #             if ($_->name) {
 #                 push(@cvterm_names, $_->name);
 #             }
@@ -434,6 +438,17 @@ sub _get_extension {
         return $mimetype;
     }
 }
+
+
+sub image_tag : Chained('basic_rest_image') PathPart('img') Args(1) {
+    my $self = shift;
+    my $c = shift;
+    my $size = shift;
+
+    print STDERR "Using size $size...\n";
+    $c->stash->{rest} = { tag => $c->stash->{response}->{$size} };
+}
+
 
 sub delete_image :Chained('basic_rest_image') PathPart('delete') Args(0) {
     my $self = shift;
