@@ -12,7 +12,7 @@ $action => undef
 
 % if ($compound_id) {
 %  if ($action eq "edit") {
-<& /page/page_title.mas, title=>"Edit <span id=\"smid_title\">---</span> " &>
+<& /page/page_title.mas, title=>"Edit <span id=\"smid_title\">---</span> <font size=\"3\">[<a href=\"/smid/$compound_id\">Cancel</a>]</font>" &>
 % }
 % else { 
   <& /page/page_title.mas, title=>"Details for <span id=\"smid_title\">---</span> <font size=\"3\">[<a href=\"/smid/$compound_id/edit\">Edit</a>]</font>" &>
@@ -28,7 +28,7 @@ $action => undef
       <center>
      <table width="90%">
        <tr><td width="200">
-	   <label class="align-top col-sm-2 control-label" for="smid_structure_images">Structure</label>
+	   <label for="smid_structure_images">Structure</label>
 	 </td><td>
 	   <span id="smid_structure_images" size="50">[no structure available]</span>
        </td></tr>
@@ -50,7 +50,7 @@ $action => undef
 % }
        <tr>
 	 <td>
-	    <label class="col-sm-2 control-label">DB ID: <span id="compound_id"><% $compound_id %></span> </label>
+	    <label> <font size="2">DB Info <span id="compound_id"><% $compound_id %></span></font></label>
 	 </td><td>
 	   <span id="modification_history">&nbsp;</span>
 	 <td>
@@ -256,7 +256,7 @@ $action => undef
       <th>Ionization mode</th>
       <th>Collision energy [eV]</th>
       <th>Adduct fragmented</th>
-      <th>MZ intensity</th>
+      <th>MS/MS spectral data</th>
       <th>Link</th>
       <th></th>
     </tr>

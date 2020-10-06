@@ -21,11 +21,12 @@ $data
 
   var data = '<% $data %>';
 
-  alert(data);
-
   var data_object = JSON.parse(data);
   
   $('#result_data_table').DataTable( {
+    'language' : {
+      'search' : 'Filter results'
+    },
     'data' : data_object
   });
 

@@ -14,8 +14,9 @@
     SMID-DB is hosted at the <a href="https://btiscience.org">Boyce Thompson Institute</a>.
   </div>
 
-
-  <a href="https://btiscience.org/"><img src="/static/images/boyce-thompson-institute-logo.jpg" width="120"/></a><br />
+  <div style="position:absolute; right:30px; margin-top: -40px; border: 0px;">
+    <a href="https://btiscience.org/" target="_new"><img src="/static/images/boyce-thompson-institute-logo.jpg" width="120"/></a><br />
+    </div>
   
 
 </div>

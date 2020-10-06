@@ -333,7 +333,6 @@ function populate_smid_data(compound_id) {
 		$('#iupac_name').val(r.data.iupac_name);
 		$('#iupac_name_input_div').hide();
 		
-		
 		$('#smid_title').html(r.data.smid_id);
 
 		$('#description_static_div').show();

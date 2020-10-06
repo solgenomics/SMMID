@@ -71,9 +71,7 @@ sub store_experiment :Path('/rest/experiment/store') Args(0) {
     };
 
     eval {
-	print STDERR "Inserting row...\n";
 	my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->create($experiment_data);
-	print STDERR "INSERTED ".$row->experiment_id()."\n";
     };
     
     if ($@) {
@@ -84,5 +82,42 @@ sub store_experiment :Path('/rest/experiment/store') Args(0) {
     $c->stash->{rest} = { success => 1 };
 }
 
+sub experiment :Chained('/') :PathPart('rest/experiment') CaptureArgs(1) {
+    my $self = shift;
+    my $c = shift;
+
+    my $experiment_id = shift;
+    
+    my $experiment = $c->model('SMIDDB')->resultset("SMIDDB::Result::Result")->find( { experiment_id => $experiment_id } );
+    
+    $c->stash->{experiment} = $experiment;
+    $c->stash->{experiment_id} = $experiment_id;
+	
+    
+}
+
+sub experiment_detail :Chained('experiment') :PathPart('') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    # build detail data structure
+	
+}
+
+
+sub delete_experiment : Chained('experiment') :PathPart('delete') Args(0) {
+    my $self = shift;
+    my $c = shift;
+    
+    if ($c->user() && ($c->user->get_object()->dbuser_id() == $c->stash->{experiment}->dbuser_id()) || $c->user()->user_type() eq "curator") {
+	$c->stash->{experiment}->delete();
+	$c->stash->{rest} = { success => 1 };
+    }
+    else {
+	$c->stash->{error} = { error => "You don't have the required privileges to delete this entry." };
+    }
+}
+    
+	
 
 "SMMID::Controller::REST::Results";
