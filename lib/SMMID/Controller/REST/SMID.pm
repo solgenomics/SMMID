@@ -1,6 +1,8 @@
 package SMMID::Controller::REST::SMID;
 
 use Moose;
+use utf8;
+use Unicode::Normalize;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -38,10 +40,33 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
 
     my @data;
     while (my $r = $rs->next()) {
-	push @data, [ $r->compound_id(), $r->smid_id(), $r->formula(), $r->smiles() ];
+
+      my $cur_char = "\x{2713}";
+      if($r->curation_status() == undef){$cur_char = "Unverified";}
+
+	push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), molecular_weight($r->formula()), $cur_char ];
     }
 
     $c->stash->{rest} = { data => \@data };
+}
+
+sub molecular_weight {
+  #...
+  #The default variable will be used as the chemical Formula
+  $_ = shift(@_);
+
+  my %elements = ("H" => 1.01, "C" => 12.01, "O" => 16.0, "N" => 14.01, "P" => 30.97, "S" => 32.06);
+  my $weight = 0;
+
+  my @pairs = /([CHONPS][0-9]*)/g;
+  foreach my $pair (@pairs){
+    if (length($pair)==1){
+      $weight += $elements{substr($pair, 0, 1)};
+    }else{
+      $weight += $elements{substr($pair, 0, 1)}*substr($pair, 1);
+    }
+  }
+  return $weight;
 }
 
 #Inserting a subroutine for the curator interface. At first, it will be a clone of the browse tab.
@@ -115,6 +140,11 @@ sub browse_format :Chained('rest') PathPart('browse') Args(1) {
 
     if ($format eq "datatable") {
 	#...
+
+  print STDERR "found the browse data...\n";
+
+  my @data = $c->stash->{rest}->{data};
+  #my @cols = ["{title: \"Compound ID\"}\n", "{title: \"SMID ID\"}\n", "{title: \"Formula\"}\n", "{title: \"SMILES\"}\n", "{title: \"Curation Status\"}\n"];
     }
 
 

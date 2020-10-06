@@ -19,7 +19,6 @@ function curator_html() {
         'searching': true,
         'info': true,
         data: r.data,
-        //columns: r.columns
         columns: [
           {title: "Compound ID"},
           {title: "SMID ID"},
