@@ -23,13 +23,14 @@ function make_fields_editable(compound_id) {
 	    $('#add_dbxref_button').click(
 		function(event) {
 		    event.preventDefault();
-		    edit_dbxref_info();	
+		    edit_dbxref_info();
+        
 		});
 
 	    if (compound_id) { embed_compound_images(compound_id, 'medium', 'smid_structure_images'); }
 	    
 	    $('#add_new_smid_button').prop('disabled', false);
-	    
+
 	    $('#add_new_smid_button').click(  function(event) {
 		event.preventDefault();
 		store_smid().then( function(r) {
@@ -40,7 +41,7 @@ function make_fields_editable(compound_id) {
 			alert(r.message);
 			location.href="/smid/"+r.compound_id;
 		    }
-		}, function(e) { alert('An error occurred. '+e.responseText) });			    
+		}, function(e) { alert('An error occurred. '+e.responseText) });
 	    });
 
 	    $('#add_hplc_ms_button').prop('disabled', false);
@@ -49,14 +50,14 @@ function make_fields_editable(compound_id) {
 		event.preventDefault();
 		edit_hplc_ms_data();
 	    });
-	    
+
 	    $('#add_ms_spectrum_button').prop('disabled', false);
 
 	    $('#add_ms_spectrum_button').click( function(event) {
 		event.preventDefault();
 		edit_ms_spectrum();
 	    });
-	   
+
 	    $('#update_smid_button').click( function(event) {
 		event.preventDefault();
 		update_smid().then( function(r) {
@@ -90,7 +91,7 @@ function edit_dbxref_info() {
 	    $('#db_id_select_div').html(r.html);
 	}
     }, function(e) { alert(e.responseText); });
-    
+
     $('#save_dbxref_button').click(
 	function(event) {
 	    event.preventDefault();
@@ -101,7 +102,7 @@ function edit_dbxref_info() {
 		}
 		$('#add_dbxref_dialog').modal("hide");
 		$('#smid_dbxref_data_table').DataTable().ajax.reload();
-	    } , function(e) { alert("An error occurred "+e.responseText); }) 
+	    } , function(e) { alert("An error occurred "+e.responseText); })
 	});
 }
 
@@ -127,7 +128,7 @@ function edit_hplc_ms_data() {
 function edit_ms_spectrum() {
     $('#add_ms_spectrum_dialog').modal("show");
 
-    $('#save_ms_spectrum_button').click(function(event) { 
+    $('#save_ms_spectrum_button').click(function(event) {
 	store_ms_spectrum_data().then(
 	    function(r) {
 		if (r.error) {
@@ -228,7 +229,7 @@ function delete_dbxref(dbxref_id) {
 		    $('#smid_dbxref_data_table').DataTable().ajax.reload();
 		}
 	    }
-	    
+
 	});
     }
 }
@@ -282,7 +283,7 @@ function store_hplc_ms_data() {
 	    'hplc_ms_adducts_detected' : $('#hplc_ms_adducts_detected').val(),
 	    'hplc_ms_scan_number' : $('#hplc_ms_scan_number').val(),
 	    'hplc_ms_link' : $('#hplc_ms_link').val()
-	    
+
 	}
     });
 }
@@ -306,7 +307,7 @@ function store_ms_spectrum_data() {
 }
 
 
-function populate_smid_data(compound_id) { 
+function populate_smid_data(compound_id) {
     $.ajax( {
 	url: '/rest/smid/'+compound_id+'/details',
 	error: function(r) { alert("An error occurred. "+r.responseText); },
@@ -348,7 +349,7 @@ function populate_smid_data(compound_id) {
 
 	}
     });
-    
+
     $('#smid_dbxref_data_table').DataTable( {
 	searching: false,
 	paging: false,
@@ -356,7 +357,7 @@ function populate_smid_data(compound_id) {
 	"ajax": {
 	    url: '/rest/smid/'+compound_id+'/dbxrefs'
 	}
-     
+
     } );
 
     $('#smid_hplc_ms_table').DataTable( {
@@ -377,6 +378,3 @@ function populate_smid_data(compound_id) {
 	}
     });
 }
-
-
-

@@ -11,6 +11,11 @@ sub browse :Path('/browse') Args(0) {
     my $c = shift;
 }
 
+sub curator :Path('/curator') Args(0) {
+  my $self = shift;
+  my $c = shift;
+}
+
 sub smid :Chained('/') PathPart('smid') CaptureArgs(1) {
     my $self = shift;
     my $c = shift;
@@ -54,7 +59,7 @@ sub add :Path('/smid') Args(0) {
     $c->stash->{action} = 'new';
     $c->stash->{compound_id} = 0;
     $c->stash->{template} = '/smid/detail.mas';
-    
+
 }
 
 sub edit :Chained('smid') PathPart('edit') Args(0) {

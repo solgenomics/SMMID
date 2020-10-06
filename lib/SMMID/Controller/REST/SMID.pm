@@ -1,6 +1,8 @@
 package SMMID::Controller::REST::SMID;
 
 use Moose;
+use utf8;
+use Unicode::Normalize;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -29,7 +31,7 @@ sub rest : Chained('/') PathPart('rest') CaptureArgs(0) {
     print STDERR "found rest...\n";
 }
 
-sub browse :Chained('rest') PathPart('browse') Args(0) { 
+sub browse :Chained('rest') PathPart('browse') Args(0) {
     my ($self, $c) = @_;
 
     print STDERR "found rest/browse...\n";
@@ -38,10 +40,83 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
 
     my @data;
     while (my $r = $rs->next()) {
-	push @data, [ $r->compound_id(), $r->smid_id(), $r->formula(), $r->smiles() ];
+
+      my $cur_char = "\x{2713}";
+      if($r->curation_status() == undef){$cur_char = "Unverified";}
+
+	push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), molecular_weight($r->formula()), $cur_char ];
     }
 
     $c->stash->{rest} = { data => \@data };
+}
+
+sub molecular_weight {
+  #...
+  #The default variable will be used as the chemical Formula
+  $_ = shift(@_);
+
+  my %elements = ("H" => 1.01, "C" => 12.01, "O" => 16.0, "N" => 14.01, "P" => 30.97, "S" => 32.06);
+  my $weight = 0;
+
+  my @pairs = /([CHONPS][0-9]*)/g;
+  foreach my $pair (@pairs){
+    if (length($pair)==1){
+      $weight += $elements{substr($pair, 0, 1)};
+    }else{
+      $weight += $elements{substr($pair, 0, 1)}*substr($pair, 1);
+    }
+  }
+  return $weight;
+}
+
+#Inserting a subroutine for the curator interface. At first, it will be a clone of the browse tab.
+sub curator : Chained('rest') PathPart('curator') Args(0) {
+  my ($self, $c) = @_;
+
+  print STDERR "found rest/curator...\n";
+
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search({curation_status => undef});
+
+  my @data;
+  while (my $r = $rs->next()) {
+push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), "<button id=\"curate_smid\" disabled=\"false\" class=\"btn btn-primary\">Approve and Curate</button>"];
+  }
+
+  $c->stash->{rest} = { data => \@data };
+
+}
+
+#If I am correct, this subroutine formats the data, while the above subroutine collects the data
+sub curator_format :Chained('rest') PathPart('curator') Args(1) {
+    my $self = shift;
+    my $c = shift;
+    my $format = shift;
+
+    $self->curator($c);
+
+    if ($format eq "html") {
+
+      print STDERR "found the curator html...\n";
+
+	     my $html = "<table border=\"1\" width=\"100%\" cellpadding=\"10\" >\n
+	      <thead><th>SMID ID</th><th>Formula</th><th>SMILES</th><th><a width=\"50\"></a>Status</th></thead>\n";
+
+	     foreach my $smid (@{$c->stash->{rest}->{data}}) {
+	        $html .= "<tr><td><a href=\"/smid/$smid->[0]\">$smid->[1]</a></td><td>$smid->[2]</td><td>$smid->[3]</td><td><button id=\"curate_smid\" disabled=\"false\" class=\"btn btn-primary\">Approve and Curate</button></td></tr>\n";
+	       }
+	     $html .= "</table>\n";
+
+	     $c->stash->{rest} = { html => $html };
+    }
+
+    if ($format eq "datatable") {
+	    #...
+      print STDERR "found the curator data...\n";
+
+      my @data = $c->stash->{rest}->{data};
+    }
+
+
 }
 
 sub browse_format :Chained('rest') PathPart('browse') Args(1) {
@@ -65,8 +140,13 @@ sub browse_format :Chained('rest') PathPart('browse') Args(1) {
 
     if ($format eq "datatable") {
 	#...
+
+  print STDERR "found the browse data...\n";
+
+  my @data = $c->stash->{rest}->{data};
+  #my @cols = ["{title: \"Compound ID\"}\n", "{title: \"SMID ID\"}\n", "{title: \"Formula\"}\n", "{title: \"SMILES\"}\n", "{title: \"Curation Status\"}\n"];
     }
-    
+
 
 }
 
@@ -116,7 +196,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 	$c->stash->{rest} = { error => $errors };
 	return;
     }
-    
+
     my $row = {
 	smid_id => $smid_id,
 	formula => $formula,
@@ -132,7 +212,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     };
 
     my $compound_id;
-    eval { 
+    eval {
 	my $new = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->new($row);
 	$new->insert();
 	$compound_id = $new->compound_id();
@@ -147,7 +227,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 	compound_id => $compound_id,
 	message => "Successfully stored the smid $smid_id"
     };
-    
+
 }
 
 sub smid :Chained('rest') PathPart('smid') CaptureArgs(1) {
@@ -206,7 +286,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	$c->stash->{rest} = { error => $errors };
 	return;
     }
-    
+
     my $data = {
 	smid_id => $smid_id,
 	formula => $formula,
@@ -219,7 +299,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	last_modified_date => 'now()',
     };
 
-    eval { 
+    eval {
 	$smid_row->update($data);
     };
 
@@ -232,7 +312,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	compound_id => $compound_id,
 	message => "Successfully stored the smid $smid_id"
     };
-    
+
 }
 
 
@@ -271,14 +351,14 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
     my $c = shift;
 
     my $rs;
-    if ($c->stash->{compound_id}) { 
+    if ($c->stash->{compound_id}) {
 	$rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbxref")->search(  { 'compound_dbxrefs.compound_id' => $c->stash->{compound_id} }, { join => 'compound_dbxrefs' , { join => 'db'  }});
     }
     else {
 	$c->stash->{rest} = { data => [] };
 	return;
     }
-    
+
     my $data = [];
 
 
@@ -287,14 +367,14 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
 
 	my $db_name = "";
 	my $display_url = "";
-	
+
 	if ($dbxref->db()) {
 	    $db_name = $dbxref->db->name();
 	    my $url = $dbxref->db->url();
 	    my $urlprefix = $dbxref->db->urlprefix();
 	    $display_url = join("",  $urlprefix, $url, $dbxref->accession());
 	}
-	    
+
 	my $delete_link = "<a href=\"javascript:delete_dbxref(".$dbxref->dbxref_id().")\" ><font color=\"red\">X</font></a>";
 
 	push @$data, [ $db_name, $dbxref->accession(), $display_url , $delete_link ];
@@ -307,13 +387,13 @@ sub results : Chained('smid') PathPart('results') Args(0) {
     my $c = shift;
 
     my $experiment_type = $c->req->param("experiment_type");
-    
-    
+
+
     my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( { compound_id => $c->stash->{compound_id}, experiment_type => $experiment_type } );
 
     print STDERR "Retrieved ".$rs->count()." rows...\n";
     my @data;
-    while (my $row = $rs->next()) { 
+    while (my $row = $rs->next()) {
 	if ($experiment_type eq "hplc_ms") {
 	    my $json = $row->data();
 	    my $hash = JSON::Any->decode($json);

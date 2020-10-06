@@ -4,12 +4,15 @@
 
 <& /page/page_title.mas, title=>"Browse SMIDs" &>
 
+<script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="/js/source/entries/browse.js"></script>
 
+<link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css">
 <a href="/smid/">Add a new SMID...</a><br />
-<div id="browse_smid_data_div">
-<cente>[loading...]</center>
-</div>
+<table id="browse_smid_data_div">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<!--<center>[loading...]</center>-->
+</table>
 
 <script>
   $(document).ready( function() {

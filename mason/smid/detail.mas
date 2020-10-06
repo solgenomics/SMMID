@@ -14,9 +14,9 @@ $action => undef
 %  if ($action eq "edit") {
 <& /page/page_title.mas, title=>"Edit <span id=\"smid_title\">---</span> <font size=\"3\">[<a href=\"/smid/$compound_id\">Cancel</a>]</font>" &>
 % }
-% else { 
+% else {
   <& /page/page_title.mas, title=>"Details for <span id=\"smid_title\">---</span> <font size=\"3\">[<a href=\"/smid/$compound_id/edit\">Edit</a>]</font>" &>
-   
+
 % } }
 % else {
   <& /page/page_title.mas, title=>"Enter new SMID" &>
@@ -190,9 +190,8 @@ $action => undef
      </table>
      </center>
     </form>
-    
-    
-% if (!$compound_id) { 
+
+% if (!$compound_id) {
     <button id="add_new_smid_button" class="btn btn-primary" disabled="true" >Add new SMID</button>
 % }
 
@@ -223,6 +222,9 @@ $action => undef
 % if ($action eq "edit") {
 <br />
 <button id="add_dbxref_button" disabled="true" class="btn btn-primary">Add Dbxref</button>
+<!-- I don't quite know what I'm doing, so let's just see if this adds a button. Note: this will
+add the button regardless of login status. -->
+<button id="curate_database_selection_button" disabled="true" class="btn btn-primary">Verify Database Source</button>
 % }
 
 <h2>HPLC-MS data</h2>
