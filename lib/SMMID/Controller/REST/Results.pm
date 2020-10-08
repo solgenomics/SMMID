@@ -88,22 +88,34 @@ sub experiment :Chained('/') :PathPart('rest/experiment') CaptureArgs(1) {
 
     my $experiment_id = shift;
     
-    my $experiment = $c->model('SMIDDB')->resultset("SMIDDB::Result::Result")->find( { experiment_id => $experiment_id } );
+    my $experiment = $c->model('SMIDDB')->resultset("SMIDDB::Result::Experiment")->find( { experiment_id => $experiment_id } );
     
     $c->stash->{experiment} = $experiment;
     $c->stash->{experiment_id} = $experiment_id;
-	
-    
 }
 
 sub experiment_detail :Chained('experiment') :PathPart('') Args(0) {
     my $self = shift;
     my $c = shift;
 
-    # build detail data structure
-	
+    my $experiment = $c->stash->{experiment};
+    my $data = $c->stash->{experiment}->data();
+    $data->{experiment_type} = $experiment->experiment_type();
+    $data->{description} = $experiment->description();
+
+    $c->stash->{rest} = { data => $data };
 }
 
+sub experiment_mz_data : Chained('experiment') PathPart('mz_data') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    my $data_json = $c->stash->{experiment}->data();
+
+    my $data = JSON::XS->new()->decode($data_json);
+
+    $c->stash->{rest} =  { data => $data->{ms_spectrum_mz_intensity} };
+}
 
 sub delete_experiment : Chained('experiment') :PathPart('delete') Args(0) {
     my $self = shift;
