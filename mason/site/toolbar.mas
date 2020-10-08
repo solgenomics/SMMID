@@ -26,7 +26,7 @@
 	      &nbsp;
 	    </td>
 	    <td >
-	      <form action="/search" style="margin-bottom:0px">
+	      <form action="/search/results" style="margin-bottom:0px">
 		<input name="term" size="10" />
 		<button id="site_search" type="submit" class="btn btn-info">search</button>
 	      </form>

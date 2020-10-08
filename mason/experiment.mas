@@ -1,0 +1,22 @@
+
+<%args>
+$experiment_id
+</%args>
+
+<h3>Experiment <% $experiment_id %></h3>
+
+<div id="experiment_data"></div>
+
+
+<script>
+
+  $(document).ready( function() {
+
+  $.ajax( {
+  url: '/rest/experiment/'+<% $experiment_id %>+'/mz_data'
+  error : function(e) { alert('An error occurred!'); },
+  success: function(r) { $('#experiment_data').html(r.data); }
+
+  });
+
+  });
