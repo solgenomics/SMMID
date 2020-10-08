@@ -186,6 +186,8 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $synonyms = $self->clean($c->req->param("synonyms"));
     my $curation_status = $self->clean($c->req->param("curation_status"));
 
+    my $molecular_weight = molecular_weight($formula);
+    
     my $errors = "";
     if (!$smid_id) { $errors .= "Need smid id. "; }
     if (!$iupac_name) { $errors .= "Need a IUPAC name. "; }
@@ -208,6 +210,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 	description => $description,
 	synonyms => $synonyms,
 	create_date => 'now()',
+	molecular_weight => $molecular_weight,
 	last_modified_date => 'now()',
     };
 
@@ -274,7 +277,8 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     my $curation_status = $self->clean($c->req->param("curation_status"));
     my $synonyms = $self->clean($c->req->param("synonyms"));
     my $description = $self->clean($c->req->param("description"));
-
+    my $molecular_weight = molecular_weight($formula);
+    
     my $errors = "";
     if (!$compound_id) {  $errors .= "Need compound id. "; }
     if (!$iupac_name) { $errors .= "Need IUPAC name. "; }
@@ -296,6 +300,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	curation_status => $curation_status,
 	description => $description,
 	synonyms => $synonyms,
+	molecular_weight => $molecular_weight,
 	last_modified_date => 'now()',
     };
 
@@ -341,6 +346,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     $data->{last_curated_time} = $s->last_curated_time();
     $data->{description} = $s->description();
     $data->{synonyms} = $s->synonyms();
+    $data->{molecular_weight} = $s->molecular_weight();
 
     $c->stash->{rest} = { data => $data };
 }
@@ -402,7 +408,7 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 	if ($experiment_type eq "ms_spectrum") {
 	    my $json = $row->data();
 	    my $hash = JSON::Any->decode($json);
-	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, $hash->{ms_spectrum_mz_intensity}, $hash->{ms_spectrum_link},  "X" ];
+	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\">Details</a>", $hash->{ms_spectrum_link},  "X" ];
 	}
     }
 
