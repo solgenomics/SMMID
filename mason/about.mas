@@ -1,9 +1,9 @@
 
+<%args>
+
+</%args>
 
 <div id="content1">
-
-
-
 
 <h1>SMIDs: Unique identifiers for biogenic small molecules in <i>C. elegans</i>. </h1>
 </div>
@@ -65,62 +65,59 @@ pound sign and a number.</b></i> This scheme is comparable to that used for gene
 
 <u>Examples</u>:<br /><br/>
 
-Many pheromones in <i>C. elegans</i> belong to a class of glycosides known as <b><i>ascarosides</b></i>. Therefore, <b>ascr</b> was chosen as the four-letter SMID for this 
-class of compounds. 
+Many pheromones in <i>C. elegans</i> belong to a class of glycosides known as <b><i>ascarosides</b></i>. Therefore, <b>ascr</b> was chosen as the four-letter SMID for this class of compounds. 
+<br />
+<br />
+<ul>
+    <!-- Example 1, ascr#1 -->
+    
+    <li><a href="/detail/ascr%231/"<b>ascr#1</b></a>:"daumone" or "C7" or "(6R-(tetrahydro-3'R,5'R-dihydroxy-6'S-methyl-2Hpyran-2'R-yloxy)-heptanoic acid" </li>
 
-<ul></div><div id="content1"><ul>
-
-<li><a href="//www.smmid.org/detail/ascr%231/"<b>ascr#1</b></a>:"daumone" or "C7" or "(6R-(tetrahydro-3'R,5'R-dihydroxy-6'S-methyl-2Hpyran-2'R-yloxy)-heptanoic acid" </li>
-
- </p></div> </ul><div id="content2"> <br/>
-
-  <!-- & /image/embed_image.mas, image_id => ?, size => "medium" &>
-<img src="/static/structures/ascr%231.png" /> <br/ -->
-</div> <div id="content1"><ul>
-
-<li><a href="//www.smmid.org/detail/ascr%234/"<b>ascr#4</b></a>:"nematone-1" or "5R-(3'-O-beta-D-glucosyl-tetrahydro-3'R,5'R-dihydroxy-6'Smethyl-2H-pyran-2'R-yloxy)-2-hexanone" </li>
-
- </div> </ul><div id="content2"> <br/>
-
-  <div id="image_example1"></div>
+	   <center>
+	     <div id="image_example1"></div>
+	   </center>
+	   
+	   <& /image/embed_image.mas, image_id => 8, size => "small", div => 'image_example1' &>
   
-  <& /image/embed_image.mas, image_id => 510, size => "small", div=>"image_example1"  &>
-
-<!-- img src="/static/structures/ascr%234.png" /> <br/ -->
-</div> <div id="content3">
+  <li><a href="/detail/ascr%234/"<b>ascr#4</b></a>:"nematone-1" or "5R-(3'-O-beta-D-glucosyl-tetrahydro-3'R,5'R-dihydroxy-6'Smethyl-2H-pyran-2'R-yloxy)-2-hexanone" </li>
+	 
+	 <!-- Example 2, ascr#4 -->
+	 
+	   <center>
+	   <div id="image_example2"></div>
+	   </center>
+	   
+	   <& /image/embed_image.mas, image_id => 50, size => "small", div=>"image_example2"  &>
+  
+</ul>
 
 <br/>Similarly, steroids called <b><i>dafachronic acids</b></i> that regulate <i>C. elegans</i> development have been assigned the four-letter SMID "<b>dafa</b>":<br/>
-</div><div id="content1"><ul>
-<li><a href="//www.smmid.org/detail/dafa%231/"<b>dafa#1</b></a>:("delta4-dafachronic acid" or "3-keto-4-cholestenoic acid") </li>
-
- </div> </ul><div id="content2"> <br/>
-
-  <div id="image_example2"></div>
- <& /image/embed_image.mas, image_id => 561, size => "small", div=>"image_example2"  &>
+<br />
+<ul>
+<li><a href="/detail/dafa%231/"<b>dafa#1</b></a>:("delta4-dafachronic acid" or "3-keto-4-cholestenoic acid") </li>
+       <center>
+	 <div id="image_example3"></div>
+	 </center>
+       <& /image/embed_image.mas, image_id => 91, size => "small", div=>"image_example3"  &>
   
-<!-- img src="/static/structures/dafa%231.png" /> <br/ -->
-</div> <div id="content1"><ul>
+    <li><a href="/detail/dafa%232/"<b>dafa#2</b></a>:("delta7-dafachronic acid" or "3-keto-7,(5a)-cholestenoic acid") </li>
 
-<li><a href="//www.smmid.org/detail/dafa%232/"<b>dafa#2</b></a>:("delta7-dafachronic acid" or "3-keto-7,(5a)-cholestenoic acid") </li>
-
- </div></ul> <div id="content2"> <br/>
-
-   <div id="image_example3"></div>
- <& /image/embed_image.mas, image_id => 562, size => "small", div=>"image_example3"  &>
-
+	   <center>
+	     <div id="image_example4"></div>
+	   </center>
+	   <& /image/embed_image.mas, image_id => 92, size => "small", div=>"image_example4"  &>
+	
 <!-- img src="/static/structures/dafa%232.png" /> <br/ -->
-</div> <div id="content3">
-
 
 </ul>
 
 <p>
-<b>II.</b><i> Stereoisomers are distinguished by the addition of a second numeral.</i> The first discovered stereoisomer of any compound will be named with the ending .1, i.e. xxxx#x.1.
-For example, in the case of ascr#6, (-)-5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2'-yloxy)-2R-hexanol would be <a href="//www.smmid.org/detail/ascr%236.1/"<b>ascr#6.1</b></a>, and (-)-5R-(3'R,5'R-dihydroxy-6'S-methyl
--(2H)-tetrahydropyran-2'-yloxy)-2S-hexanol would be <a href="//www.smmid.org/detail/ascr%232/"<b>ascr#6.2</b></a>.
+<b>II.</b> <i> Stereoisomers are distinguished by the addition of a second numeral.</i> The first discovered stereoisomer of any compound will be named with the ending .1, i.e. xxxx#x.1.
+For example, in the case of ascr#6, (-)-5R-(3'R,5'R-dihydroxy-6'S-methyl-(2H)-tetrahydropyran-2'-yloxy)-2R-hexanol would be <a href="/detail/ascr%236.1/"<b>ascr#6.1</b></a>, and (-)-5R-(3'R,5'R-dihydroxy-6'S-methyl
+-(2H)-tetrahydropyran-2'-yloxy)-2S-hexanol would be <a href="/detail/ascr%232/"<b>ascr#6.2</b></a>.
 
 <p>
-<b>III.</b> <i>The SMID database is maintained by <b>Lukas Mueller</b> (METACYC SGN databases, Boyce Thompson Institute and Cornell University) and <b>Joshua Judkins</b> (Boyce Thompson Institute and Cornell University) in collaboration with <a href="//www.wormbase.org/"<b>Wormbase</b></a>. For each C. elegans metabolite, <a href="//www.smid-db.org/"<b>SMID-DB.org</b></a> provides:</i>: </p>
+<b>III.</b> The SMID database is maintained by Tyler Schwertfeger of the Schroeder Lab at the Boyce Thompson Institute, with database support by the Mueller lab at the BTI. Previously, Joshua Judkins and Maro Kariya (both of Boyce Thompson Institute and Cornell University) have curated the database, in collaboration with <a href="//www.wormbase.org/"<b>Wormbase</b></a>. For each C. elegans metabolite, <a href="//www.smid-db.org/"<b>SMID-DB.org</b></a> provides:</i>: </p>
 <ul><p>	
 <li>Structure (structural drawing, SMILES)</p>
 <p>
