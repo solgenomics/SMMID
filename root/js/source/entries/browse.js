@@ -12,8 +12,8 @@ function browse_html() {
 		//$('#browse_smid_data_div').html(r.html);
 
     $('#browse_smid_data_div').DataTable({
-      'paging': false,
-      //'lengthMenu': [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
+      'paging': true,
+      'lengthMenu': [[-1, 10, 25, 50, 100],["All", 10, 25, 50, 100]],
       'searching': true,
       'info': true,
       data: r.data,

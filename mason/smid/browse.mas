@@ -9,7 +9,7 @@
 
 <link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css">
 <a href="/smid/">Add a new SMID...</a><br />
-<table id="browse_smid_data_div">
+<table id="browse_smid_data_div", style="width:100%", class="display">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <!--<center>[loading...]</center>-->
 </table>

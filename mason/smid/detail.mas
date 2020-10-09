@@ -32,7 +32,7 @@ $action => undef
 	 </td><td>
 	   <span id="smid_structure_images" size="50">[no structure available]</span>
        </td></tr>
-       
+
 % if ($action eq "edit") {
        <tr>
 	 <td>
@@ -46,7 +46,7 @@ $action => undef
 	   </form>
 	 </td>
        </tr>
-	  
+
 % }
        <tr>
 	 <td>
@@ -111,7 +111,7 @@ $action => undef
 	   <hr />
 	 </td>
        </tr>
-	  
+
        <tr>
 	 <td>
 	   <label>Synonyms</label>
@@ -146,7 +146,7 @@ $action => undef
 	   <hr />
 	 </td>
        </tr>
-       
+
        <tr>
 	 <td>
 	    <label>Organisms</label>
@@ -163,7 +163,7 @@ $action => undef
 	   <hr />
 	 </td>
        </tr>
-       
+
        <tr>
 	 <td>
 	    <label>SMILES</label>
@@ -172,7 +172,7 @@ $action => undef
 	   <textarea id="smiles_string" rows="3" cols="60" disabled="disabled"></textarea>
 	 </td>
        </tr>
-       
+
        <tr>
 	 <td colspan="2">
 	   <hr />
@@ -222,9 +222,6 @@ $action => undef
 % if ($action eq "edit") {
 <br />
 <button id="add_dbxref_button" disabled="true" class="btn btn-primary">Add Dbxref</button>
-<!-- I don't quite know what I'm doing, so let's just see if this adds a button. Note: this will
-add the button regardless of login status. -->
-<button id="curate_database_selection_button" disabled="true" class="btn btn-primary">Verify Database Source</button>
 % }
 
 <h2>HPLC-MS data</h2>
@@ -336,11 +333,11 @@ add the button regardless of login status. -->
 	  </div>
 	  <div class="form-group">
 	    <label for="hplc_ms_ionization_mode">Ionization mode</label>
-	    <select id="hplc_ms_ionization_mode"> 
+	    <select id="hplc_ms_ionization_mode">
 	      <option>positive</option>
 	      <option>negative</option>
 	      </select>
-		    
+
 	    <!-- input type="input" class="form-control" id="hplc_ms_ionization_mode" placeholder="Ionization mode"> -->
 	  </div>
 	  <div class="form-group">
@@ -386,7 +383,7 @@ add the button regardless of login status. -->
 
 	  <div class="form-group">
 	    <label for="ms_spectrum_ionization_mode">Ionization mode</label>
-	    <select id="ms_spectrum_ionization_mode"> 
+	    <select id="ms_spectrum_ionization_mode">
 	      <option>positive</option>
 	      <option>negative</option>
 	      </select>
@@ -427,7 +424,7 @@ add the button regardless of login status. -->
 
   var action = '<% $action %>';
 
-  if (compound_id === 0) { 
+  if (compound_id === 0) {
       make_fields_editable(compound_id);
   }
   else {

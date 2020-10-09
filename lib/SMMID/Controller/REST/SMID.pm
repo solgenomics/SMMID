@@ -41,8 +41,8 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
     my @data;
     while (my $r = $rs->next()) {
 
-      my $cur_char = "\x{2713}";
-      if($r->curation_status() == undef){$cur_char = "Unverified";}
+      my $cur_char = "<p style=\"color:green\"><b>\x{2713}</b></p>";
+      if(!defined($r->curation_status())){$cur_char = "<p style=\"color:red\">Unverified</p>";}
 
 	push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), molecular_weight($r->formula()), $cur_char ];
     }
@@ -79,7 +79,7 @@ sub curator : Chained('rest') PathPart('curator') Args(0) {
 
   my @data;
   while (my $r = $rs->next()) {
-push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), "<button id=\"curate_smid\" disabled=\"false\" class=\"btn btn-primary\">Approve and Curate</button>"];
+push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."/edit\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), "<button id=\"curate_smid\" disabled=\"false\" class=\"btn btn-primary\">Approve and Curate</button>"];
   }
 
   $c->stash->{rest} = { data => \@data };
@@ -160,7 +160,7 @@ sub clean {
 
     return $str;
 }
-    
+
 sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $self  = shift;
     my $c = shift;
@@ -171,7 +171,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     }
 
     my $user_id = $c->user()->get_object()->dbuser_id();
-    
+
     my $smid_id = $self->clean($c->req->param("smid_id"));
     my $iupac_name = $self->clean($c->req->param("iupac_name"));
 
@@ -179,7 +179,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $smiles_string = $self->clean($c->req->param("smiles_string"));
 
     print STDERR "SMILES = $smiles_string\n";
-    
+
     my $formula = $self->clean($c->req->param("formula"));
     my $organisms = $self->clean($c->req->param("organisms"));
     my $description = $self->clean($c->req->param("description"));
@@ -265,7 +265,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	$c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
 	return;
     }
-    
+
     my $smid_id = $self->clean($c->req->param("smid_id"));
     my $smiles_string = $self->clean($c->req->param("smiles_string"));
     my $formula = $self->clean($c->req->param("formula"));
@@ -416,7 +416,7 @@ sub compound_images :Chained('smid') PathPart('images') Args(1) {
     my $size = shift;
 
     my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::CompoundImage")->search( { compound_id => $c->stash->{compound_id} });
-    
+
     my @source_tags;
     while (my $row = $rs->next()) {
 	my $image = SMMID::Image->new( { schema => $c->model("SMIDDB"), image_id => $row->image_id() });
@@ -426,8 +426,8 @@ sub compound_images :Chained('smid') PathPart('images') Args(1) {
 	    $delete_link = "<a href=\"javascript:delete_image(".$row->image_id().", ".$c->stash->{compound_id}.")\">X</a>";
 	}
 
-	
-	my $file = "medium";	
+
+	my $file = "medium";
 	if ($size =~ m/thumbnail|small|medium|large/) { $file = $size.".png"; }
 	my $image_full_url =  "/".$c->config->{image_url}."/".$image->image_subpath()."/".$file;
 	push @source_tags, "<img src=\"$image_full_url\" />$delete_link";

@@ -13,7 +13,6 @@
 
 	      <a href="/browse" class="header_link">Browse</a>
 
-        <!-- Insterting a curator tab here. Don't know how to make it do anything yet. -->
         <a href="/curator" class="header_link">Curator</a>
 
 	      <a href="/download" class="header_link">Download</a>

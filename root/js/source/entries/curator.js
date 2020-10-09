@@ -24,7 +24,7 @@ function curator_html() {
           {title: "SMID ID"},
           {title: "Formula"},
           {title: "SMILES"},
-          {title: "Status"}
+          {title: "Action"}
         ]
       });
           }
