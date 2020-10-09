@@ -3,23 +3,43 @@
 
 <script type="text/javascript" src="/js/source/entries/toolbar.js" ></script>
 
-<div id="header" class="header" ><!-- BEGIN site/header -->
-  <table width="100%" cellpadding="0" cellspacing="0"><tr><td><a href="/" class="sitetitle">SMID DB</a></td><td align="right">
+<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td><a href="/" class="sitetitle"></a></td><td align="right">
+      
+      <nav class="navbar navbar-expand-lg navbar-light bg-white">
+	<a class="sitetitle" style="color:lightblue;" href="/">SMID-DB</a>
+
+	<div class="collapse navbar-collapse" id="navbarNavDropdown">
+	  <ul class="navbar-nav">
+	    <li class="nav-item">
+	      <a class="nav-link header_link" style="color:lightblue; margin-left:40px; " href="/">Home</a>
+	    </li>
+	    <li class="nav-item dropdown">
+	      <a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		About
+	      </a>
+	      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+		<a class="dropdown-item" href="/about">About SMIDs</a>
+		<a class="dropdown-item" href="/contact">Contact</a>
+		
+	      </div>
+	    </li>
+	    
+	    
+	    <li class="nav-item dropdown">
+	      <a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		Search
+	      </a>
+	      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+		<a class="dropdown-item" href="/browse">Browse</a>
+		<a class="dropdown-item" href="/search">Advanced Search</a>
+		<a class="dropdown-item" href="/curator">Curation tool</a>
+		<a class="dropdown-item" href="/download">Download</a>
+	      </div>
+	    </li>
+	  </ul>
+	</div>
 	<table cellpadding="0"><tr style="margin-bottom:0px">
 	    <td>
-	      <a href="/" class="header_link">Home</a>
-
-	      <a href="/about" class="header_link">About</a>
-
-	      <a href="/browse" class="header_link">Browse</a>
-
-        <!-- Insterting a curator tab here. Don't know how to make it do anything yet. -->
-        <a href="/curator" class="header_link">Curator</a>
-
-	      <a href="/download" class="header_link">Download</a>
-
-	      <a href="/contact" class="header_link">Contact</a>
-
 	      <span id="login_button_html_div">Login</span>
 	    </td>
 	    <td>
@@ -31,11 +51,18 @@
 		<button id="site_search" type="submit" class="btn btn-info">search</button>
 	      </form>
 	    </td>
-	</tr></table>
-  </td></tr></table>
+	  </tr>
+	</table>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+	  <span class="navbar-toggler-icon"></span>
+	</button>
+      </nav>
+    </td>
+  </tr>
+</table>
+<hr style="margin-top: 0px; " />
 
-
-  <div id="working_modal" class="modal" tabindex="-1" role="dialog">
+<div id="working_modal" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -47,7 +74,7 @@
       </div>
     </div>
   </div>
-</div>
+
 
   <div id="error_message_modal" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
