@@ -79,7 +79,7 @@ sub curator : Chained('rest') PathPart('curator') Args(0) {
 
   my @data;
   while (my $r = $rs->next()) {
-push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."/edit\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), "<button id=\"curate_smid\" disabled=\"false\" class=\"btn btn-primary\">Approve and Curate</button>"];
+push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."/edit\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), "<button id=\"curate_smid_".$r->compound_id()."\" disabled=\"false\" class=\"btn btn-primary\">Approve and Curate</button>"];
   }
 
   $c->stash->{rest} = { data => \@data };
@@ -102,7 +102,7 @@ sub curator_format :Chained('rest') PathPart('curator') Args(1) {
 	      <thead><th>SMID ID</th><th>Formula</th><th>SMILES</th><th><a width=\"50\"></a>Status</th></thead>\n";
 
 	     foreach my $smid (@{$c->stash->{rest}->{data}}) {
-	        $html .= "<tr><td><a href=\"/smid/$smid->[0]\">$smid->[1]</a></td><td>$smid->[2]</td><td>$smid->[3]</td><td><button id=\"curate_smid\" disabled=\"false\" class=\"btn btn-primary\">Approve and Curate</button></td></tr>\n";
+	        $html .= "<tr><td><a href=\"/smid/$smid->[0]\">$smid->[1]</a></td><td>$smid->[2]</td><td>$smid->[3]</td><td><button id=\"curate_smid".$smid->compound_id()."\" disabled=\"false\" class=\"btn btn-primary\">Approve and Curate</button></td></tr>\n";
 	       }
 	     $html .= "</table>\n";
 
@@ -115,8 +115,6 @@ sub curator_format :Chained('rest') PathPart('curator') Args(1) {
 
       my @data = $c->stash->{rest}->{data};
     }
-
-
 }
 
 sub browse_format :Chained('rest') PathPart('browse') Args(1) {
@@ -160,6 +158,7 @@ sub clean {
 
     return $str;
 }
+
 
 sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $self  = shift;
@@ -239,6 +238,18 @@ sub smid :Chained('rest') PathPart('smid') CaptureArgs(1) {
     $c->stash->{compound_id} = $compound_id;
 }
 
+#This is where the backend function will go to curate a smid. Use buttons modeled on smid_detail.js for help
+sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
+    my $self = shift;
+    my $c = shift;
+
+    # my $curation_status = $self->clean($c->req->param("curation_status"));
+    # $c->stash->{rest}->{
+    #   curation_status => $curation_status
+    #   message => "Smid has been curated.\n"
+    # };
+    # return;
+}
 
 sub update :Chained('smid') PathPart('update') Args(0) {
     my $self = shift;

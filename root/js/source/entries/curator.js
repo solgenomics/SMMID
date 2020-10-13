@@ -31,3 +31,23 @@ function curator_html() {
   	    }
   	})
   }
+
+  function is_curator() {
+
+  }
+
+  function curate_smid(compound_id){
+    return $.ajax({
+      url: 'rest/smid/'+compound_id+'/curate_smid',
+      data: {
+        'smid_id' : $('#smid_id').val(),
+  	    'smiles_string' : $('#smiles_string').val(),
+  	    'formula': $('#formula').val(),
+  	    'curation_status' : true,
+  	    'iupac_name' : $('#iupac_name').val(),
+  	    'organisms': $('#organisms').val(),
+  	    'description': $('#description').val(),
+  	    'synonyms': $('#synonyms').val(),
+      }
+    });
+  }
