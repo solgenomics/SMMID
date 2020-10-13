@@ -81,8 +81,6 @@ sub about :Path('/about') :Args(0) {
     my ($self, $c) = @_;
 }
 
-
-
 sub download :Path('/download') Args(0) {
     my $self = shift;
     my $c = shift;

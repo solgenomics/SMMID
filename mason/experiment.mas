@@ -1,0 +1,49 @@
+
+<%args>
+$experiment_id
+</%args>
+
+<script type="text/javascript" src="/js/source/entries/experiment_detail.js" ></script>
+
+<h2>Experiment <% $experiment_id %></h2>
+
+<div id="experiment_data"></div>
+
+<div>
+<b>Experiment type</b> <span id="experiment_type"></span>
+</div>
+
+<div>
+<b>Description</b> <span id="description">[none]</span>
+</div>
+
+<div>
+<b>Link</b> <span id="ms_spectrum_link"></span>
+</div>
+
+<div>
+<b>Ionization mode</b> <span id="ms_spectrum_ionization_mode"></span>
+</div>
+
+<div>
+<b>Adduct fragmented</b> <span id="ms_spectrum_adduct_fragmented"></span>
+</div>
+
+<div>
+<b>Spectrum</b>  <span id="ms_spectrum_mz_intensity"></span>
+</div>
+
+<div>
+<b>Author</b> <span id="ms_spectrum_author"></span>
+</div>
+
+
+<script>
+
+  $(document).ready( function() {
+
+     display_experiment(<% $experiment_id %>);
+
+  });
+
+</script>

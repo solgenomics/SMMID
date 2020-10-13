@@ -325,7 +325,8 @@ function populate_smid_data(compound_id) {
 		$('#curation_status').val(r.data.curation_status);
 
 		$('#formula_static_div').css('visibility', 'visible');
-		$('#formula_static_div').html(r.data.formula);
+		$('#formula_static_div').html(r.data.formula + '&nbsp;&nbsp;&nbsp;['+r.data.molecular_weight+' g/mol]');
+
 		$('#formula_input_div').hide();
 		$('#formula').val(r.data.formula);
 

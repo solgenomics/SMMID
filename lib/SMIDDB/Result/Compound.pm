@@ -99,6 +99,11 @@ __PACKAGE__->table("compound");
   data_type: 'text'
   is_nullable: 1
 
+=head2 molecular_weight
+   
+   data_type: 'real'
+   is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -134,7 +139,9 @@ __PACKAGE__->add_columns(
   "synonyms",
   { data_type => "text", is_nullable => 1 },
   "description",
-  { data_type => "text", is_nullable => 1 },
+    { data_type => "text", is_nullable => 1 },
+    "molecular_weight",
+    { data_type => "real", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY

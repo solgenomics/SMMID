@@ -88,22 +88,68 @@ sub experiment :Chained('/') :PathPart('rest/experiment') CaptureArgs(1) {
 
     my $experiment_id = shift;
     
-    my $experiment = $c->model('SMIDDB')->resultset("SMIDDB::Result::Result")->find( { experiment_id => $experiment_id } );
+    my $experiment = $c->model('SMIDDB')->resultset("SMIDDB::Result::Experiment")->find( { experiment_id => $experiment_id } );
     
     $c->stash->{experiment} = $experiment;
     $c->stash->{experiment_id} = $experiment_id;
-	
-    
+
+   
 }
 
 sub experiment_detail :Chained('experiment') :PathPart('') Args(0) {
     my $self = shift;
     my $c = shift;
+    
+    my $experiment = $c->stash->{experiment};
 
-    # build detail data structure
+    ## to do: provide link to compound...
+    
+    if (!$experiment) {
+	$c->stash->{rest} = { error => "No such experiment." };
+	return;
+    }
+    
+   
+    print STDERR "EXP = $experiment\n";
+    my $data_json = $experiment->data();
+
+    my $data = JSON::XS->new()->decode($data_json);
+    
+    print STDERR "Data = $data\n";
+    $data->{experiment_type} = $experiment->experiment_type();
+    $data->{description} = $experiment->description();
+
+   
+    if ($data->{experiment_type} eq "ms_spectrum") {
+	my $spectrum_html = "<table border=\"1\">";
+	my @spectrum = split /\n/, $data->{ms_spectrum_mz_intensity};
+	foreach my $line (@spectrum) {
+	    $spectrum_html .= "<tr><td>";
+	    $spectrum_html .= join "</td><td>", split /\t/, $line;
+	    $spectrum_html .= "</td></tr>";
+	}
+	$spectrum_html .= "</table>";
+	$data->{ms_spectrum_mz_intensity} = $spectrum_html;
+    }
+
+
+    
 	
+	
+    
+    $c->stash->{rest} = { data => $data };
 }
 
+sub experiment_mz_data : Chained('experiment') PathPart('mz_data') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    my $data_json = $c->stash->{experiment}->data();
+
+    my $data = JSON::XS->new()->decode($data_json);
+
+    $c->stash->{rest} =  { data => $data->{ms_spectrum_mz_intensity} };
+}
 
 sub delete_experiment : Chained('experiment') :PathPart('delete') Args(0) {
     my $self = shift;
