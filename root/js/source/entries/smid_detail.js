@@ -23,6 +23,7 @@ function make_fields_editable(compound_id) {
 	    $('#add_dbxref_button').click(
 		function(event) {
 		    event.preventDefault();
+		    event.stopImmediatePropagation(); 
 		    edit_dbxref_info();
         
 		});
@@ -33,6 +34,7 @@ function make_fields_editable(compound_id) {
 
 	    $('#add_new_smid_button').click(  function(event) {
 		event.preventDefault();
+		event.stopImmediatePropagation(); 
 		store_smid().then( function(r) {
 		    if (r.error) {
 			alert(r.error)
@@ -48,6 +50,7 @@ function make_fields_editable(compound_id) {
 
 	    $('#add_hplc_ms_button').click( function(event) {
 		event.preventDefault();
+		event.stopImmediatePropagation(); 
 		edit_hplc_ms_data();
 	    });
 
@@ -55,11 +58,13 @@ function make_fields_editable(compound_id) {
 
 	    $('#add_ms_spectrum_button').click( function(event) {
 		event.preventDefault();
+		event.stopImmediatePropagation(); 
 		edit_ms_spectrum();
 	    });
 
 	    $('#update_smid_button').click( function(event) {
 		event.preventDefault();
+		event.stopImmediatePropagation(); 
 		update_smid().then( function(r) {
 		    if (r.error) {
 			alert(r.error);
@@ -95,14 +100,8 @@ function edit_dbxref_info() {
     $('#save_dbxref_button').click(
 	function(event) {
 	    event.preventDefault();
-	    store_dbxref().then(function(r) {
-		if (r.error) { alert(r.error) }
-		else {
-		    alert("Stored Dbxref successfully!");
-		}
-		$('#add_dbxref_dialog').modal("hide");
-		$('#smid_dbxref_data_table').DataTable().ajax.reload();
-	    } , function(e) { alert("An error occurred "+e.responseText); })
+	    event.stopImmediatePropagation(); 
+	    store_dbxref();
 	});
 }
 
@@ -111,6 +110,7 @@ function edit_hplc_ms_data() {
 
     $('#save_hplc_ms_button').click(function(event) {
 	event.preventDefault();
+	event.stopImmediatePropagation(); 
 	store_hplc_ms_data().then(
 	    function(r) {
 		if (r.error) { alert(r.error); }
@@ -129,6 +129,9 @@ function edit_ms_spectrum() {
     $('#add_ms_spectrum_dialog').modal("show");
 
     $('#save_ms_spectrum_button').click(function(event) {
+	event.preventDefault();
+	event.stopImmediatePropagation(); 
+
 	store_ms_spectrum_data().then(
 	    function(r) {
 		if (r.error) {
@@ -198,14 +201,24 @@ function db_html_select() {
 
 function store_dbxref() {
 
-    return $.ajax( {
-	url: '/rest/dbxref/store',
+    $.ajax( {
+	url: '/rest/store/dbxref',
 	data: {
 	    'compound_id' : $('#compound_id').html(),
 	    'db_id' : $('#db_id_select').val(),
-	    'accession': $('#accession').val(),
-	    'description': $('#description').val()
-	}
+	    'dbxref_accession': $('#dbxref_accession').val(),
+	    'dbxref_description': $('#dbxref_description').val()
+	},
+	success : function(r) {
+	    if (r.error) { alert(r.error) }
+	    else {
+		alert("Stored Dbxref successfully!");
+	    }
+	    
+	    $('#add_dbxref_dialog').modal("hide");
+	    $('#smid_dbxref_data_table').DataTable().ajax.reload();
+	},
+	error: function(e) { alert('Error. '+e.responseText); }	
     });
 }
 
@@ -233,6 +246,30 @@ function delete_dbxref(dbxref_id) {
 	});
     }
 }
+
+function delete_experiment(experiment_id) {
+    var yes = confirm("Are you sure you want to delete the experiment with id "+experiment_id+"?");
+    if (yes) {
+	$.ajax( {
+	    url : '/rest/experiment/'+experiment_id+'/delete',
+	    error: function (e) { alert("An error occurred: "+e.responseText); },
+	    success: function(r) {
+		if (r.error) {
+		    alert(r.error);
+		}
+		else {
+		    if (r.experiment_type === "hplc_ms") {
+			$('#smid_hplc_ms_table').DataTable().ajax.reload();
+		    }
+		    else { 
+			$('#smid_ms_spectra_table').DataTable().ajax.reload();
+		    }
+		}
+	    }
+	});
+    }
+}
+
 
 function delete_image(image_id, compound_id) {
     var yes = confirm("Are you sure you want to delete the image with id "+image_id+"?");
@@ -270,6 +307,21 @@ function embed_compound_images(compound_id, image_size, div_name) {
 
 function store_hplc_ms_data() {
 
+
+    var hplc_ms_retention_time = $('#hplc_ms_retention_time').val();
+    
+    if (isNaN(hplc_ms_retention_time)) { 
+	alert("HPLC MS retention time must be numeric.");
+	return;
+    }
+
+    var hplc_ms_scan_number = $('#hplc_ms_scan_number').val();
+
+    if (isNaN(hplc_ms_scan_number)) { 
+	alert("HPLC MS scan number must be numeric.");
+	return;
+    }
+    
     return $.ajax( {
 	url: '/rest/experiment/store',
 	data: {
@@ -290,6 +342,13 @@ function store_hplc_ms_data() {
 
 function store_ms_spectrum_data() {
 
+    var collision_energy = $('#ms_spectrum_collision_energy').val();
+
+    if (isNaN(collision_energy)) { 
+	alert("Collision energy must be numeric.");
+	return;
+    }
+    
     return $.ajax( {
 	url: '/rest/experiment/store',
 	data: {

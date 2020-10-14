@@ -71,15 +71,18 @@ sub store_experiment :Path('/rest/experiment/store') Args(0) {
     };
 
     eval {
+	print STDERR "Storing Experiment for compound $params->{compound_id} $params->{experiment_type}, $description...\n";
 	my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->create($experiment_data);
     };
     
     if ($@) {
+	print STDERR "An error occurred storing the experiment.\n";
 	$c->stash->{rest} = { error => "An error occurred! ($@)" }; 
 	return;
     }
-
-    $c->stash->{rest} = { success => 1 };
+    
+    
+    $c->stash->{rest} = { message => "Successfully stored experimental results.", success => 1 };
 }
 
 sub experiment :Chained('/') :PathPart('rest/experiment') CaptureArgs(1) {
@@ -154,10 +157,11 @@ sub experiment_mz_data : Chained('experiment') PathPart('mz_data') Args(0) {
 sub delete_experiment : Chained('experiment') :PathPart('delete') Args(0) {
     my $self = shift;
     my $c = shift;
-    
+
+    my $experiment_type = $c->stash->{experiment}->experiment_type();
     if ($c->user() && ($c->user->get_object()->dbuser_id() == $c->stash->{experiment}->dbuser_id()) || $c->user()->user_type() eq "curator") {
 	$c->stash->{experiment}->delete();
-	$c->stash->{rest} = { success => 1 };
+	$c->stash->{rest} = { message => "Successfully deleted experiment.", success => 1, experiment_type => $experiment_type  };
     }
     else {
 	$c->stash->{error} = { error => "You don't have the required privileges to delete this entry." };
