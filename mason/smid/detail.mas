@@ -24,7 +24,7 @@ $action => undef
 
 <!-- SMID input/output form -->
 
-    <form name="new_accessions_form" id="new_accessions_form">
+    <!-- form name="new_accessions_form" id="new_accessions_form" -->
       <center>
      <table width="90%">
        <tr><td width="200">
@@ -189,7 +189,7 @@ $action => undef
        </tr>
      </table>
      </center>
-    </form>
+    <!-- /form -->
 
 % if (!$compound_id) {
     <button id="add_new_smid_button" class="btn btn-primary" disabled="true" >Add new SMID</button>
@@ -285,20 +285,18 @@ add the button regardless of login status. -->
         </button>
       </div>
       <div class="modal-body">
-	<form>
 	  <div class="form-group">
 	    <label for="db_id_select_div">Database</label>
 	    <span id="db_id_select_div">[Database Select]</span>
 	  </div>
 	  <div class="form-group">
-	    <label for="accession">Identifier</label>
-	    <input type="input" class="form-control" id="accession" placeholder="Identifier">
+	    <label for="dbxref_accession">Identifier</label>
+	    <input type="input" class="form-control" id="dbxref_accession" placeholder="Identifier">
 	  </div>
 	  <div class="form-group">
-	    <label for="description">Description</label>
-	    <input type="input" class="form-control" id="description" placeholder="Description (optional)">
+	    <label for="dbxref_description">Description</label>
+	    <input type="input" class="form-control" id="dbxref_description" placeholder="Description (optional)">
 	  </div>
-	</form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -320,7 +318,6 @@ add the button regardless of login status. -->
         </button>
       </div>
       <div class="modal-body">
-	<form>
 	  <div class="form-group">
 	    <label for="hplc_ms_author">Author</label>
 	    <input type="input" class="form-control" id="hplc_ms_author" placeholder="Author">
@@ -355,8 +352,6 @@ add the button regardless of login status. -->
 	    <label for="hplc_ms_link">Link</label>
 	    <input type="input" class="form-control" id="hplc_ms_link" placeholder="URL">
 	  </div>
-
-	</form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -399,8 +394,9 @@ add the button regardless of login status. -->
 	    <label for="ms_spectrum_adduct_fragmented">Adducts fragmented</label>
 	    <input type="input" class="form-control" id="ms_spectrum_adduct_fragmented" placeholder="Adducts fragmented">
 	  </div>
+	  <label for="ms_spectrum_mz_intensity">M/Z intensity relative_intensity</label>
+	  <span>(<a href="#ms_ms_spectra_format_modal" data-toggle="modal" data-target="#ms_ms_spectra_format_modal">format info</a>)</span>
 	  <div class="form-group">
-	    <label for="ms_spectrum_mz_intensity">M/Z intensity relative_intensity</label>
 	    <textarea cols="50" rows="10" class="form-control" id="ms_spectrum_mz_intensity" placeholder="M/Z intensity relative_intensity"></textarea>
 	  </div>
 	  <div class="form-group">
@@ -412,6 +408,38 @@ add the button regardless of login status. -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 	<button id="save_ms_spectrum_button" type="button" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- input help modal -->
+
+<div id="ms_ms_spectra_format_modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">MS/MS spectra format</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+	  To enter MS/MS spectra, export the spectra directly from Xcalibur by using the copy from clipboard function, then paste the lines from the corresponding lines shown below.
+	  <br />
+	  <br />
+	  <pre>
+m/z        Intensity              Relative
+
+147.04541  4376510.0              100.00
+164.07195  4200581.5               95.98
+ 72.00922   864740.1               19.76
+164.83664    60805.3                1.39
+...
+	    </pre>
+	</div>
       </div>
     </div>
   </div>
