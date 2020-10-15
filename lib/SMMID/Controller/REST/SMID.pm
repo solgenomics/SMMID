@@ -42,7 +42,7 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
     while (my $r = $rs->next()) {
 
       my $cur_char = "<p style=\"color:green\"><b>\x{2713}</b></p>";
-      if(!defined($r->curation_status())){$cur_char = "<p style=\"color:red\">Unverified</p>";}
+      if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){$cur_char = "<p style=\"color:red\">Unverified</p>";}
 
 	push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), molecular_weight($r->formula()), $cur_char ];
     }
@@ -75,11 +75,24 @@ sub curator : Chained('rest') PathPart('curator') Args(0) {
 
   print STDERR "found rest/curator...\n";
 
-  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search({curation_status => undef});
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search({}, { order_by => { -asc => 'smid_id'}});
 
   my @data;
   while (my $r = $rs->next()) {
-push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."/edit\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), "<button id=\"curate_smid_".$r->compound_id()."\" disabled=\"false\" class=\"btn btn-primary\">Approve and Curate</button>"];
+
+
+    ###  Alter so that only one button appears at a time ###
+    my $unverify_disabled = "";
+    my $verify_disabled = "disabled";
+    my $cur_char = "<p style=\"color:green\"><b>\x{2713}</b></p>";
+    if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){
+      $cur_char = "<p style=\"color:red\">Unverified</p>";
+      $unverify_disabled = "disabled";
+      $verify_disabled = "";
+    }
+
+push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."/edit\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\"".$verify_disabled.">Approve and Curate</button>",
+"<button id=\"unverify_".$r->compound_id()."\" onclick=\"mark_smid_unverified(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\"".$unverify_disabled.">Mark as Unverified</button>", $cur_char];
   }
 
   $c->stash->{rest} = { data => \@data };
@@ -142,7 +155,6 @@ sub browse_format :Chained('rest') PathPart('browse') Args(1) {
   print STDERR "found the browse data...\n";
 
   my @data = $c->stash->{rest}->{data};
-  #my @cols = ["{title: \"Compound ID\"}\n", "{title: \"SMID ID\"}\n", "{title: \"Formula\"}\n", "{title: \"SMILES\"}\n", "{title: \"Curation Status\"}\n"];
     }
 
 
@@ -186,7 +198,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $curation_status = $self->clean($c->req->param("curation_status"));
 
     my $molecular_weight = molecular_weight($formula);
-    
+
     my $errors = "";
     if (!$smid_id) { $errors .= "Need smid id. "; }
     if (!$iupac_name) { $errors .= "Need a IUPAC name. "; }
@@ -242,16 +254,54 @@ sub smid :Chained('rest') PathPart('smid') CaptureArgs(1) {
 }
 
 #This is where the backend function will go to curate a smid. Use buttons modeled on smid_detail.js for help
+#Note that this function will both curate a smid and mark it as unverified depending on the parameters sent!
 sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
+
     my $self = shift;
     my $c = shift;
 
-    # my $curation_status = $self->clean($c->req->param("curation_status"));
-    # $c->stash->{rest}->{
-    #   curation_status => $curation_status
-    #   message => "Smid has been curated.\n"
-    # };
-    # return;
+    my $curation_status = $self->clean($c->req->param("curation_status"));
+    my $compound_id = $c->stash->{compound_id};
+    my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id} );
+
+      if (!$row){
+        $c->stash->{rest} = { error => "The SMID with id $compound_id does not exist." };
+      	return;
+      }
+
+      my $smid_id = $row->smid_id();
+      # my $smiles_string = $row->smiles_string();
+      # my $formula = $row->formula();
+      # my $organisms = $row->organisms();
+      # my $iupac_name = $row->iupac_name();
+      # my $synonyms = $row->synonyms();
+      # my $description = $row->description();
+      # my $molecular_weight = $row->molecular_weight($formula);
+
+       my $data = {
+  	 smid_id => $smid_id,
+  	# formula => $formula,
+  	# smiles => $smiles_string,
+  	# organisms => $organisms,
+  	# iupac_name => $iupac_name,
+  	 curation_status => $curation_status,
+  	# description => $description,
+  	# synonyms => $synonyms,
+  	# molecular_weight => $molecular_weight,
+  	 last_modified_date => 'now()'
+       };
+
+      eval{
+        #$c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find({ compound_id => $compound_id})->update($data);
+        $row->update($data);
+      };
+
+      $c->stash->{rest} ={
+  	message => "Successfully stored the smid $smid_id"
+      };
+
+    print STDERR "Smid ".$smid_id." curation status updated to $curation_status";
+    return;
 }
 
 sub update :Chained('smid') PathPart('update') Args(0) {
@@ -289,7 +339,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     my $synonyms = $self->clean($c->req->param("synonyms"));
     my $description = $self->clean($c->req->param("description"));
     my $molecular_weight = molecular_weight($formula);
-    
+
     my $errors = "";
     if (!$compound_id) {  $errors .= "Need compound id. "; }
     if (!$iupac_name) { $errors .= "Need IUPAC name. "; }

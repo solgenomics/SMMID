@@ -22,7 +22,6 @@ sub smid :Chained('/') PathPart('smid') CaptureArgs(1) {
     $c->stash->{compound_id} = shift;
 }
 
-
 sub detail :Chained('smid') PathPart('') Args(0) {
     my $self = shift;
     my $c = shift;
@@ -31,7 +30,7 @@ sub detail :Chained('smid') PathPart('') Args(0) {
 }
 
 # compatibility with old site
-sub smid_old : Chained('/') PathPart('detail') Args(1) { 
+sub smid_old : Chained('/') PathPart('detail') Args(1) {
     my $self = shift;
     my $c = shift;
     my $smid_id = shift;
@@ -80,7 +79,7 @@ sub add_image :Chained('smid') PathPart('image') Args(0) {
     while (my $row = $rs->next()) {
 	push @image_ids, $row->image_id();
     }
-    
+
     $c->stash->{image_ids} = \@image_ids;
     $c->stash->{template} = '/image/index.mas';
 }

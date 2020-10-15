@@ -9,7 +9,7 @@
 
 <link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css"></link>
 <p id="no_login_text">You must be logged in as a curator to view this page. Please login.</p>
-<table id="browse_c_smid_data_div", style="width:100%", class="display">
+<table id="browse_c_smid_data_div" style="width:100%" class="display">
 <!--<center>[loading...]</center>-->
 </table>
 
@@ -19,7 +19,7 @@
     $("#no_login_text").hide();
 
     has_login().then( function(r){
-       if(r.user !== null /*Add condition for curator login only*/){
+       if(r.user !== null && r.role == "curator"){
          curator_html();
        } else {
          $("#no_login_text").show();
@@ -28,16 +28,4 @@
      }).catch( function(error){ alert('An error occurred.' + e.responseText)});
    }
  );
-
- $("#curate_smid_"+compound_id).click( function(event){
-   event.preventDefault();
-
-   curate_smid(compound_id).then(function(r){
-     if(r.error) {alert(r.error);}
-     else{
-
-     }
-   });
-
- });
 </script>
