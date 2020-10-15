@@ -3,6 +3,8 @@ package SMMID::Controller::REST::SMID;
 use Moose;
 use utf8;
 use Unicode::Normalize;
+use Chemistry::Mol;
+use Chemistry::File::SMILES;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -283,8 +285,12 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     if (!$compound_id) {  $errors .= "Need compound id. "; }
     if (!$iupac_name) { $errors .= "Need IUPAC name. "; }
     if (!$smid_id) { $errors .= "Need smid id. "; }
-    if (!$smiles_string) { $errors .= "Need smiles_string. "; }
+    #if (!$smiles_string) { $errors .= "Need smiles_string. "; }
     if (!$formula) { $errors .= "Need formula. "; }
+
+    if (my $smiles_error = $self->check_smiles($smiles_string)) {
+	$errors .= $smiles_error;
+    }
 
     if ($errors) {
 	$c->stash->{rest} = { error => $errors };
@@ -320,6 +326,23 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 
 }
 
+sub check_smiles {
+    my $self = shift;
+    my $smiles = shift;
+
+    eval {
+	Chemistry::Mol->parse($smiles, format => 'smiles');
+    };
+
+    my $error;
+    if ($@) {
+	$error = $@;
+    }
+
+    return $error;
+}
+    
+	
 
 sub detail :Chained('smid') PathPart('details') Args(0) {
     my $self = shift;
