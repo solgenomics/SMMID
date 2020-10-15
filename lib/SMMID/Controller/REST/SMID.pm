@@ -367,7 +367,6 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
 
     my $data = [];
 
-
     while (my $dbxref = $rs->next()) {
 	print STDERR "Retrieved: ". $dbxref->dbxref_id()."...\n";
 
@@ -381,8 +380,11 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
 	    $display_url = join("",  $urlprefix, $url, $dbxref->accession());
 	}
 
-	my $delete_link = "<a href=\"javascript:delete_dbxref(".$dbxref->dbxref_id().")\" ><font color=\"red\">X</font></a>";
-
+	my $delete_link = "X";
+	
+	if ($c->user()) {
+	    $delete_link = "<a href=\"javascript:delete_dbxref(".$dbxref->dbxref_id().")\" ><font color=\"red\">X</font></a>";
+	}
 	push @$data, [ $db_name, $dbxref->accession(), $display_url , $delete_link ];
     }
     $c->stash->{rest} = { data => $data };
@@ -394,15 +396,17 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 
     my $experiment_type = $c->req->param("experiment_type");
 
-
     my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( { compound_id => $c->stash->{compound_id}, experiment_type => $experiment_type } );
 
     print STDERR "Retrieved ".$rs->count()." rows...\n";
     my @data;
 
+    my $delete_link = "X";
     while (my $row = $rs->next()) {
-	my $experiment_id = $row->experiment_id();	
-	my $delete_link = "<a href=\"javascript:delete_experiment($experiment_id)\"><font color=\"red\">X</font></a>";
+	my $experiment_id = $row->experiment_id();
+	if ($c->user()) { 
+	    $delete_link = "<a href=\"javascript:delete_experiment($experiment_id)\"><font color=\"red\">X</font></a>";
+	}
 	
 	if ($experiment_type eq "hplc_ms") {
 	    my $json = $row->data();
