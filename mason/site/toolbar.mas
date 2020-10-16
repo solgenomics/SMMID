@@ -22,6 +22,7 @@
 	      	<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 			<a class="dropdown-item" href="/about">About SMIDs</a>
 			<a class="dropdown-item" href="/contact">Contact</a>
+			<a class="dropdown-item" href="/cite">Cite SMID-DB</a>
 		
 	      	</div>
 	    	</li>
