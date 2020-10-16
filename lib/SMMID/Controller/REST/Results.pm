@@ -3,7 +3,7 @@ package SMMID::Controller::REST::Results;
 
 use Moose;
 
-use JSON::Any;
+use JSON::XS;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -58,7 +58,7 @@ sub store_experiment :Path('/rest/experiment/store') Args(0) {
 	$description = $params->{ms_spectrum_description};
     }
 
-    my $data_json = JSON::Any->encode($data);
+    my $data_json = JSON::XS->new()->encode($data);
 
     my $experiment_data = {
 	compound_id => $params->{compound_id},
