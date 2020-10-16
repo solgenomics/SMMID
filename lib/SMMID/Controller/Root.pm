@@ -77,6 +77,10 @@ sub contact :Path('/contact') :Args(0) {
     my ($self, $c) = @_;
 }
 
+sub cite : Path('/cite') Args(0) {
+
+}
+
 sub about :Path('/about') :Args(0) {
     my ($self, $c) = @_;
 }
