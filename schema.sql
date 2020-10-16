@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.4 (Debian 11.4-1.pgdg90+1)
--- Dumped by pg_dump version 11.4 (Debian 11.4-1.pgdg90+1)
+-- Dumped from database version 12.4 (Debian 12.4-1.pgdg100+1)
+-- Dumped by pg_dump version 12.4 (Debian 12.4-1.pgdg100+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,7 +17,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: 
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
@@ -32,7 +32,7 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
+SET default_table_access_method = heap;
 
 --
 -- Name: compound; Type: TABLE; Schema: public; Owner: postgres
@@ -40,10 +40,8 @@ SET default_with_oids = false;
 
 CREATE TABLE public.compound (
     compound_id integer NOT NULL,
-    formula text NOT NULL,
     organisms text,
     smid_id character varying(100) NOT NULL,
-    smiles text,
     curation_status character varying(100),
     dbuser_id bigint,
     curator_id bigint,
@@ -52,7 +50,10 @@ CREATE TABLE public.compound (
     last_modified_date timestamp without time zone,
     iupac_name text NOT NULL,
     synonyms text,
-    description text
+    description text,
+    smiles text,
+    formula text,
+    molecular_weight real
 );
 
 
@@ -337,7 +338,18 @@ CREATE TABLE public.image (
     name character varying(100),
     description text,
     type character varying(20),
-    dbuser_id bigint
+    dbuser_id bigint,
+    copyright text,
+    obsolete boolean DEFAULT false,
+    file_ext character varying(20),
+    original_filename character varying(255),
+    md5sum character varying(100),
+    image_taken_timestamp timestamp without time zone,
+    create_date timestamp without time zone,
+    modified_date timestamp without time zone DEFAULT now(),
+    curation_status character varying(20) DEFAULT 'unverified'::character varying,
+    last_curated_time timestamp without time zone,
+    curator_id bigint
 );
 
 
@@ -478,14 +490,6 @@ ALTER TABLE ONLY public.compound_dbxref
 
 
 --
--- Name: compound compound_formula_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
---ALTER TABLE ONLY public.compound
----    ADD CONSTRAINT compound_formula_key UNIQUE (formula);
-
-
---
 -- Name: compound_image compound_image_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -507,14 +511,6 @@ ALTER TABLE ONLY public.compound
 
 ALTER TABLE ONLY public.compound
     ADD CONSTRAINT compound_smid_id_key UNIQUE (smid_id);
-
-
---
--- Name: compound compound_smiles_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
---- ALTER TABLE ONLY public.compound
----    ADD CONSTRAINT compound_smiles_key UNIQUE (smiles);
 
 
 --
@@ -675,6 +671,14 @@ ALTER TABLE ONLY public.experiment
 
 ALTER TABLE ONLY public.experiment
     ADD CONSTRAINT experiment_user_id_fkey FOREIGN KEY (dbuser_id) REFERENCES public.dbuser(dbuser_id);
+
+
+--
+-- Name: image image_curator_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.image
+    ADD CONSTRAINT image_curator_id_fkey FOREIGN KEY (curator_id) REFERENCES public.dbuser(dbuser_id);
 
 
 --
