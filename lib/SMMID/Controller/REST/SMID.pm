@@ -5,6 +5,7 @@ use utf8;
 use Unicode::Normalize;
 use Chemistry::Mol;
 use Chemistry::File::SMILES;
+use JSON::XS;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -433,12 +434,12 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 	
 	if ($experiment_type eq "hplc_ms") {
 	    my $json = $row->data();
-	    my $hash = JSON::Any->decode($json);
+	    my $hash = JSON::XS->new()->decode($json);
 	    push @data, [ $hash->{hplc_ms_author}, $hash->{hplc_ms_method_type}, $hash->{hplc_ms_retention_time}, $hash->{hplc_ms_ionization_mode}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_scan_number}, $hash->{hplc_ms_link}, $delete_link ];
 	}
 	if ($experiment_type eq "ms_spectrum") {
 	    my $json = $row->data();
-	    my $hash = JSON::Any->decode($json);
+	    my $hash = JSON::XS->new()->decode($json);
 	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\">Details</a>", $hash->{ms_spectrum_link},  $delete_link ];
 	}
     }
