@@ -2,6 +2,7 @@
 package SMMID::Controller::REST::Dbxref;
 
 use Moose;
+use Data::Dumper;
 
 BEGIN{ extends 'Catalyst::Controller::REST'; }
 
@@ -12,7 +13,7 @@ __PACKAGE__->config(
    );
 
 
-sub store_dbxref :Path('/rest/dbxref/store') Args(0) {
+sub store_dbxref :Path('/rest/store/dbxref') Args(0) {
     my $self = shift;
     my $c = shift;
 
@@ -24,9 +25,9 @@ sub store_dbxref :Path('/rest/dbxref/store') Args(0) {
     my $dbuser_id = $c->user()->get_object()->dbuser_id();
     my $compound_id = $c->req->param("compound_id");
     my $db_id = $c->req->param("db_id");
-    my $accession = $c->req->param("accession");
-    my $version = $c->req->param("version");
-    my $description = $c->req->param("description");
+    my $accession = $c->req->param("dbxref_accession");
+    my $version = $c->req->param("dbxref_version");
+    my $description = $c->req->param("dbxref_description");
 
     my $errors = "";
     if (! $compound_id) {  $errors .= "Need a compound id. "; }
@@ -37,7 +38,7 @@ sub store_dbxref :Path('/rest/dbxref/store') Args(0) {
 	$c->stash->{rest} = { error => $errors };
 	return;
     }
-    
+
     my $row = {
 	db_id => $db_id,
 	accession => $accession,
@@ -46,6 +47,8 @@ sub store_dbxref :Path('/rest/dbxref/store') Args(0) {
 	dbuser_id => $dbuser_id,
     };
 
+    print STDERR Dumper($row);
+    
     my $dbxref_id;
     
     eval { 

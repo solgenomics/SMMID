@@ -27,7 +27,7 @@
     "source-map-support": "^0.5.10",
     "tape": "^4.10.1",
     "uglifyjs-webpack-plugin": "^1.2.7",
-    "webpack": "^4.44.1",
+    "webpack": "^4.44.2",
     "webpack-command": "^0.4.2"
   },
   "dependencies": {

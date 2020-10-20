@@ -3,6 +3,9 @@ package SMMID::Controller::REST::SMID;
 use Moose;
 use utf8;
 use Unicode::Normalize;
+use Chemistry::Mol;
+use Chemistry::File::SMILES;
+use JSON::XS;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -345,8 +348,12 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     if (!$compound_id) {  $errors .= "Need compound id. "; }
     if (!$iupac_name) { $errors .= "Need IUPAC name. "; }
     if (!$smid_id) { $errors .= "Need smid id. "; }
-    if (!$smiles_string) { $errors .= "Need smiles_string. "; }
+    #if (!$smiles_string) { $errors .= "Need smiles_string. "; }
     if (!$formula) { $errors .= "Need formula. "; }
+
+    if (my $smiles_error = $self->check_smiles($smiles_string)) {
+	$errors .= $smiles_error;
+    }
 
     if ($errors) {
 	$c->stash->{rest} = { error => $errors };
@@ -382,6 +389,23 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 
 }
 
+sub check_smiles {
+    my $self = shift;
+    my $smiles = shift;
+
+    eval {
+	Chemistry::Mol->parse($smiles, format => 'smiles');
+    };
+
+    my $error;
+    if ($@) {
+	$error = $@;
+    }
+
+    return $error;
+}
+    
+	
 
 sub detail :Chained('smid') PathPart('details') Args(0) {
     my $self = shift;
@@ -429,7 +453,6 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
 
     my $data = [];
 
-
     while (my $dbxref = $rs->next()) {
 	print STDERR "Retrieved: ". $dbxref->dbxref_id()."...\n";
 
@@ -443,8 +466,11 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
 	    $display_url = join("",  $urlprefix, $url, $dbxref->accession());
 	}
 
-	my $delete_link = "<a href=\"javascript:delete_dbxref(".$dbxref->dbxref_id().")\" ><font color=\"red\">X</font></a>";
-
+	my $delete_link = "X";
+	
+	if ($c->user()) {
+	    $delete_link = "<a href=\"javascript:delete_dbxref(".$dbxref->dbxref_id().")\" ><font color=\"red\">X</font></a>";
+	}
 	push @$data, [ $db_name, $dbxref->accession(), $display_url , $delete_link ];
     }
     $c->stash->{rest} = { data => $data };
@@ -456,21 +482,27 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 
     my $experiment_type = $c->req->param("experiment_type");
 
-
     my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( { compound_id => $c->stash->{compound_id}, experiment_type => $experiment_type } );
 
     print STDERR "Retrieved ".$rs->count()." rows...\n";
     my @data;
+
+    my $delete_link = "X";
     while (my $row = $rs->next()) {
+	my $experiment_id = $row->experiment_id();
+	if ($c->user()) { 
+	    $delete_link = "<a href=\"javascript:delete_experiment($experiment_id)\"><font color=\"red\">X</font></a>";
+	}
+	
 	if ($experiment_type eq "hplc_ms") {
 	    my $json = $row->data();
-	    my $hash = JSON::Any->decode($json);
-	    push @data, [ $hash->{hplc_ms_author}, $hash->{hplc_ms_method_type}, $hash->{hplc_ms_retention_time}, $hash->{hplc_ms_ionization_mode}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_scan_number}, $hash->{hplc_ms_link}, "X" ];
+	    my $hash = JSON::XS->new()->decode($json);
+	    push @data, [ $hash->{hplc_ms_author}, $hash->{hplc_ms_method_type}, $hash->{hplc_ms_retention_time}, $hash->{hplc_ms_ionization_mode}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_scan_number}, $hash->{hplc_ms_link}, $delete_link ];
 	}
 	if ($experiment_type eq "ms_spectrum") {
 	    my $json = $row->data();
-	    my $hash = JSON::Any->decode($json);
-	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\">Details</a>", $hash->{ms_spectrum_link},  "X" ];
+	    my $hash = JSON::XS->new()->decode($json);
+	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\">Details</a>", $hash->{ms_spectrum_link},  $delete_link ];
 	}
     }
 
