@@ -264,7 +264,7 @@ $action => undef
 
 %  if ($action eq "edit") {
 <br />
-<button id="add_ms_spectrum_button" disabled="true" class="btn btn-primary">Add MS spectrum</button>
+<button id="add_ms_spectrum_button" disabled="true" class="btn btn-primary">Add MS/MS Data</button>
 %  }
 
 

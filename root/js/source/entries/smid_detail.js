@@ -5,7 +5,9 @@ function make_fields_editable(compound_id) {
 	if (r.user !==null) {
 	    $('#smid_id').prop('disabled', false);
 	    $('#smiles_string').prop('disabled', false);
-	    $('#curation_status').val('unverified');
+      if (r.role == "curator"){$('#curation_status').prop('disabled', false);}
+      else {$('#curation_status').prop('disabled', true);}
+      $('#curation_status').prop("value", "unverified");
 	    $('#formula_input_div').show();
 	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
@@ -24,11 +26,11 @@ function make_fields_editable(compound_id) {
 		function(event) {
 		    event.preventDefault();
 		    edit_dbxref_info();
-        
+
 		});
 
 	    if (compound_id) { embed_compound_images(compound_id, 'medium', 'smid_structure_images'); }
-	    
+
 	    $('#add_new_smid_button').prop('disabled', false);
 
 	    $('#add_new_smid_button').click(  function(event) {
@@ -69,7 +71,7 @@ function make_fields_editable(compound_id) {
 			location.href="/smid/"+r.compound_id;
 		    }}, function(e) { alert('An error occurred.' + e.responseText) });
 	    });
-	    
+
 	    $('#smid_structure_upload_div').attr("visible", "true");
 
 	    $('#input_image_file_upload').fileupload( {
@@ -157,7 +159,7 @@ function store_smid() {
 	    'iupac_name' : $('#iupac_name').val(),
 	    'formula': $('#formula').val(),
 	    'organisms': $('#organisms').val(),
-	    'curation_status' : $('#curation_status').val(),
+	    'curation_status' : "unverified",
 	    'organisms': $('#organisms').val(),
 	    'description': $('#description').val(),
 	    'synonyms': $('#synonyms').val()
@@ -247,7 +249,7 @@ function delete_image(image_id, compound_id) {
 		    embed_compound_images(compound_id, 'medium', 'smid_structure_images');
 		    alert("Image deleted.");
 		}
-	    },	
+	    },
 	    error : function(r) { alert("an error occurred"); }
 	});
     }
@@ -334,17 +336,17 @@ function populate_smid_data(compound_id) {
 		$('#iupac_name_static_div').html(r.data.iupac_name);
 		$('#iupac_name').val(r.data.iupac_name);
 		$('#iupac_name_input_div').hide();
-		
+
 		$('#smid_title').html(r.data.smid_id);
 
 		$('#description_static_div').show();
 		$('#description_static_content_div').html(r.data.description);
 		$('#description_input_div').hide();
 		$('#description').html(r.data.description);
-		
+
 		$('#synonyms').val(r.data.synonyms);
 		$('#modification_history').html('<font size="2">Created: '+r.data.create_date+' Last modified: '+r.data.last_modified_date+'</font>');
-		
+
 
 	    }
 

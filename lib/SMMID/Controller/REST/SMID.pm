@@ -76,23 +76,37 @@ sub curator : Chained('rest') PathPart('curator') Args(0) {
   print STDERR "found rest/curator...\n";
 
   my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search({}, { order_by => { -asc => 'smid_id'}});
-
   my @data;
   while (my $r = $rs->next()) {
 
+    my $button = "<button id=\"unverify_".$r->compound_id()."\" onclick=\"mark_smid_unverified(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\">Mark as Unverified</button>";
+    my $cur_status = "<p style=\"color:green\"><b>\x{2713}</b></p>";
+    my $disabled = "";
 
-    ###  Alter so that only one button appears at a time ###
-    my $unverify_disabled = "";
-    my $verify_disabled = "disabled";
-    my $cur_char = "<p style=\"color:green\"><b>\x{2713}</b></p>";
     if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){
-      $cur_char = "<p style=\"color:red\">Unverified</p>";
-      $unverify_disabled = "disabled";
-      $verify_disabled = "";
+      #Check to make sure these values match those in database
+      my $hplcexperiments = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search({compound_id => $r->compound_id(), experiment_type => "hplc_ms"});
+      my $msmsexperiments = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search({compound_id => $r->compound_id(), experiment_type => "ms_spectrum"});
+
+      my $advice = "Approve and Curate";
+      my @missing;
+      $cur_status = "<p style=\"color:red\">Unverified ";
+      #Note that it is already a requirement for these fields to be entered before they may be put in the database
+      if (!$r->organisms()){push(@missing, "organisms");}
+      if (!$r->formula()){push(@missing, "Molecular Formula");}
+      if (!$r->smid_id()){push(@missing, "SMID ID");}
+      # ...requirement for HPLC-MS and MS/MS data
+      if (!$hplcexperiments->next()){push(@missing, "HPLC-MS Data");}
+      if (!$msmsexperiments->next()){push(@missing, "MS/MS Data");}
+      my $missinglist = "(Missing: ";
+      $missinglist .= join(", ", @missing);
+      $missinglist .= ")";
+      if ($missinglist eq "(Missing: )"){$missinglist = "";} else {$advice = "Curation not Reccommended"; $disabled = "disabled";}
+      $cur_status .= "$missinglist</p>";
+      $button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
     }
 
-push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."/edit\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\"".$verify_disabled.">Approve and Curate</button>",
-"<button id=\"unverify_".$r->compound_id()."\" onclick=\"mark_smid_unverified(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\"".$unverify_disabled.">Mark as Unverified</button>", $cur_char];
+push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."/edit\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), $button, $cur_status];
   }
 
   $c->stash->{rest} = { data => \@data };
@@ -270,34 +284,21 @@ sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
       }
 
       my $smid_id = $row->smid_id();
-      # my $smiles_string = $row->smiles_string();
-      # my $formula = $row->formula();
-      # my $organisms = $row->organisms();
-      # my $iupac_name = $row->iupac_name();
-      # my $synonyms = $row->synonyms();
-      # my $description = $row->description();
-      # my $molecular_weight = $row->molecular_weight($formula);
 
        my $data = {
   	 smid_id => $smid_id,
-  	# formula => $formula,
-  	# smiles => $smiles_string,
-  	# organisms => $organisms,
-  	# iupac_name => $iupac_name,
+
   	 curation_status => $curation_status,
-  	# description => $description,
-  	# synonyms => $synonyms,
-  	# molecular_weight => $molecular_weight,
+
   	 last_modified_date => 'now()'
        };
 
       eval{
-        #$c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find({ compound_id => $compound_id})->update($data);
         $row->update($data);
       };
 
       $c->stash->{rest} ={
-  	message => "Successfully stored the smid $smid_id"
+  	message => "Successfully updated the curation status of smid $smid_id"
       };
 
     print STDERR "Smid ".$smid_id." curation status updated to $curation_status";

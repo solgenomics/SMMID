@@ -2,17 +2,6 @@
 
 function curator_html() {
 
-  // $.ajax( {
-  //   url: 'rest/curator/datatable',
-  //   error: function(r) { alert('An error occurred.'+r.responseText); },
-  // 	success: function(r) {
-  // 	    if (r.error) {
-  // 		alert('Error ('+r.error+')');
-  // 	    }
-  // 	    else {
-
-  		//$('#browse_c_smid_data_div').html(r.html);
-
       $('#browse_c_smid_data_div').DataTable({
         'ajax': 'rest/curator/datatable',
         'paging': true,
@@ -25,13 +14,11 @@ function curator_html() {
           {title: "SMID ID"},
           {title: "Formula"},
           {title: "SMILES"},
-          {title: "  "},
-          {title: "  "},
+          {title: "Action"},
           {title: "Status"}
         ]
       });
-        //   }
-  	    // }
+
   	}
 
   function curate_smid(compound_id){
@@ -49,8 +36,6 @@ function curator_html() {
         }
       }
     });
-    //$('#browse_c_smid_data_div').DataTable().ajax.reload();
-    //$(document).reload();
   }
 
   function mark_smid_unverified(compound_id){
@@ -68,6 +53,4 @@ function curator_html() {
       }
     }
     });
-    //$('#browse_c_smid_data_div').DataTable().ajax.reload();
-    //$(document).reload();
   }
