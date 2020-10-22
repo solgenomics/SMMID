@@ -344,8 +344,13 @@ function store_ms_spectrum_data() {
 
     var collision_energy = $('#ms_spectrum_collision_energy').val();
 
-    if (isNaN(collision_energy)) { 
-	alert("Collision energy must be numeric.");
+    let re = /^[0-9., ]*$/;
+
+    var matches = collision_energy.match(re);
+
+    alert(JSON.stringify(matches));
+    if (matches === null) { 
+	alert("Collision energies must be numeric, separated by commas.");
 	return;
     }
     
