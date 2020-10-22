@@ -3,7 +3,7 @@ use strict;
 
 use SMIDDB;
 
-my $schema = SMIDDB->connect('dbi:Pg:dbname=smid_db;host=breedbase_db;user=postgres;password=postgres');
+my $schema = SMIDDB->connect('dbi:Pg:dbname=smid_db;host=localhost;user=postgres;password=DebianBox**');
 
 my $compounds = $schema->resultset("SMIDDB::Result::Compound")->search( {} );
 
@@ -11,8 +11,8 @@ while (my $compound = $compounds->next()) {
     my $molecular_weight = molecular_weight($compound->formula());
 
     $compound->update( { molecular_weight => $molecular_weight });
-    
-    
+
+
 }
 
 

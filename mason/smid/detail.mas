@@ -184,7 +184,11 @@ $action => undef
 	   <label>Curation status</label>
 	 </td>
 	 <td>
-	   <input id="curation_status" size="20" disabled />
+	   <select name="curation_status" id="curation_status" disabled>
+       <option value="curated">Curated</option>
+       <option value="unverified">Unverified</option>
+       <option value="review">Marked for Review</option>
+     </select>
 	 </td>
        </tr>
      </table>

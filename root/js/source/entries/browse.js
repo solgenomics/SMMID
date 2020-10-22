@@ -19,7 +19,6 @@ function browse_html() {
       data: r.data,
       columns:
       [
-        {title: "Compound ID"},
         {title: "SMID ID"},
         {title: "Formula"},
         {title: "Molecular Weight"},

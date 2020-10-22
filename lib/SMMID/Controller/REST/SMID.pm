@@ -46,8 +46,9 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
 
       my $cur_char = "<p style=\"color:green\"><b>\x{2713}</b></p>";
       if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){$cur_char = "<p style=\"color:red\">Unverified</p>";}
+      elsif($r->curation_status() eq "review"){$cur_char = "<p style=\"color:blue\">Marked for Review</p>";}
 
-	push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), molecular_weight($r->formula()), $cur_char ];
+	push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $cur_char ];
     }
 
     $c->stash->{rest} = { data => \@data };
@@ -82,30 +83,33 @@ sub curator : Chained('rest') PathPart('curator') Args(0) {
   my @data;
   while (my $r = $rs->next()) {
 
-    my $button = "<button id=\"unverify_".$r->compound_id()."\" onclick=\"mark_smid_unverified(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\">Mark as Unverified</button>";
+    my $button = "<button id=\"unverify_".$r->compound_id()."\" onclick=\"mark_smid_for_review(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\">Mark for Review</button>";
     my $cur_status = "<p style=\"color:green\"><b>\x{2713}</b></p>";
     my $disabled = "";
+    my $advice = "Approve and Curate";
+    my @missing;
+
+    my $hplcexperiments = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search({compound_id => $r->compound_id(), experiment_type => "hplc_ms"});
+    my $msmsexperiments = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search({compound_id => $r->compound_id(), experiment_type => "ms_spectrum"});
+
+    if (!$r->organisms()){push(@missing, "organisms");}
+    if (!$r->formula()){push(@missing, "Molecular Formula");}
+    if (!$r->smid_id()){push(@missing, "SMID ID");}
+    # ...requirement for HPLC-MS and MS/MS data
+    if (!$hplcexperiments->next()){push(@missing, "HPLC-MS Data");}
+    if (!$msmsexperiments->next()){push(@missing, "MS/MS Data");}
+
+    my $missinglist = "(Missing: ";
+    $missinglist .= join(", ", @missing);
+    $missinglist .= ")";
+    if ($missinglist eq "(Missing: )"){$missinglist = "";} else {$advice = "Curation not Reccommended"; $disabled = "disabled";}
 
     if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){
-      #Check to make sure these values match those in database
-      my $hplcexperiments = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search({compound_id => $r->compound_id(), experiment_type => "hplc_ms"});
-      my $msmsexperiments = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search({compound_id => $r->compound_id(), experiment_type => "ms_spectrum"});
-
-      my $advice = "Approve and Curate";
-      my @missing;
-      $cur_status = "<p style=\"color:red\">Unverified ";
-      #Note that it is already a requirement for these fields to be entered before they may be put in the database
-      if (!$r->organisms()){push(@missing, "organisms");}
-      if (!$r->formula()){push(@missing, "Molecular Formula");}
-      if (!$r->smid_id()){push(@missing, "SMID ID");}
-      # ...requirement for HPLC-MS and MS/MS data
-      if (!$hplcexperiments->next()){push(@missing, "HPLC-MS Data");}
-      if (!$msmsexperiments->next()){push(@missing, "MS/MS Data");}
-      my $missinglist = "(Missing: ";
-      $missinglist .= join(", ", @missing);
-      $missinglist .= ")";
-      if ($missinglist eq "(Missing: )"){$missinglist = "";} else {$advice = "Curation not Reccommended"; $disabled = "disabled";}
-      $cur_status .= "$missinglist</p>";
+      $cur_status = "<p style=\"color:red\">Unverified $missinglist </p>";
+      $button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
+    }
+    elsif($r->curation_status() eq "review"){
+      $cur_status = "<p style=\"color:blue\">Marked for Review $missinglist </p> ";
       $button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
     }
 
@@ -404,8 +408,8 @@ sub check_smiles {
 
     return $error;
 }
-    
-	
+
+
 
 sub detail :Chained('smid') PathPart('details') Args(0) {
     my $self = shift;
@@ -467,7 +471,7 @@ sub smid_dbxref :Chained('smid') PathPart('dbxrefs') Args(0) {
 	}
 
 	my $delete_link = "X";
-	
+
 	if ($c->user()) {
 	    $delete_link = "<a href=\"javascript:delete_dbxref(".$dbxref->dbxref_id().")\" ><font color=\"red\">X</font></a>";
 	}
@@ -490,10 +494,10 @@ sub results : Chained('smid') PathPart('results') Args(0) {
     my $delete_link = "X";
     while (my $row = $rs->next()) {
 	my $experiment_id = $row->experiment_id();
-	if ($c->user()) { 
+	if ($c->user()) {
 	    $delete_link = "<a href=\"javascript:delete_experiment($experiment_id)\"><font color=\"red\">X</font></a>";
 	}
-	
+
 	if ($experiment_type eq "hplc_ms") {
 	    my $json = $row->data();
 	    my $hash = JSON::XS->new()->decode($json);
