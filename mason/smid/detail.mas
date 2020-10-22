@@ -325,7 +325,13 @@ add the button regardless of login status. -->
 
 	  <div class="form-group">
 	    <label for="hplc_ms_method_type">Method type</label>
-	    <input type="input" class="form-control" id="hplc_ms_method_type" placeholder="Method type">
+	    <!-- input type="input" class="form-control" id="hplc_ms_method_type" placeholder="Method type" -->
+	    <select id="hplc_ms_method_type">
+	      <option>RP_28min</option>
+	      <option>RP_80min</option>
+	      <option>NP_28min</option>
+	      <option>NP_80min</option>
+	    </select
 	  </div>
 	  <div class="form-group">
 	    <label for="hplc_ms_retention_time">Retention time</label>
