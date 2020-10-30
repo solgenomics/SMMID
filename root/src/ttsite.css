@@ -17,7 +17,7 @@ html {
     height: 100%;
 }
 
-body { 
+body {
     background-color: white;
     font-family: fira sans;
     color: dark grey;
@@ -74,13 +74,13 @@ h2 {
 }
 
 
-.sitetitle { 
+.sitetitle {
     font-family: fira sans ultra;
     text-decoration: none;
     font-size: 28pt;
     font-weight: 1000;
     color: lightblue;
-    margin-bottom: 0px;   
+    margin-bottom: 0px;
 }
 
 .sitetitle:hover {
@@ -155,7 +155,7 @@ width: 80%;
 .css-grid-table-header,
 .css-grid-table-body {
 grid-template-columns: auto auto minmax(150px, 25%);
-line-height: 24px; 
+line-height: 24px;
 }
 
 .css-grid-table-header {

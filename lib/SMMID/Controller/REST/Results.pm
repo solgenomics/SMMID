@@ -29,14 +29,14 @@ sub store_experiment :Path('/rest/experiment/store') Args(0) {
     }
 
     my $user_id = $c->user()->get_object()->dbuser_id();
-    
+
     my $params = $c->req->params();
 
     print STDERR "Storing data... :-) ...\n";
     my $data;
 
     my $description = "";
-    
+
     if ($params->{experiment_type} eq "hplc_ms") {
 	$data->{hplc_ms_author} = $params->{hplc_ms_author};
 	$data->{hplc_ms_method_type} = $params->{hplc_ms_method_type};
@@ -74,14 +74,14 @@ sub store_experiment :Path('/rest/experiment/store') Args(0) {
 	print STDERR "Storing Experiment for compound $params->{compound_id} $params->{experiment_type}, $description...\n";
 	my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->create($experiment_data);
     };
-    
+
     if ($@) {
 	print STDERR "An error occurred storing the experiment.\n";
-	$c->stash->{rest} = { error => "An error occurred! ($@)" }; 
+	$c->stash->{rest} = { error => "An error occurred! ($@)" };
 	return;
     }
-    
-    
+
+
     $c->stash->{rest} = { message => "Successfully stored experimental results.", success => 1 };
 }
 
@@ -90,39 +90,39 @@ sub experiment :Chained('/') :PathPart('rest/experiment') CaptureArgs(1) {
     my $c = shift;
 
     my $experiment_id = shift;
-    
+
     my $experiment = $c->model('SMIDDB')->resultset("SMIDDB::Result::Experiment")->find( { experiment_id => $experiment_id } );
-    
+
     $c->stash->{experiment} = $experiment;
     $c->stash->{experiment_id} = $experiment_id;
 
-   
+
 }
 
 sub experiment_detail :Chained('experiment') :PathPart('') Args(0) {
     my $self = shift;
     my $c = shift;
-    
+
     my $experiment = $c->stash->{experiment};
 
     ## to do: provide link to compound...
-    
+
     if (!$experiment) {
 	$c->stash->{rest} = { error => "No such experiment." };
 	return;
     }
-    
-   
+
+
     print STDERR "EXP = $experiment\n";
     my $data_json = $experiment->data();
 
     my $data = JSON::XS->new()->decode($data_json);
-    
+
     print STDERR "Data = $data\n";
     $data->{experiment_type} = $experiment->experiment_type();
     $data->{description} = $experiment->description();
 
-   
+
     if ($data->{experiment_type} eq "ms_spectrum") {
 	my $spectrum_html = "<table border=\"1\">";
 	my @spectrum = split /\n/, $data->{ms_spectrum_mz_intensity};
@@ -135,15 +135,58 @@ sub experiment_detail :Chained('experiment') :PathPart('') Args(0) {
 	$data->{ms_spectrum_mz_intensity} = $spectrum_html;
     }
 
-
-    
-	
-	
-    
     $c->stash->{rest} = { data => $data };
 }
 
-sub experiment_mz_data : Chained('experiment') PathPart('mz_data') Args(0) {
+sub msms_visual_data : Chained('experiment') PathPart('msms_spectrum') Args(0){
+  #Collect, sort, and return data in much the same way as the subroutine above this owned
+
+
+  print STDERR "Found visualizer!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+
+  my $self = shift;
+  my $c = shift;
+
+  my $experiment = $c->stash->{experiment};
+
+  if (!$experiment) {
+    $c->stash->{rest} = { error => "No such experiment." };
+    return;
+  }
+
+  my $data_json = $experiment->data();
+
+  my $data = JSON::XS->new()->decode($data_json);
+
+  #The data collected above needs to be formatted. It will be sorted according to 'x' value, with 'y' and 'ry' values accompanied.
+  #The data will be scaled in javascript, local to the place where it is displayed (this is to make sure no time is wasted shuttling data
+  #back and forth between the website and here)
+
+    my @spectrum = split /\n/, $data->{ms_spectrum_mz_intensity};
+    my @return_spec;
+    foreach my $line (@spectrum){
+      no strict;
+      #print STDERR $line."\n";
+      my @split = split(/\t/, $line);
+      print STDERR $split[0]."\n";
+      push(@return_spec, ($split[0] + 0.0, $split[1] + 0.0, $split[2] + 0.0));
+    }
+
+    print STDERR "++++++++++++++++++++++++++++++++++++++++\n";
+
+
+    my @return_spec_sorted = sort { $a->[0] cmp $b->[0]}@return_spec;
+
+    foreach my $line(@return_spec_sorted){
+      print STDERR $line."\n";
+    }
+    $data->{ms_spectrum_mz_intensity} = @return_spec_sorted;
+
+  $c->stash->{rest} = { data => $data};
+
+}
+
+sub experiment_mz_data : Chained('experiment') :PathPart('mz_data') Args(0) {
     my $self = shift;
     my $c = shift;
 
@@ -167,7 +210,7 @@ sub delete_experiment : Chained('experiment') :PathPart('delete') Args(0) {
 	$c->stash->{error} = { error => "You don't have the required privileges to delete this entry." };
     }
 }
-    
-	
+
+
 
 "SMMID::Controller::REST::Results";

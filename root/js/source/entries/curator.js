@@ -42,7 +42,7 @@ function curator_html() {
     //$('#curate_'+compound_id).prop('disabled', false);
     //$('#unverify_'+compound_id).prop('disabled', true);
     $.ajax({
-      url: 'rest/smid/'+compound_id+'/curate_smid',
+      url: 'rest/smid/'+compound_id+'/mark_for_review',
       data: {
   	    'curation_status' : "review"
       },

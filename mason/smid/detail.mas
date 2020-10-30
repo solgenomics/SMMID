@@ -189,6 +189,7 @@ $action => undef
        <option value="unverified">Unverified</option>
        <option value="review">Marked for Review</option>
      </select>
+     <button name="request_review_button" id="request_review_button"  class="btn btn-primary" onlick="mark_smid_for_review(<% $compound_id %>)">Request a review of this SMID</button>
 	 </td>
        </tr>
      </table>

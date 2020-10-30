@@ -54,24 +54,25 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
     $c->stash->{rest} = { data => \@data };
 }
 
-sub molecular_weight {
-  #...
-  #The default variable will be used as the chemical Formula
-  $_ = shift(@_);
-
-  my %elements = ("H" => 1.01, "C" => 12.01, "O" => 16.0, "N" => 14.01, "P" => 30.97, "S" => 32.06);
-  my $weight = 0;
-
-  my @pairs = /([CHONPS][0-9]*)/g;
-  foreach my $pair (@pairs){
-    if (length($pair)==1){
-      $weight += $elements{substr($pair, 0, 1)};
-    }else{
-      $weight += $elements{substr($pair, 0, 1)}*substr($pair, 1);
-    }
-  }
-  return $weight;
-}
+###Deprecated
+# sub molecular_weight {
+#   #...
+#   #The default variable will be used as the chemical Formula
+#   $_ = shift(@_);
+#
+#   my %elements = ("H" => 1.01, "C" => 12.01, "O" => 16.0, "N" => 14.01, "P" => 30.97, "S" => 32.06);
+#   my $weight = 0;
+#
+#   my @pairs = /([CHONPS][0-9]*)/g;
+#   foreach my $pair (@pairs){
+#     if (length($pair)==1){
+#       $weight += $elements{substr($pair, 0, 1)};
+#     }else{
+#       $weight += $elements{substr($pair, 0, 1)}*substr($pair, 1);
+#     }
+#   }
+#   return $weight;
+# }
 
 #Inserting a subroutine for the curator interface. At first, it will be a clone of the browse tab.
 sub curator : Chained('rest') PathPart('curator') Args(0) {
@@ -218,7 +219,8 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $synonyms = $self->clean($c->req->param("synonyms"));
     my $curation_status = $self->clean($c->req->param("curation_status"));
 
-    my $molecular_weight = molecular_weight($formula);
+    my $mm = new Chemistry::MolecularMass;
+    my $molecular_weight = mm->calc_mass($formula);
 
     my $errors = "";
     if (!$smid_id) { $errors .= "Need smid id. "; }
@@ -283,6 +285,7 @@ sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
 
     my $curation_status = $self->clean($c->req->param("curation_status"));
     my $compound_id = $c->stash->{compound_id};
+    my $curator_id = $c->user()->get_object()->dbuser_id();
     my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id} );
 
       if (!$row){
@@ -297,7 +300,11 @@ sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
 
   	 curation_status => $curation_status,
 
-  	 last_modified_date => 'now()'
+  	 last_modified_date => 'now()',
+
+     last_curated_time => 'now()',
+
+     curator_id => $curator_id
        };
 
       eval{
@@ -308,8 +315,44 @@ sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
   	message => "Successfully updated the curation status of smid $smid_id"
       };
 
-    print STDERR "Smid ".$smid_id." curation status updated to $curation_status";
+    print STDERR "Smid ".$smid_id." curation status updated to $curation_status\n";
     return;
+}
+
+
+#Note that this one does not update curator id, last edited time, or last curated time. It is being marked for
+#review, so it is inappropriate to say that the smid has been edited or curated.
+sub mark_for_review : Chained('smid') PathPart('mark_for_review') Args(0) {
+
+  my $self = shift;
+  my $c = shift;
+
+  my $curation_status = $self->clean($c->req->param("curation_status"));
+  my $compound_id = $c->stash->{compound_id};
+  my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id} );
+
+    if (!$row){
+      $c->stash->{rest} = { error => "The SMID with id $compound_id does not exist." };
+      return;
+    }
+
+    my $smid_id = $row->smid_id();
+
+     my $data = {
+   smid_id => $smid_id,
+   curation_status => $curation_status,
+     };
+
+    eval{
+      $row->update($data);
+    };
+
+    $c->stash->{rest} ={
+  message => "Successfully updated the curation status of smid $smid_id"
+    };
+
+  print STDERR "Smid ".$smid_id." curation status updated to $curation_status NOTE TO RYAN\n";
+  return;
 }
 
 sub update :Chained('smid') PathPart('update') Args(0) {
@@ -346,7 +389,8 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     my $curation_status = $self->clean($c->req->param("curation_status"));
     my $synonyms = $self->clean($c->req->param("synonyms"));
     my $description = $self->clean($c->req->param("description"));
-    my $molecular_weight = molecular_weight($formula);
+    my $mm <- new Chemistry::MolecularMass;
+    my $molecular_weight = $mm->calc_mass($formula);
 
     my $errors = "";
     if (!$compound_id) {  $errors .= "Need compound id. "; }

@@ -8,6 +8,7 @@ function make_fields_editable(compound_id) {
       if (r.role == "curator"){$('#curation_status').prop('disabled', false);}
       else {$('#curation_status').prop('disabled', true);}
       $('#curation_status').prop("value", "review");
+      $('#request_review_button').prop('disabled', false);
 	    $('#formula_input_div').show();
 	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
@@ -190,6 +191,20 @@ function update_smid() {
     });
 }
 
+function mark_smid_for_review(compound_id){
+  //$('#curate_'+compound_id).prop('disabled', false);
+  //$('#unverify_'+compound_id).prop('disabled', true);
+  $.ajax({
+    url: 'rest/smid/'+compound_id+'/mark_for_review',
+    data: {
+      'curation_status' : "review"
+    },
+    success: function(r){
+      if (r.error){alert("unsuccessful");}
+      else {alert("success\n");}
+  }
+  });
+}
 
 
 function db_html_select() {
