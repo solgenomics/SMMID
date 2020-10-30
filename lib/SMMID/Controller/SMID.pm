@@ -35,6 +35,12 @@ sub smid_old : Chained('/') PathPart('detail') Args(1) {
     my $c = shift;
     my $smid_id = shift;
 
+    # google links sometimes have windows like end characters... remove!
+    $smid_id =~ s/\r//g;
+    chomp($smid_id);
+
+    print STDERR "SMID ID = |$smid_id|\n";
+    
     my $row = $c->model('SMIDDB')->resultset("SMIDDB::Result::Compound")->find( { smid_id => $smid_id });
 
     my $compound_id;

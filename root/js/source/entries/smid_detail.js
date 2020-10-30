@@ -191,21 +191,6 @@ function update_smid() {
     });
 }
 
-function mark_smid_for_review(compound_id){
-  //$('#curate_'+compound_id).prop('disabled', false);
-  //$('#unverify_'+compound_id).prop('disabled', true);
-  $.ajax({
-    url: 'rest/smid/'+compound_id+'/mark_for_review',
-    data: {
-      'curation_status' : "review"
-    },
-    success: function(r){
-      if (r.error){alert("unsuccessful");}
-      else {alert("success\n");}
-  }
-  });
-}
-
 
 function db_html_select() {
 
@@ -361,8 +346,18 @@ function store_ms_spectrum_data() {
 
     var collision_energy = $('#ms_spectrum_collision_energy').val();
 
+<<<<<<< HEAD
     if (isNaN(collision_energy)) {
 	alert("Collision energy must be numeric.");
+=======
+    let re = /^[0-9., ]*$/;
+
+    var matches = collision_energy.match(re);
+
+    alert(JSON.stringify(matches));
+    if (matches === null) {
+	alert("Collision energies must be numeric, separated by commas.");
+>>>>>>> relational_smid
 	return;
     }
 

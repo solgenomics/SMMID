@@ -327,11 +327,16 @@ $action => undef
 
 	  <div class="form-group">
 	    <label for="hplc_ms_method_type">Method type</label>
-	    <input type="input" class="form-control" id="hplc_ms_method_type" placeholder="Method type">
+	    <select id="hplc_ms_method_type">
+	      <option>RP_28min</option>
+	      <option>RP_80min</option>
+	      <option>NP_28min</option>
+	      <option>NP_80min</option>
+	    </select>
 	  </div>
 	  <div class="form-group">
 	    <label for="hplc_ms_retention_time">Retention time</label>
-	    <input type="input" class="form-control" id="hplc_ms_retention_time" placeholder="Retention time">
+	    <input type="input" class="form-control" id="hplc_ms_retention_time" placeholder="Retention time" />
 	  </div>
 	  <div class="form-group">
 	    <label for="hplc_ms_ionization_mode">Ionization mode</label>
@@ -344,15 +349,15 @@ $action => undef
 	  </div>
 	  <div class="form-group">
 	    <label for="hplc_ms_adducts_detected">Adducts detected</label>
-	    <input type="input" class="form-control" id="hplc_ms_adducts_detected" placeholder="Adducts detected">
+	    <input type="input" class="form-control" id="hplc_ms_adducts_detected" placeholder="Adducts detected" />
 	  </div>
 	  <div class="form-group">
 	    <label for="hplc_ms_scan_number">Scan number</label>
-	    <input type="input" class="form-control" id="hplc_ms_scan_number" placeholder="Scan number">
+	    <input type="input" class="form-control" id="hplc_ms_scan_number" placeholder="Scan number" />
 	  </div>
 	  <div class="form-group">
 	    <label for="hplc_ms_link">Link</label>
-	    <input type="input" class="form-control" id="hplc_ms_link" placeholder="URL">
+	    <input type="input" class="form-control" id="hplc_ms_link" placeholder="URL" />
 	  </div>
       </div>
       <div class="modal-footer">
@@ -378,23 +383,23 @@ $action => undef
 	<form>
 	  <div class="form-group">
 	    <label for="ms_spectrum_author">Author</label>
-	    <input type="input" class="form-control" id="ms_spectrum_author" placeholder="Author">
+	    <input type="input" class="form-control" id="ms_spectrum_author" placeholder="Author" />
 	  </div>
-
+	  
 	  <div class="form-group">
 	    <label for="ms_spectrum_ionization_mode">Ionization mode</label>
 	    <select id="ms_spectrum_ionization_mode">
 	      <option>positive</option>
 	      <option>negative</option>
-	      </select>
+	    </select>
 	  </div>
 	  <div class="form-group">
 	    <label for="ms_spectrum_collision_energy">Collision energy [eV]</label>
-	    <input type="input" class="form-control" id="ms_spectrum_collision_energy" placeholder="Collision energy">
+	    <input type="input" class="form-control" id="ms_spectrum_collision_energy" placeholder="Collision energy" />
 	  </div>
 	  <div class="form-group">
 	    <label for="ms_spectrum_adduct_fragmented">Adducts fragmented</label>
-	    <input type="input" class="form-control" id="ms_spectrum_adduct_fragmented" placeholder="Adducts fragmented">
+	    <input type="input" class="form-control" id="ms_spectrum_adduct_fragmented" placeholder="Adducts fragmented" />
 	  </div>
 	  <label for="ms_spectrum_mz_intensity">M/Z intensity relative_intensity</label>
 	  <span>(<a href="#ms_ms_spectra_format_modal" data-toggle="modal" data-target="#ms_ms_spectra_format_modal">format info</a>)</span>
@@ -403,7 +408,7 @@ $action => undef
 	  </div>
 	  <div class="form-group">
 	    <label for="ms_spectrum_link">Link</label>
-	    <input type="input" class="form-control" id="ms_spectrum_link" placeholder="URL">
+	    <input type="input" class="form-control" id="ms_spectrum_link" placeholder="URL" />
 	  </div>
 	</form>
       </div>
