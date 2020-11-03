@@ -5,7 +5,10 @@ function make_fields_editable(compound_id) {
 	if (r.user !==null) {
 	    $('#smid_id').prop('disabled', false);
 	    $('#smiles_string').prop('disabled', false);
-	    $('#curation_status').val('unverified');
+      if (r.role == "curator"){$('#curation_status').prop('disabled', false);}
+      else {$('#curation_status').prop('disabled', true);}
+      $('#curation_status').prop("value", "review");
+      $('#request_review_button').prop('visible', false);
 	    $('#formula_input_div').show();
 	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
@@ -23,18 +26,18 @@ function make_fields_editable(compound_id) {
 	    $('#add_dbxref_button').click(
 		function(event) {
 		    event.preventDefault();
-		    event.stopImmediatePropagation(); 
+		    event.stopImmediatePropagation();
 		    edit_dbxref_info();
-        
+
 		});
 
 	    if (compound_id) { embed_compound_images(compound_id, 'medium', 'smid_structure_images'); }
-	    
+
 	    $('#add_new_smid_button').prop('disabled', false);
 
 	    $('#add_new_smid_button').click(  function(event) {
 		event.preventDefault();
-		event.stopImmediatePropagation(); 
+		event.stopImmediatePropagation();
 		store_smid().then( function(r) {
 		    if (r.error) {
 			alert(r.error)
@@ -50,7 +53,7 @@ function make_fields_editable(compound_id) {
 
 	    $('#add_hplc_ms_button').click( function(event) {
 		event.preventDefault();
-		event.stopImmediatePropagation(); 
+		event.stopImmediatePropagation();
 		edit_hplc_ms_data();
 	    });
 
@@ -58,13 +61,13 @@ function make_fields_editable(compound_id) {
 
 	    $('#add_ms_spectrum_button').click( function(event) {
 		event.preventDefault();
-		event.stopImmediatePropagation(); 
+		event.stopImmediatePropagation();
 		edit_ms_spectrum();
 	    });
 
 	    $('#update_smid_button').click( function(event) {
 		event.preventDefault();
-		event.stopImmediatePropagation(); 
+		event.stopImmediatePropagation();
 		update_smid().then( function(r) {
 		    if (r.error) {
 			alert(r.error);
@@ -74,7 +77,7 @@ function make_fields_editable(compound_id) {
 			location.href="/smid/"+r.compound_id;
 		    }}, function(e) { alert('An error occurred.' + e.responseText) });
 	    });
-	    
+
 	    $('#smid_structure_upload_div').attr("visible", "true");
 
 	    $('#input_image_file_upload').fileupload( {
@@ -100,7 +103,7 @@ function edit_dbxref_info() {
     $('#save_dbxref_button').click(
 	function(event) {
 	    event.preventDefault();
-	    event.stopImmediatePropagation(); 
+	    event.stopImmediatePropagation();
 	    store_dbxref();
 	});
 }
@@ -110,7 +113,7 @@ function edit_hplc_ms_data() {
 
     $('#save_hplc_ms_button').click(function(event) {
 	event.preventDefault();
-	event.stopImmediatePropagation(); 
+	event.stopImmediatePropagation();
 	store_hplc_ms_data().then(
 	    function(r) {
 		if (r.error) { alert(r.error); }
@@ -130,7 +133,7 @@ function edit_ms_spectrum() {
 
     $('#save_ms_spectrum_button').click(function(event) {
 	event.preventDefault();
-	event.stopImmediatePropagation(); 
+	event.stopImmediatePropagation();
 
 	store_ms_spectrum_data().then(
 	    function(r) {
@@ -160,7 +163,7 @@ function store_smid() {
 	    'iupac_name' : $('#iupac_name').val(),
 	    'formula': $('#formula').val(),
 	    'organisms': $('#organisms').val(),
-	    'curation_status' : $('#curation_status').val(),
+	    'curation_status' : "unverified",
 	    'organisms': $('#organisms').val(),
 	    'description': $('#description').val(),
 	    'synonyms': $('#synonyms').val()
@@ -189,7 +192,6 @@ function update_smid() {
 }
 
 
-
 function db_html_select() {
 
     return $.ajax( {
@@ -214,11 +216,11 @@ function store_dbxref() {
 	    else {
 		alert("Stored Dbxref successfully!");
 	    }
-	    
+
 	    $('#add_dbxref_dialog').modal("hide");
 	    $('#smid_dbxref_data_table').DataTable().ajax.reload();
 	},
-	error: function(e) { alert('Error. '+e.responseText); }	
+	error: function(e) { alert('Error. '+e.responseText); }
     });
 }
 
@@ -261,7 +263,7 @@ function delete_experiment(experiment_id) {
 		    if (r.experiment_type === "hplc_ms") {
 			$('#smid_hplc_ms_table').DataTable().ajax.reload();
 		    }
-		    else { 
+		    else {
 			$('#smid_ms_spectra_table').DataTable().ajax.reload();
 		    }
 		}
@@ -284,7 +286,7 @@ function delete_image(image_id, compound_id) {
 		    embed_compound_images(compound_id, 'medium', 'smid_structure_images');
 		    alert("Image deleted.");
 		}
-	    },	
+	    },
 	    error : function(r) { alert("an error occurred"); }
 	});
     }
@@ -309,19 +311,19 @@ function store_hplc_ms_data() {
 
 
     var hplc_ms_retention_time = $('#hplc_ms_retention_time').val();
-    
-    if (isNaN(hplc_ms_retention_time)) { 
+
+    if (isNaN(hplc_ms_retention_time)) {
 	alert("HPLC MS retention time must be numeric.");
 	return;
     }
 
     var hplc_ms_scan_number = $('#hplc_ms_scan_number').val();
 
-    if (isNaN(hplc_ms_scan_number)) { 
+    if (isNaN(hplc_ms_scan_number)) {
 	alert("HPLC MS scan number must be numeric.");
 	return;
     }
-    
+
     return $.ajax( {
 	url: '/rest/experiment/store',
 	data: {
@@ -344,16 +346,18 @@ function store_ms_spectrum_data() {
 
     var collision_energy = $('#ms_spectrum_collision_energy').val();
 
+    if (isNaN(collision_energy)) {
+	alert("Collision energy must be numeric.");
     let re = /^[0-9., ]*$/;
 
     var matches = collision_energy.match(re);
 
     alert(JSON.stringify(matches));
-    if (matches === null) { 
+    if (matches === null) {
 	alert("Collision energies must be numeric, separated by commas.");
 	return;
     }
-    
+
     return $.ajax( {
 	url: '/rest/experiment/store',
 	data: {
@@ -368,6 +372,7 @@ function store_ms_spectrum_data() {
 	    'ms_spectrum_link' : $('#ms_spectrum_link').val()
 	}
     });
+  }
 }
 
 
@@ -387,6 +392,9 @@ function populate_smid_data(compound_id) {
 		$('#organisms_input_div').css('visibility', 'hidden');
 
 		$('#curation_status').val(r.data.curation_status);
+    if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
+      $('#request_review_button').prop('visible', true);
+    } else {$('#request_review_button').prop('disabled', false);}
 
 		$('#formula_static_div').css('visibility', 'visible');
 		$('#formula_static_div').html(r.data.formula + '&nbsp;&nbsp;&nbsp;['+r.data.molecular_weight+' g/mol]');
@@ -398,17 +406,17 @@ function populate_smid_data(compound_id) {
 		$('#iupac_name_static_div').html(r.data.iupac_name);
 		$('#iupac_name').val(r.data.iupac_name);
 		$('#iupac_name_input_div').hide();
-		
+
 		$('#smid_title').html(r.data.smid_id);
 
 		$('#description_static_div').show();
 		$('#description_static_content_div').html(r.data.description);
 		$('#description_input_div').hide();
 		$('#description').html(r.data.description);
-		
+
 		$('#synonyms').val(r.data.synonyms);
 		$('#modification_history').html('<font size="2">Created: '+r.data.create_date+' Last modified: '+r.data.last_modified_date+'</font>');
-		
+
 
 	    }
 

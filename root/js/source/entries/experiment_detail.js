@@ -11,12 +11,13 @@ function display_experiment(experiment_id) {
 
     retrieve_experiment(experiment_id).then(
 	function(r) {
-	    
+
 	    if (r.data.experiment_type === 'hplc_ms') {
 		display_hplc_experiment(r);
 	    }
 	    if (r.data.experiment_type === 'ms_spectrum') {
 		display_ms_spectrum_experiment(r);
+    display_msms_visual(r);
 	    }
 	},
 
@@ -32,7 +33,7 @@ function display_hplc_experiment(r) {
 }
 
 function display_ms_spectrum_experiment(r) {
-    
+
     $('#experiment_type').html(r.data.experiment_type);
     $('#description').html(r.data.description);
     $('#ms_spectrum_link').html(r.data.ms_spectrum_link);
@@ -42,9 +43,8 @@ function display_ms_spectrum_experiment(r) {
     $('#ms_spectrum_adduct_fragmented').html(r.data.ms_spectrum_adduct_fragmented);
 }
 
-
-
-	
-
-
-		  
+function display_msms_visual(r){
+  $('#msms_visual_test_table').DataTable({
+    'ajax': '/rest/experiment/'+compound_id+'/msms_spectrum'
+  });
+}

@@ -1,0 +1,10 @@
+<%args>
+$experiment_id
+</%args>
+
+
+<!--<canvas id="msms_visual_canvas" height="50%" width="80%">-->
+
+  <table id="msms_visual_test_table" style="width:50%"> Test Table </table>
+
+<!--</canvas>-->

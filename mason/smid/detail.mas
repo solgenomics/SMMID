@@ -1,12 +1,13 @@
 
 <%args>
-$compound_id => 0  # 0 means add new smid - show empty form
+$compound_id => 0 # 0 means add new smid - show empty form
 $action => undef
 </%args>
 
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="/js/node_modules/blueimp-file-upload/js/jquery.fileupload.js"></script>
 <script src="/js/source/entries/smid_detail.js" ></script>
+<script src="/js/source/entries/curator.js"></script>
 
 <link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css" />
 
@@ -32,7 +33,7 @@ $action => undef
 	 </td><td>
 	   <span id="smid_structure_images" size="50">[no structure available]</span>
        </td></tr>
-       
+
 % if ($action eq "edit") {
        <tr>
 	 <td>
@@ -46,7 +47,7 @@ $action => undef
 	   </form>
 	 </td>
        </tr>
-	  
+
 % }
        <tr>
 	 <td>
@@ -111,7 +112,7 @@ $action => undef
 	   <hr />
 	 </td>
        </tr>
-	  
+
        <tr>
 	 <td>
 	   <label>Synonyms</label>
@@ -146,7 +147,7 @@ $action => undef
 	   <hr />
 	 </td>
        </tr>
-       
+
        <tr>
 	 <td>
 	    <label>Organisms</label>
@@ -163,7 +164,7 @@ $action => undef
 	   <hr />
 	 </td>
        </tr>
-       
+
        <tr>
 	 <td>
 	    <label>SMILES</label>
@@ -172,7 +173,7 @@ $action => undef
 	   <textarea id="smiles_string" rows="3" cols="60" disabled="disabled"></textarea>
 	 </td>
        </tr>
-       
+
        <tr>
 	 <td colspan="2">
 	   <hr />
@@ -184,7 +185,20 @@ $action => undef
 	   <label>Curation status</label>
 	 </td>
 	 <td>
-	   <input id="curation_status" size="20" disabled />
+	   <select name="curation_status" id="curation_status" disabled>
+       <option value="curated">Curated</option>
+       <option value="unverified">Unverified</option>
+       <option value="review">Marked for Review</option>
+     </select>
+     <button name="request_review_button" id="request_review_button"  class="btn btn-primary" disabled="true" visible="true">Request a review of this SMID</button>
+     <script>
+      $('#request_review_button').click(function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        $('#curation_status').prop("value", "review");
+        update_smid();
+      });
+     </script>
 	 </td>
        </tr>
      </table>
@@ -222,9 +236,6 @@ $action => undef
 % if ($action eq "edit") {
 <br />
 <button id="add_dbxref_button" disabled="true" class="btn btn-primary">Add Dbxref</button>
-<!-- I don't quite know what I'm doing, so let's just see if this adds a button. Note: this will
-add the button regardless of login status. -->
-<button id="curate_database_selection_button" disabled="true" class="btn btn-primary">Verify Database Source</button>
 % }
 
 <h2>HPLC-MS data</h2>
@@ -267,7 +278,7 @@ add the button regardless of login status. -->
 
 %  if ($action eq "edit") {
 <br />
-<button id="add_ms_spectrum_button" disabled="true" class="btn btn-primary">Add MS spectrum</button>
+<button id="add_ms_spectrum_button" disabled="true" class="btn btn-primary">Add MS/MS Data</button>
 %  }
 
 
@@ -338,11 +349,11 @@ add the button regardless of login status. -->
 	  </div>
 	  <div class="form-group">
 	    <label for="hplc_ms_ionization_mode">Ionization mode</label>
-	    <select id="hplc_ms_ionization_mode"> 
+	    <select id="hplc_ms_ionization_mode">
 	      <option>positive</option>
 	      <option>negative</option>
 	      </select>
-		    
+
 	    <!-- input type="input" class="form-control" id="hplc_ms_ionization_mode" placeholder="Ionization mode"> -->
 	  </div>
 	  <div class="form-group">
@@ -383,10 +394,9 @@ add the button regardless of login status. -->
 	    <label for="ms_spectrum_author">Author</label>
 	    <input type="input" class="form-control" id="ms_spectrum_author" placeholder="Author" />
 	  </div>
-	  
 	  <div class="form-group">
 	    <label for="ms_spectrum_ionization_mode">Ionization mode</label>
-	    <select id="ms_spectrum_ionization_mode"> 
+	    <select id="ms_spectrum_ionization_mode">
 	      <option>positive</option>
 	      <option>negative</option>
 	    </select>
@@ -460,7 +470,7 @@ m/z        Intensity              Relative
 
   var action = '<% $action %>';
 
-  if (compound_id === 0) { 
+  if (compound_id === 0) {
       make_fields_editable(compound_id);
   }
   else {
