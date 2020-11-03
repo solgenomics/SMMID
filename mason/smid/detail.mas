@@ -1,12 +1,13 @@
 
 <%args>
-$compound_id => 0  # 0 means add new smid - show empty form
+$compound_id => 0 # 0 means add new smid - show empty form
 $action => undef
 </%args>
 
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="/js/node_modules/blueimp-file-upload/js/jquery.fileupload.js"></script>
 <script src="/js/source/entries/smid_detail.js" ></script>
+<script src="/js/source/entries/curator.js"></script>
 
 <link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css" />
 
@@ -189,7 +190,15 @@ $action => undef
        <option value="unverified">Unverified</option>
        <option value="review">Marked for Review</option>
      </select>
-     <button name="request_review_button" id="request_review_button"  class="btn btn-primary" onlick="mark_smid_for_review(<% $compound_id %>)">Request a review of this SMID</button>
+     <button name="request_review_button" id="request_review_button"  class="btn btn-primary" disabled="true" visible="true">Request a review of this SMID</button>
+     <script>
+      $('#request_review_button').click(function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        $('#curation_status').prop("value", "review");
+        update_smid();
+      });
+     </script>
 	 </td>
        </tr>
      </table>
@@ -385,7 +394,6 @@ $action => undef
 	    <label for="ms_spectrum_author">Author</label>
 	    <input type="input" class="form-control" id="ms_spectrum_author" placeholder="Author" />
 	  </div>
-	  
 	  <div class="form-group">
 	    <label for="ms_spectrum_ionization_mode">Ionization mode</label>
 	    <select id="ms_spectrum_ionization_mode">

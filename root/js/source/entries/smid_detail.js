@@ -8,7 +8,7 @@ function make_fields_editable(compound_id) {
       if (r.role == "curator"){$('#curation_status').prop('disabled', false);}
       else {$('#curation_status').prop('disabled', true);}
       $('#curation_status').prop("value", "review");
-      $('#request_review_button').prop('disabled', false);
+      $('#request_review_button').prop('visible', false);
 	    $('#formula_input_div').show();
 	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
@@ -346,10 +346,8 @@ function store_ms_spectrum_data() {
 
     var collision_energy = $('#ms_spectrum_collision_energy').val();
 
-<<<<<<< HEAD
     if (isNaN(collision_energy)) {
 	alert("Collision energy must be numeric.");
-=======
     let re = /^[0-9., ]*$/;
 
     var matches = collision_energy.match(re);
@@ -357,7 +355,6 @@ function store_ms_spectrum_data() {
     alert(JSON.stringify(matches));
     if (matches === null) {
 	alert("Collision energies must be numeric, separated by commas.");
->>>>>>> relational_smid
 	return;
     }
 
@@ -375,6 +372,7 @@ function store_ms_spectrum_data() {
 	    'ms_spectrum_link' : $('#ms_spectrum_link').val()
 	}
     });
+  }
 }
 
 
@@ -394,6 +392,9 @@ function populate_smid_data(compound_id) {
 		$('#organisms_input_div').css('visibility', 'hidden');
 
 		$('#curation_status').val(r.data.curation_status);
+    if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
+      $('#request_review_button').prop('visible', true);
+    } else {$('#request_review_button').prop('disabled', false);}
 
 		$('#formula_static_div').css('visibility', 'visible');
 		$('#formula_static_div').html(r.data.formula + '&nbsp;&nbsp;&nbsp;['+r.data.molecular_weight+' g/mol]');
