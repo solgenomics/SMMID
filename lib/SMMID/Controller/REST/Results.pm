@@ -5,6 +5,8 @@ use Moose;
 
 use JSON::XS;
 
+use Data::Dumper;
+
 BEGIN { extends 'Catalyst::Controller::REST' };
 
 __PACKAGE__->config(
@@ -169,16 +171,16 @@ sub msms_visual_data : Chained('experiment') PathPart('msms_spectrum') Args(0){
       #print STDERR $line."\n";
       my @split = split(/\t/, $line);
       print STDERR $split[0]."\n";
-      push(@return_spec, ($split[0] + 0.0, $split[1] + 0.0, $split[2] + 0.0));
+      push(@return_spec, [$split[0] + 0.0, $split[1] + 0.0, $split[2] + 0.0]);
     }
 
     print STDERR "++++++++++++++++++++++++++++++++++++++++\n";
 
 
-    my @return_spec_sorted = sort { $a->[0] cmp $b->[0]}@return_spec;
+    my @return_spec_sorted = sort { $a->[0] <=> $b->[0]}@return_spec;
 
     foreach my $line(@return_spec_sorted){
-      print STDERR $line."\n";
+      print STDERR Dumper($line)."\n";
     }
     $data->{ms_spectrum_mz_intensity} = @return_spec_sorted;
 
