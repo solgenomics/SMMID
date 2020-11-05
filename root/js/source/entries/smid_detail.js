@@ -84,6 +84,23 @@ function make_fields_editable(compound_id) {
 	    $('#input_image_file_upload').fileupload( {
 		url : '/rest/image/upload'
 	    });
+
+	    $('#delete_smid_button').click( function(event) {
+		event.preventDefault();
+		var yes = confirm("Are you sure you want to delete this entry? It will be permanently removed from the database.");
+		if (yes) {
+		    var compound_id = $('#compound_id').html();
+		    alert('Compound ID to delete: '+compound_id);
+		    
+		    $.ajax( {
+			url : '/smid/'+r.compound_id+'/delete',
+			error: function(e) { alert('Error... '+e.responseText); },
+			success: function(r) { alert('The smid has been deleted. RIP.'); }
+		    });
+		}
+		
+	    });
+					    
 	}
 	else {
 	    login_dialog();
@@ -454,16 +471,4 @@ function populate_smid_data(compound_id) {
     });
 }
 
-function delete_smid(smid_id) {
 
-    var yes = confirm("Are you sure you want to permanently delete the smid with id "+smid_id+"? This action cannot be undone.");
-
-    if (yes) { 
-	$.ajax( {
-	    url : '/rest/smid/'+smid_id+'/delete',
-	    error: function(e) { alert('Error... '+e.responseText); },
-	    success: function(r) { alert('The smid has been deleted. RIP.'); }
-	});
-    }
-
-}

@@ -480,14 +480,15 @@ m/z        Intensity              Relative
 <div style="height:30px">
 </div>
 
+%  if ($action eq "edit") {
 <div class="alert alert-danger" >
-  <h5>Danger Zone</h5>
-  <div><button class="btn btn-danger" id="delete_smid_button">DELETE THIS SMID</button></div>
+    <input type="hidden" id="smid_id" value="?" />
+    <div><button class="btn btn-danger" id="delete_smid_button">Delete this SMID</button></div>
   <span>
-    This will eliminate the SMID from the database, along with structures, HPLC and spectral data. Deletion cannot be undone.
-  
+    This will eliminate the SMID from the database, along with structural, HPLC and spectral data. Deletion is permanent and cannot be undone.  
   </span>
 </div>
+%  }
 
 <!-- script -->
 

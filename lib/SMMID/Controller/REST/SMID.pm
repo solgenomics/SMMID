@@ -394,6 +394,16 @@ sub smid :Chained('rest') PathPart('smid') CaptureArgs(1) {
     $c->stash->{compound_id} = $compound_id;
 }
 
+sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
+    my $self = shift;
+    my $c = shift;
+
+    
+    
+
+}
+
+
 #This is where the backend function will go to curate a smid. Use buttons modeled on smid_detail.js for help
 #Note that this function will both curate a smid and mark it as unverified depending on the parameters sent!
 sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
