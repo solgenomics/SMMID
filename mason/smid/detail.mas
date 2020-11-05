@@ -2,6 +2,7 @@
 <%args>
 $compound_id => 0 # 0 means add new smid - show empty form
 $action => undef
+$user_role => undef
 </%args>
 
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
@@ -122,7 +123,7 @@ $action => undef
 	 </td>
        </tr>
 
-       <tr>
+              <tr>
 	 <td colspan="2">
 	   <hr />
 	 </td>
@@ -130,18 +131,13 @@ $action => undef
 
        <tr>
 	 <td>
-	   <label>Description</label>
-	 </td>
-	 <td style="word-wrap: break-word">
-	   <span id="description_static_div">
-	     <span id="description_static_content_div">[??]</span>
-	   </span>
-	   <span id="description_input_div">
-	     <textarea id="description" cols="60" rows="3">[?]</textarea>
-	   </span>
-	 </td>
-       </tr>
-
+	    <label>Literature reference (DOI)</label>
+	  </td>
+	  <td>
+	    <input id="doi" size="60" disabled  />
+       	  </td>
+	  
+       
        <tr>
 	 <td colspan="2">
 	   <hr />
@@ -165,6 +161,26 @@ $action => undef
 	 </td>
        </tr>
 
+       <tr>
+	 <td>
+	   <label>Comments</label>
+	 </td>
+	 <td style="word-wrap: break-word">
+	   <span id="description_static_div">
+	     <span id="description_static_content_div">[??]</span>
+	   </span>
+	   <span id="description_input_div">
+	     <textarea id="description" cols="60" rows="3">[?]</textarea>
+	   </span>
+	 </td>
+       </tr>
+
+       <tr>
+	 <td colspan="2">
+	   <hr />
+	 </td>
+       </tr>
+       
        <tr>
 	 <td>
 	    <label>SMILES</label>
@@ -460,6 +476,18 @@ m/z        Intensity              Relative
   </div>
 </div>
 
+
+<div style="height:30px">
+</div>
+
+<div class="alert alert-danger" >
+  <h5>Danger Zone</h5>
+  <div><button class="btn btn-danger" id="delete_smid_button">DELETE THIS SMID</button></div>
+  <span>
+    This will eliminate the SMID from the database, along with structures, HPLC and spectral data. Deletion cannot be undone.
+  
+  </span>
+</div>
 
 <!-- script -->
 

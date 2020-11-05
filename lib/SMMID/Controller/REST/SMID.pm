@@ -7,7 +7,7 @@ use Chemistry::Mol;
 use Chemistry::File::SMILES;
 use JSON::XS;
 #use lib '~/SMMID/local-lib/lib/perl5/Chemistry/MolecularMass';
-use Chemistry::MolecularMass;
+#use Chemistry::MolecularMass;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -334,6 +334,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $description = $self->clean($c->req->param("description"));
     my $synonyms = $self->clean($c->req->param("synonyms"));
     my $curation_status = $self->clean($c->req->param("curation_status"));
+    my $doi = $self->clean($c->req->param("doi"));
 
     #my $mm = new Chemistry::MolecularMass;
     my $molecular_weight = molecular_weight($formula);
@@ -354,6 +355,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 	formula => $formula,
 	smiles => $smiles_string,
 	organisms => $organisms,
+	doi => $doi,
 	iupac_name => $iupac_name,
 	curation_status => $curation_status,
 	dbuser_id => $user_id,
@@ -505,6 +507,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     my $curation_status = $self->clean($c->req->param("curation_status"));
     my $synonyms = $self->clean($c->req->param("synonyms"));
     my $description = $self->clean($c->req->param("description"));
+    my $doi = $self->clean($c->req->param("doi"));
     #my $mm <- new Chemistry::MolecularMass;
     my $molecular_weight = molecular_weight($formula);
 
@@ -529,6 +532,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	formula => $formula,
 	smiles => $smiles_string,
 	organisms => $organisms,
+	doi => $doi,
 	iupac_name => $iupac_name,
 	curation_status => $curation_status,
 	description => $description,
@@ -587,6 +591,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     $data->{compound_id} = $s->compound_id();
     $data->{formula}= $s->formula();
     $data->{organisms} = $s->organisms();
+    $data->{doi} = $s->doi();
     $data->{iupac_name} = $s->iupac_name();
     $data->{smiles_string} = $s->smiles();
     $data->{curation_status} = $s->curation_status();

@@ -12,6 +12,7 @@ function make_fields_editable(compound_id) {
 	    $('#formula_input_div').show();
 	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
+	    $('#doi').prop('disabled', false);
 	    $('#organisms').prop('disabled', false);
 	    $('#organisms_static_div').hide();
 	    $('#organisms_input_div').css('visibility', 'visible');
@@ -162,9 +163,9 @@ function store_smid() {
 	    'smiles_string' : $('#smiles_string').val(),
 	    'iupac_name' : $('#iupac_name').val(),
 	    'formula': $('#formula').val(),
+	    'doi': $('#doi').val(),
 	    'organisms': $('#organisms').val(),
 	    'curation_status' : "unverified",
-	    'organisms': $('#organisms').val(),
 	    'description': $('#description').val(),
 	    'synonyms': $('#synonyms').val()
 	}
@@ -182,6 +183,7 @@ function update_smid() {
 	    'formula': $('#formula').val(),
 	    'curation_status' : $('#curation_status').val(),
 	    'iupac_name' : $('#iupac_name').val(),
+	    'doi': $('#doi').val(),
 	    'organisms': $('#organisms').val(),
 	    'description': $('#description').val(),
 	    'synonyms': $('#synonyms').val(),
@@ -390,7 +392,7 @@ function populate_smid_data(compound_id) {
 		$('#organisms_static_div').html(r.data.organisms);
 		$('#organisms').val(r.data.organisms);
 		$('#organisms_input_div').css('visibility', 'hidden');
-
+		$('#doi').val(r.data.doi);
 		$('#curation_status').val(r.data.curation_status);
     if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
       $('#request_review_button').prop('visible', true);
@@ -450,4 +452,18 @@ function populate_smid_data(compound_id) {
 	    url: '/rest/smid/'+compound_id+'/results?experiment_type=ms_spectrum'
 	}
     });
+}
+
+function delete_smid(smid_id) {
+
+    var yes = confirm("Are you sure you want to permanently delete the smid with id "+smid_id+"? This action cannot be undone.");
+
+    if (yes) { 
+	$.ajax( {
+	    url : '/rest/smid/'+smid_id+'/delete',
+	    error: function(e) { alert('Error... '+e.responseText); },
+	    success: function(r) { alert('The smid has been deleted. RIP.'); }
+	});
+    }
+
 }
