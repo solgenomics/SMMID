@@ -4,7 +4,7 @@ package Chemistry::MolecularMass;
 use strict;
 
 
-sub molecular_mass {
+sub molecular_mass{
   #...
   #The default variable will be used as the chemical Formula
   $_ = shift(@_);

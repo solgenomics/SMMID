@@ -43,10 +43,6 @@ $experiment_id
   </div>
 </td>
 
-<td>
-  <table id="msms_visual_test_table"> Test Table </table>
-</td>
-
 </tr>
 </table>
 

@@ -5,8 +5,6 @@ function make_fields_editable(compound_id) {
 	if (r.user !==null) {
 	    $('#smid_id').prop('disabled', false);
 	    $('#smiles_string').prop('disabled', false);
-      if (r.role == "curator"){$('#curation_status').prop('disabled', false);}
-      else {$('#curation_status').prop('disabled', true);}
       $('#curation_status').prop("value", "review");
       $('#request_review_button').prop('visible', false);
 	    $('#formula_input_div').show();
@@ -391,10 +389,25 @@ function populate_smid_data(compound_id) {
 		$('#organisms').val(r.data.organisms);
 		$('#organisms_input_div').css('visibility', 'hidden');
 
-		$('#curation_status').val(r.data.curation_status);
+    var curation_status_html = "";
+    if(r.data.curation_status == "curated"){
+      curation_status_html = "Verified";
+      $('#curation_status').prop('style',"color:green; font-size:1.5em");
+    }
+    if(r.data.curation_status == null || r.data.curation_status == "" || r.data.curation_status == "unverified"){
+      curation_status_html = "Unverified";
+      $('#curation_status').prop('style',"color:red; font-size:1.5em");
+    }
+    if(r.data.curation_status == "review"){
+      curation_status_html = "Marked for Review";
+      $('#curation_status').prop('style',"color:blue; font-size:1.5em");
+    }
+
+		$('#curation_status').html(curation_status_html);
     if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
-      $('#request_review_button').prop('visible', true);
+      $('#request_review_button').prop('style', "display:none");
     } else {$('#request_review_button').prop('disabled', false);}
+
 
 		$('#formula_static_div').css('visibility', 'visible');
 		$('#formula_static_div').html(r.data.formula + '&nbsp;&nbsp;&nbsp;['+r.data.molecular_weight+' g/mol]');
@@ -450,4 +463,20 @@ function populate_smid_data(compound_id) {
 	    url: '/rest/smid/'+compound_id+'/results?experiment_type=ms_spectrum'
 	}
     });
+}
+
+function mark_smid_for_review(compound_id){
+  $.ajax({
+    url: '/rest/smid/'+compound_id+'/mark_for_review',
+    data: {
+      'curation_status' : "review"
+    },
+    success: function(r){
+      if (r.error){alert(r.error);}
+      else {
+        $('#curation_status').html("Marked for Review");
+        $('#curation_status').prop('style',"color:blue; font-size:1.5em");
+      }
+    }
+  });
 }

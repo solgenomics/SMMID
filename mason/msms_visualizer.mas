@@ -3,8 +3,73 @@ $experiment_id
 </%args>
 
 
+<!--<script src = "js/source/entries/experiment_detail.js"></script>
+
 <!--<canvas id="msms_visual_canvas" height="50%" width="80%">-->
 
-  <table id="msms_visual_test_table" style="width:50%"> Test Table </table>
+  <!--<table id="msms_visual_test_table" style="width:50%"> Test Table </table>-->
 
 <!--</canvas>-->
+
+<!--<script>
+  $(document).ready(function () {
+    display_msms_visual(<% $experiment_id %>);
+  });
+</script>-->
+<script src="/js/source/entries/experiment_detail.js" ></script>
+<script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
+
+<h2>Experiment <% $experiment_id %></h2>
+
+<table>
+<tr>
+  <td>
+  <div>
+
+    <div>
+    <b>Experiment type</b> <span id="experiment_type"></span>
+    </div>
+
+    <div>
+    <b>Description</b> <span id="description">[none]</span>
+    </div>
+
+    <div>
+    <b>Link</b> <span id="ms_spectrum_link"></span>
+    </div>
+
+    <div>
+    <b>Ionization mode</b> <span id="ms_spectrum_ionization_mode"></span>
+    </div>
+
+    <div>
+    <b>Adduct fragmented</b> <span id="ms_spectrum_adduct_fragmented"></span>
+    </div>
+
+    <div>
+    <b>Spectrum</b>  <span id="ms_spectrum_mz_intensity"></span>
+    </div>
+
+    <div>
+    <b>Author</b> <span id="ms_spectrum_author"></span>
+    </div>
+
+  </div>
+</td>
+
+<td>
+  <table id="msms_visual_test_table"> Test Table </table>
+</td>
+
+</tr>
+</table>
+
+<script>
+
+  $(document).ready( function() {
+
+     display_experiment(<% $experiment_id %>);
+
+  });
+
+</script>
