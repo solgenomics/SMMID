@@ -322,6 +322,7 @@ sub mark_for_review : Chained('smid') PathPart('mark_for_review') Args(0) {
 
   if(! $c->user()){
     $c->stash->{rest} = {error => "Must be logged in to request a review of a smid."};
+    return;
   }
 
   my $curation_status = $self->clean($c->req->param("curation_status"));
