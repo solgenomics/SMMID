@@ -3,21 +3,22 @@ $experiment_id
 </%args>
 
 
-<!--<script src = "js/source/entries/experiment_detail.js"></script>
+<!-- <script src = "js/source/entries/experiment_detail.js"></script>
+ <canvas id="msms_visual_canvas" height="50%" width="80%">
 
-<!--<canvas id="msms_visual_canvas" height="50%" width="80%">-->
+  <table id="msms_visual_test_table" style="width:50%"> Test Table </table>
 
-  <!--<table id="msms_visual_test_table" style="width:50%"> Test Table </table>-->
+</canvas>
 
-<!--</canvas>-->
-
-<!--<script>
+<script>
   $(document).ready(function () {
     display_msms_visual(<% $experiment_id %>);
   });
-</script>-->
+</script> -->
 <script src="/js/source/entries/experiment_detail.js" ></script>
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="/js/node_modules/d3/dist/d3.min.js"></script>
+<script src="/js/node_modules/d3/dist/d3.js"></script>
 
 <h2>Experiment <% $experiment_id %></h2>
 
@@ -58,7 +59,9 @@ $experiment_id
 </td>
 
 <td>
-  <table id="msms_visual_test_table"> Test Table </table>
+  <!-- <table id="msms_visual_test_table"> Test Table </table> -->
+  <div id="msms_svg" name="msms_svg" style="width:1100; height:800;">
+  </div>
 </td>
 
 </tr>
@@ -69,6 +72,7 @@ $experiment_id
   $(document).ready( function() {
 
      display_experiment(<% $experiment_id %>);
+     display_msms_visual(<% $experiment_id %>);
 
   });
 
