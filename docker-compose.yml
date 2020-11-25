@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+  smid_db:
+    image: smid_db:v0.08
+    depends_on:
+      - smid_db_postgres
+    container_name: smid_db
+    ports:
+      - 8088:8088
+      - 25:25
+    volumes:
+      - type: bind
+        source: ${HOME}/docker/smid_db/smmid_local.conf
+        target: /home/production/SMMID/smmid_local.conf
+      - type: bind
+        source: ${HOME}/docker/smid_db/tmp
+        target: /home/production/tmp
+        source: ${HOME}/docker/smid_db/smmid_images
+        target: /home/production/SMMID/images
+  smid_db_postgres:
+    image: breedbase/breedbase_pg12.4:v0.5
+    container_name: smid-db-postgres
+    volumes:
+      - type: bind
+        source: ${HOME}/docker/smid_db/pgdata
+        target: /var/lib/postgresql/data
