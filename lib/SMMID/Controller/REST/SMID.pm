@@ -417,14 +417,14 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	return;
     }
 
-    my $user_id = $c->user()->get_object()->dbuser_id();
-    my $smid_owner_id = $smid_row->dbuser_id();
-
-
-    if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
-	$c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
-	return;
-    }
+  #   my $user_id = $c->user()->get_object()->dbuser_id();
+  #   my $smid_owner_id = $smid_row->dbuser_id();
+  #
+  #
+  #   if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
+	# $c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
+	# return;
+  #   }
 
     my $smid_id = $self->clean($c->req->param("smid_id"));
     my $smiles_string = $self->clean($c->req->param("smiles_string"));
