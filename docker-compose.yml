@@ -5,6 +5,7 @@ services:
     image: smid_db:v0.08
     depends_on:
       - smid_db_postgres
+      - selenium
     container_name: smid_db
     ports:
       - 8088:8088
@@ -16,8 +17,13 @@ services:
       - type: bind
         source: ${HOME}/docker/smid_db/tmp
         target: /home/production/tmp
-        source: ${HOME}/docker/smid_db/smmid_images
-        target: /home/production/SMMID/images
+      - type: bind
+        source: ${HOME}/docker/smid_db/images
+        target: /home/production/SMMID/root/images
+      - type: bind
+        source: ${HOME}/docker/cxgn/smmid
+        target: /home/production/SMMID
+
   smid_db_postgres:
     image: breedbase/breedbase_pg12.4:v0.5
     container_name: smid-db-postgres
@@ -25,3 +31,10 @@ services:
       - type: bind
         source: ${HOME}/docker/smid_db/pgdata
         target: /var/lib/postgresql/data
+
+  selenium:
+    image: selenium/standalone-firefox-debug
+    container_name: selenium
+    ports:
+      - 5900:5900
+      
