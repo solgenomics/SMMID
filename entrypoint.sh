@@ -6,5 +6,7 @@ cd /home/production/SMMID/root/js
 
 npm install
 
-perl /home/production/SMMID/script/smmid_server.pl -p 8088
+cd /home/production/SMMID
+
+perl /home/production/SMMID/script/smmid_server.pl -r -p 8088
 
