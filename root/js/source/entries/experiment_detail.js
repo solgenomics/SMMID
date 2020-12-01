@@ -17,7 +17,7 @@ function display_experiment(experiment_id) {
 	    }
 	    if (r.data.experiment_type === 'ms_spectrum') {
 		display_ms_spectrum_experiment(r);
-    display_msms_visual(r);
+    display_msms_visual(experiment_id);
 	    }
 	},
 
@@ -43,8 +43,13 @@ function display_ms_spectrum_experiment(r) {
     $('#ms_spectrum_adduct_fragmented').html(r.data.ms_spectrum_adduct_fragmented);
 }
 
-function display_msms_visual(r){
+function display_msms_visual(experiment_id){
   $('#msms_visual_test_table').DataTable({
-    'ajax': '/rest/experiment/'+compound_id+'/msms_spectrum'
+    ajax: '/rest/experiment/'+experiment_id+'/msms_spectrum/',
+    columns: [
+      {title: "X"},
+      {title: "Y"},
+      {title: "Z"}
+    ]
   });
 }

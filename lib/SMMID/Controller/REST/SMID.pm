@@ -6,8 +6,7 @@ use Unicode::Normalize;
 use Chemistry::Mol;
 use Chemistry::File::SMILES;
 use JSON::XS;
-#use lib '~/SMMID/local-lib/lib/perl5/Chemistry/MolecularMass';
-#use Chemistry::MolecularMass;
+use Chemistry::MolecularMass;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -56,143 +55,15 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
     $c->stash->{rest} = { data => \@data };
 }
 
-###Deprecated
-sub molecular_weight {
-  #...
-  #The default variable will be used as the chemical Formula
-  $_ = shift(@_);
-
-  my %elements = (
-  "H" => 1.00794,
-  "D" => 2.014101,
-  "T" => 3.016049,
-  "He" => 4.002602,
-  "Li" => 6.941,
-  "Be" => 9.012182,
-  "B" => 10.811,
-  "C" => 12.0107,
-  "N" => 14.00674,
-  "O" => 15.9994,
-  "F" => 18.9984032,
-  "Ne" => 20.1797,
-  "Na" => 22.989770,
-  "Mg" => 24.3050,
-  "Al" => 26.981538,
-  "Si" => 28.0855,
-  "P" => 30.973761,
-  "S" => 32.066,
-  "Cl" => 35.4527,
-  "Ar" => 39.948,
-  "K" => 39.0983,
-  "Ca" => 40.078,
-  "Sc" => 44.955910,
-  "Ti" => 47.867,
-  "V" => 50.9415,
-  "Cr" => 51.9961,
-  "Mn" => 54.938049,
-  "Fe" => 55.845,
-  "Co" => 58.933200,
-  "Ni" => 58.6934,
-  "Cu" => 63.546,
-  "Zn" => 65.39,
-  "Ga" => 69.723,
-  "Ge" => 72.61,
-  "As" => 74.92160,
-  "Se" => 78.96,
-  "Br" => 79.904,
-  "Kr" => 83.80,
-  "Rb" => 85.4678,
-  "Sr" => 87.62,
-  "Y" => 88.90585,
-  "Zr" => 91.224,
-  "Nb" => 92.90638,
-  "Mo" => 95.94,
-  "Tc" => 98,
-  "Ru" => 101.07,
-  "Rh" => 102.90550,
-  "Pd" => 106.42,
-  "Ag" => 107.8682,
-  "Cd" => 112.411,
-  "In" => 114.818,
-  "Sn" => 118.710,
-  "Sb" => 121.760,
-  "Te" => 127.60,
-  "I" => 126.90447,
-  "Xe" => 131.29,
-  "Cs" => 132.90545,
-  "Ba" => 137.327,
-  "La" => 138.9055,
-  "Ce" => 140.116,
-  "Pr" => 140.90765,
-  "Nd" => 144.24,
-  "Pm" => 145,
-  "Sm" => 150.36,
-  "Eu" => 151.964,
-  "Gd" => 157.25,
-  "Tb" => 158.92534,
-  "Dy" => 162.50,
-  "Ho" => 164.93032,
-  "Er" => 167.26,
-  "Tm" => 168.93421,
-  "Yb" => 173.04,
-  "Lu" => 174.967,
-  "Hf" => 178.49,
-  "Ta" => 180.9479,
-  "W" => 183.84,
-  "Re" => 186.207,
-  "Os" => 190.23,
-  "Ir" => 192.217,
-  "Pt" => 195.078,
-  "Au" => 196.96655,
-  "Hg" => 200.59,
-  "Tl" => 204.3833,
-  "Pb" => 207.2,
-  "Bi" => 208.98038,
-  "Po" => 209,
-  "At" => 210,
-  "Rn" => 222,
-  "Fr" => 223,
-  "Ra" => 226,
-  "Ac" => 227,
-  "Th" => 232.038,
-  "Pa" => 231.03588,
-  "U" => 238.0289,
-  "Np" => 237,
-  "Pu" => 244,
-  "Am" => 243,
-  "Cm" => 247,
-  "Bk" => 247,
-  "Cf" => 251,
-  "Es" => 252,
-  "Fm" => 257,
-  "Md" => 258,
-  "No" => 259,
-  "Lr" => 262,
-  "Rf" => 261,
-  "Db" => 262,
-  "Sg" => 266,
-  "Bh" => 264,
-  "Hs" => 269,
-  "Mt" => 268,
-  "Uun" => 271,
-  "Uuu" => 272
-);
-  my $weight = 0;
-
-  my @pairs = /([CHONPS][0-9]*)/g;
-  foreach my $pair (@pairs){
-    if (length($pair)==1){
-      $weight += $elements{substr($pair, 0, 1)};
-    }else{
-      $weight += $elements{substr($pair, 0, 1)}*substr($pair, 1);
-    }
-  }
-  return $weight;
-}
 
 #Inserting a subroutine for the curator interface. At first, it will be a clone of the browse tab.
 sub curator : Chained('rest') PathPart('curator') Args(0) {
   my ($self, $c) = @_;
+
+  if (! $c->user() || $c->user()->get_object()->user_type() ne "curator") {
+$c->stash->{rest} = { error => "Curator login required to access curation tool." };
+return;
+  }
 
   print STDERR "found rest/curator...\n";
 
@@ -230,7 +101,7 @@ sub curator : Chained('rest') PathPart('curator') Args(0) {
       $button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
     }
 
-push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."/edit\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), $button, $cur_status];
+push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), $button, $cur_status];
   }
 
   $c->stash->{rest} = { data => \@data };
@@ -242,6 +113,11 @@ sub curator_format :Chained('rest') PathPart('curator') Args(1) {
     my $self = shift;
     my $c = shift;
     my $format = shift;
+
+    if (! $c->user() || $c->user()->get_object()->user_type() ne "curator") {
+  $c->stash->{rest} = { error => "Curator login required to access curation tool." };
+  return;
+    }
 
     $self->curator($c);
 
@@ -331,8 +207,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $curation_status = $self->clean($c->req->param("curation_status"));
     my $doi = $self->clean($c->req->param("doi"));
 
-    #my $mm = new Chemistry::MolecularMass;
-    my $molecular_weight = molecular_weight($formula);
+    my $molecular_weight = Chemistry::MolecularMass::molecular_mass($formula);
 
     my $errors = "";
     if (!$smid_id) { $errors .= "Need smid id. "; }
@@ -442,10 +317,16 @@ sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
 
 #This is where the backend function will go to curate a smid. Use buttons modeled on smid_detail.js for help
 #Note that this function will both curate a smid and mark it as unverified depending on the parameters sent!
+
 sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
 
     my $self = shift;
     my $c = shift;
+
+    if (! $c->user() || $c->user()->get_object()->user_type() ne "curator") {
+  $c->stash->{rest} = { error => "Curator login required to verify a SMID." };
+  return;
+    }
 
     my $curation_status = $self->clean($c->req->param("curation_status"));
     my $compound_id = $c->stash->{compound_id};
@@ -484,12 +365,15 @@ sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
 }
 
 
-#Note that this one does not update curator id, last edited time, or last curated time. It is being marked for
-#review, so it is inappropriate to say that the smid has been edited or curated.
 sub mark_for_review : Chained('smid') PathPart('mark_for_review') Args(0) {
 
   my $self = shift;
   my $c = shift;
+
+  if(! $c->user()){
+    $c->stash->{rest} = {error => "Must be logged in to request a review of a smid."};
+    return;
+  }
 
   my $curation_status = $self->clean($c->req->param("curation_status"));
   my $compound_id = $c->stash->{compound_id};
@@ -505,6 +389,7 @@ sub mark_for_review : Chained('smid') PathPart('mark_for_review') Args(0) {
      my $data = {
    smid_id => $smid_id,
    curation_status => $curation_status,
+   last_modified_date => 'now()'
      };
 
     eval{
@@ -515,8 +400,54 @@ sub mark_for_review : Chained('smid') PathPart('mark_for_review') Args(0) {
   message => "Successfully updated the curation status of smid $smid_id"
     };
 
-  print STDERR "Smid ".$smid_id." curation status updated to $curation_status NOTE TO RYAN\n";
+  print STDERR "Smid ".$smid_id." curation status updated to $curation_status\n";
   return;
+}
+
+sub mark_unverified :Chained('smid') PathPart('mark_unverified') Args(0){
+
+    my $self = shift;
+    my $c = shift;
+
+    if (! $c->user() || $c->user()->get_object()->user_type() ne "curator") {
+  $c->stash->{rest} = { error => "Curator login required to verify a SMID." };
+  return;
+    }
+
+    my $curation_status = $self->clean($c->req->param("curation_status"));
+    my $compound_id = $c->stash->{compound_id};
+    my $curator_id = $c->user()->get_object()->dbuser_id();
+    my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id} );
+
+      if (!$row){
+        $c->stash->{rest} = { error => "The SMID with id $compound_id does not exist." };
+      	return;
+      }
+
+      my $smid_id = $row->smid_id();
+
+       my $data = {
+  	 smid_id => $smid_id,
+
+  	 curation_status => $curation_status,
+
+  	 last_modified_date => 'now()',
+
+     last_curated_time => 'now()',
+
+     curator_id => $curator_id
+       };
+
+      eval{
+        $row->update($data);
+      };
+
+      $c->stash->{rest} ={
+  	message => "Successfully updated the curation status of smid $smid_id"
+      };
+
+    print STDERR "Smid ".$smid_id." curation status updated to $curation_status\n";
+    return;
 }
 
 sub update :Chained('smid') PathPart('update') Args(0) {
@@ -553,9 +484,8 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     my $curation_status = $self->clean($c->req->param("curation_status"));
     my $synonyms = $self->clean($c->req->param("synonyms"));
     my $description = $self->clean($c->req->param("description"));
+    my $molecular_weight= Chemistry::MolecularMass::molecular_mass($formula);
     my $doi = $self->clean($c->req->param("doi"));
-    #my $mm <- new Chemistry::MolecularMass;
-    my $molecular_weight = molecular_weight($formula);
 
     my $errors = "";
     if (!$compound_id) {  $errors .= "Need compound id. "; }
