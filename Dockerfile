@@ -10,9 +10,9 @@ EXPOSE 8088
 RUN mkdir -p  /home/production/local-lib
 
 
-# install prerequisites
+# install prerequisites (libexpat1-dev is needed for XML libraries)
 
-RUN apt-get update && apt-get -y install apt-utils imagemagick screen nmap git lynx postgresql postgresql-server-dev-11 cpanminus build-essential perl-doc curl
+RUN apt-get update && apt-get -y install apt-utils imagemagick screen nmap git lynx postgresql postgresql-server-dev-11 cpanminus build-essential perl-doc curl libexpat1-dev
 
 RUN curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 

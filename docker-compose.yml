@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   smid_db:
-    image: smid_db:v0.08
+    image: smid_db:v0.09
     depends_on:
       - smid_db_postgres
       - selenium
