@@ -466,8 +466,11 @@ sub delete_image :Chained('basic_rest_image') PathPart('delete') Args(0) {
 	return;
     }
 
-    if ($c->user()->get_object()->user_type() ne "curator" || $c->user()->get_object()->dbuser_id() != $c->stash->{image}->dbuser_id()) {
-	$c->stash->{rest} = { error => "You are not a curator, or you don't own the image, so you cannot delete it. Sorry." };
+    if ( ! ( ($c->user()->get_object()->user_type() eq "curator") ||
+	($c->user()->get_object()->dbuser_id() == $c->stash->{image}->dbuser_id()))) {
+	$c->stash->{rest} = {
+	    error => "You are not a curator, or you don't own the image, so you cannot delete it. Sorry."
+	};
 	return;
     }
 
