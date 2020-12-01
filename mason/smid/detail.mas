@@ -198,6 +198,21 @@ $user_role => undef
 
        <tr>
 	 <td>
+	   <label>Author</label>
+	 </td>
+	 <td>
+	   <div id="author">?</div>
+	 </td>
+       </tr>
+
+       <tr>
+	 <td colspan="2">
+	   <hr />
+	 </td>
+       </tr>
+
+       <tr>
+	 <td>
 	   <label>Curation status</label>
 	 </td>
 	 <td>
@@ -480,15 +495,6 @@ m/z        Intensity              Relative
 <div style="height:30px">
 </div>
 
-%  if ($action eq "edit") {
-<div class="alert alert-danger" >
-    <input type="hidden" id="smid_id" value="?" />
-    <div><button class="btn btn-danger" id="delete_smid_button">Delete this SMID</button></div>
-  <span>
-    This will eliminate the SMID from the database, along with structural, HPLC and spectral data. Deletion is permanent and cannot be undone.  
-  </span>
-</div>
-%  }
 
 <!-- script -->
 
