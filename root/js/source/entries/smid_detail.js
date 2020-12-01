@@ -93,7 +93,7 @@ function make_fields_editable(compound_id) {
 		    alert('Compound ID to delete: '+compound_id);
 		    
 		    $.ajax( {
-			url : '/smid/'+r.compound_id+'/delete',
+			url : '/rest/smid/'+compound_id+'/delete',
 			error: function(e) { alert('Error... '+e.responseText); },
 			success: function(r) { alert('The smid has been deleted. RIP.'); }
 		    });
@@ -435,6 +435,7 @@ function populate_smid_data(compound_id) {
 
 		$('#synonyms').val(r.data.synonyms);
 		$('#modification_history').html('<font size="2">Created: '+r.data.create_date+' Last modified: '+r.data.last_modified_date+'</font>');
+		$('#author').html(r.data.author);
 
 
 	    }

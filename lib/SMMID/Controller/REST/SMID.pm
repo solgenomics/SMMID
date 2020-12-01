@@ -323,12 +323,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 
     my $smid_id = $self->clean($c->req->param("smid_id"));
     my $iupac_name = $self->clean($c->req->param("iupac_name"));
-
-    print STDERR "IUPAC name = $iupac_name\n";
     my $smiles_string = $self->clean($c->req->param("smiles_string"));
-
-    print STDERR "SMILES = $smiles_string\n";
-
     my $formula = $self->clean($c->req->param("formula"));
     my $organisms = $self->clean($c->req->param("organisms"));
     my $description = $self->clean($c->req->param("description"));
@@ -398,7 +393,48 @@ sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
     my $self = shift;
     my $c = shift;
 
+    print STDERR "DELETE SMID: ".$c->stash->{compound_id}." role = ".$c->user()->check_roles("curator")."\n";
     
+    my $error = "";
+    
+    if ( ($c->user()) && ($c->user()->check_roles("curator"))) {
+
+	print STDERR "Deleting compound with id $c->stash->{compound_id} and associated metadata...\n";
+	
+	my $exp_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( { compound_id => $c->stash->{compound_id} });
+
+	while (my $exp = $exp_rs->next()) { 
+	    $exp->delete();
+	}
+
+	my $image_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::CompoundImage")->search( { compound_id => $c->stash->{compound_id} });
+	while (my $image = $image_rs->next()) {
+	    $image->delete();
+	}
+
+	my $dbxref_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::CompoundDbxref")->search( { compound_id => $c->stash->{compound_id} });
+
+	while (my $dbxref = $dbxref_rs->next()) {
+	    $dbxref->delete();
+	}
+
+	my $compound_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search( { compound_id => $c->stash->{compound_id} });
+	while (my $compound = $compound_rs->next()) {
+	    $compound->delete();
+	}
+
+    }
+    else {
+	$error = "Not enough privileges to delete a compound.";
+    }
+
+    if ($error) {
+	$c->stash->{rest} = { error => $error };
+    }
+
+    else {
+	$c->stash->{rest} = { success => 1 };
+    }
     
 
 }
@@ -589,7 +625,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     my $self = shift;
     my $c = shift;
 
-    my $s = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $c->stash->{compound_id} });
+    my $s = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $c->stash->{compound_id} }, { join => "dbuser" } );
 
     if (! $s) {
 	$c->stash->{rest} = { error => "Can't find smid with id ".$c->stash->{compound_id}."\n" };
@@ -613,6 +649,12 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     $data->{synonyms} = $s->synonyms();
     $data->{molecular_weight} = $s->molecular_weight();
 
+    if (! $s->dbuser()) {
+	$data->{author} = "unknown";
+    }
+    else { 
+	$data->{author} = $s->dbuser->first_name()." ".$s->dbuser->last_name();
+    }
     $c->stash->{rest} = { data => $data };
 
     print STDERR "Found smid details...\n";
