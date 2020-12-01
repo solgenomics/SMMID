@@ -1,5 +1,6 @@
 #!/bin/bash
 cpanm -L /home/production/local-lib Config::General
+cpanm -L /home/production/local-lib Config::Std
 cpanm -L /home/production/local-lib Catalyst
 cpanm -L /home/production/local-lib Catalyst::Plugin::Static::Simple
 cpanm -L /home/production/local-lib Catalyst::Plugin::ConfigLoader
@@ -21,4 +22,7 @@ cpanm -L /home/production/local-lib Try::Tiny
 cpanm -L /home/production/local-lib JSON::XS
 cpanm -L /home/production/local-lib Chemistry::File::SMILES
 cpanm -L /home/production/local-lib Image::Size
+cpanm -L /home/production/local-lib YAML
+cpanm -L /home/production/local-lib Test::Selenium::Remote::Driver
+
 
