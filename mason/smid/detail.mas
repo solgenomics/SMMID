@@ -7,6 +7,8 @@ $action => undef
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="/js/node_modules/blueimp-file-upload/js/jquery.fileupload.js"></script>
 <script src="/js/source/entries/smid_detail.js" ></script>
+<script src="/js/node_modules/d3/dist/d3.min.js"></script>
+<script src="/js/node_modules/d3/dist/d3.js"></script>
 
 <link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css" />
 
@@ -460,6 +462,41 @@ m/z        Intensity              Relative
     </div>
   </div>
 </div>
+
+<!-- MSMS Spectrum visualizer modal -->
+<div id="msms_spectrum_visualizer" class="modal">
+  <div class="modal-body">
+    <div id="msms_spectrum_modal" class="modal-content" style>
+      <div class="modal-header">
+        <h5 class="modal-title">MSMS Spectrum</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="msms_svg" name="msms_svg">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .modal{
+    width: 60%;
+    height: 80%;
+    left: 20%;
+    top: 10%;
+  }
+
+  .modal-content{
+    width: 100%;
+    height: 100%;
+  }
+
+  .modal-body{
+    padding:0px;
+  }
+</style>
 
 
 <!-- script -->

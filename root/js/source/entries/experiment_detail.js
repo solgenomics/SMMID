@@ -73,8 +73,8 @@ function display_msms_visual(experiment_id){
 
       //Set up drawing area
       var margin = {top: 50, bottom: 50, left: 100, right: 100};
-      var width = document.querySelector('#msms_svg').offsetWidth;
-      var height = document.querySelector('#msms_svg').offsetHeight;
+      var width = document.querySelector('#msms_visual_table').offsetWidth;
+      var height = document.querySelector('#msms_visual_table').offsetHeight;
 
       var svg = d3.select('#msms_svg').append("svg");
 
@@ -82,7 +82,7 @@ function display_msms_visual(experiment_id){
 
       //Draw axes and set scales
       var xscale = d3.scaleLinear()
-      .domain([d3.min(xdata), d3.max(xdata) + 100])
+      .domain([d3.min(xdata), d3.max(xdata) + 10])
       .range([margin.left, width]);
       var xaxis = d3.axisBottom().scale(xscale);
       svg.append("g").attr("class", "axis").attr("transform", "translate("+(0)+","+(height-margin.bottom+2)+")").call(xaxis.ticks(10)).attr("stroke-width","2");
