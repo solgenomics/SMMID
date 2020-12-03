@@ -465,8 +465,8 @@ m/z        Intensity              Relative
 
 <!-- MSMS Spectrum visualizer modal -->
 <div id="msms_spectrum_visualizer" class="modal">
-  <div class="modal-body">
-    <div id="msms_spectrum_modal" class="modal-content" style>
+  <div class="modal-body-msms">
+    <div id="msms_spectrum_modal" class="modal-content-msms">
       <div class="modal-header">
         <h5 class="modal-title">MSMS Spectrum</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -488,13 +488,17 @@ m/z        Intensity              Relative
     top: 10%;
   }
 
-  .modal-content{
+  .modal-content-msms{
     width: 100%;
     height: 100%;
+    background-color:white;
+    border-radius:5px;
   }
 
-  .modal-body{
+  .modal-body-msms{
     padding:0px;
+    background-color:white;
+    border-radius:5px;
   }
 </style>
 
