@@ -17,7 +17,7 @@ function display_experiment(experiment_id) {
 	    }
 	    if (r.data.experiment_type === 'ms_spectrum') {
 		display_ms_spectrum_experiment(r);
-    display_msms_visual(experiment_id);
+    //display_msms_visual(experiment_id);
 	    }
 	},
 
@@ -44,12 +44,67 @@ function display_ms_spectrum_experiment(r) {
 }
 
 function display_msms_visual(experiment_id){
-  $('#msms_visual_test_table').DataTable({
-    ajax: '/rest/experiment/'+experiment_id+'/msms_spectrum/',
-    columns: [
-      {title: "X"},
-      {title: "Y"},
-      {title: "Z"}
-    ]
+  //Collect and format data
+  //Note for learning: ajax requests are asynchronous, so attempting to treat the event as a one-time sequential operation
+  //will not work. If you wish for some code to execute upon successfully gathering data from a foreign url, place
+  //that code in the success parameter of the ajax request.
+  $.ajax({
+    url: "/rest/experiment/"+experiment_id+"/msms_spectrum",
+    success: function(r){
+      var rawdata = r.data;
+      console.log(rawdata);
+
+      //Format data to ensure that there are no gaps between peaks
+      var xdata = [];
+      var ydata = [];
+      var i;
+      var prev = +rawdata[0][0];
+      for(i = 0; i < rawdata.length; i++){
+        if(rawdata[i][0] - prev > 1 && i != 0){
+          xdata.push((+rawdata[i-1][0])+0.00001);
+          xdata.push((+rawdata[i][0])-0.00001);
+          ydata.push(0);
+          ydata.push(0);
+        }
+        xdata.push(+rawdata[i][0]);
+        ydata.push(+rawdata[i][1]);
+        prev = +rawdata[i][0];
+      }
+
+      //Set up drawing area
+      var margin = {top: 50, bottom: 50, left: 100, right: 100};
+      var width = document.querySelector('#msms_visual_table').offsetWidth;
+      var height = document.querySelector('#msms_visual_table').offsetHeight;
+
+      var svg = d3.select('#msms_svg').append("svg");
+
+      svg.attr('width', width).attr('height', height);
+
+      //Draw axes and set scales
+      var xscale = d3.scaleLinear()
+      .domain([d3.min(xdata), d3.max(xdata) + 10])
+      .range([margin.left, width]);
+      var xaxis = d3.axisBottom().scale(xscale);
+      svg.append("g").attr("class", "axis").attr("transform", "translate("+(0)+","+(height-margin.bottom+2)+")").call(xaxis.ticks(10)).attr("stroke-width","2");
+      //
+      var yscale = d3.scaleLinear()
+      .domain([0, d3.max(ydata) + 1000])
+      .range([height-margin.bottom, margin.top]);
+      var yaxis = d3.axisLeft().scale(yscale);
+      svg.append("g").attr("class", "axis").attr("transform", "translate("+(margin.left - 2)+","+(0)+")").call(yaxis.ticks(10)).attr("stroke-width","2");
+
+      //Create string representing the path the chart should take. This needs to be done because there are gaps in the data over the domain.
+      var pathString = ["M"+(xscale(xdata[0]))+","+(height-margin.bottom)];
+      for (i = 1; i < xdata.length; i++){
+          pathString.push("L"+(xscale(xdata[i])+","+(yscale(ydata[i]))));
+      }
+
+      pathString = pathString.join("");
+
+      console.log(pathString);
+
+      svg.append("path").attr("fill", "none").attr("stroke", "blue").attr("stroke-width", "1.5").attr("d", pathString);
+
+    }
   });
 }

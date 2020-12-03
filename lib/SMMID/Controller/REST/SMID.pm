@@ -467,14 +467,14 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	return;
     }
 
-    my $user_id = $c->user()->get_object()->dbuser_id();
-    my $smid_owner_id = $smid_row->dbuser_id();
-
-
-    if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
-	$c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
-	return;
-    }
+  #   my $user_id = $c->user()->get_object()->dbuser_id();
+  #   my $smid_owner_id = $smid_row->dbuser_id();
+  #
+  #
+  #   if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
+	# $c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
+	# return;
+  #   }
 
     my $smid_id = $self->clean($c->req->param("smid_id"));
     my $smiles_string = $self->clean($c->req->param("smiles_string"));
@@ -655,7 +655,17 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 	if ($experiment_type eq "ms_spectrum") {
 	    my $json = $row->data();
 	    my $hash = JSON::XS->new()->decode($json);
-	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\">Details</a>", $hash->{ms_spectrum_link},  $delete_link ];
+      my $mouseover= "
+        var timer;
+        var delay = 1000;
+        \$(this).hover(function(){
+          timer=setTimeout(function(){
+            display_msms_visual(".$row->experiment_id().")
+          }, delay);
+        }, function(){
+          clearTimeout(timer);
+        });";
+	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\">Details</a> <br></br><a href=\"/experiment/".$row->experiment_id()."/msms_spectrum\" onmouseover=\"".$mouseover."\">Spectrum</a>", $hash->{ms_spectrum_link},  $delete_link ];
 	}
     }
 
