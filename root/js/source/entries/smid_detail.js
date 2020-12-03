@@ -10,6 +10,7 @@ function make_fields_editable(compound_id) {
 	    $('#formula_input_div').show();
 	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
+	    $('#doi').prop('disabled', false);
 	    $('#organisms').prop('disabled', false);
 	    $('#organisms_static_div').hide();
 	    $('#organisms_input_div').css('visibility', 'visible');
@@ -81,6 +82,23 @@ function make_fields_editable(compound_id) {
 	    $('#input_image_file_upload').fileupload( {
 		url : '/rest/image/upload'
 	    });
+
+	    $('#delete_smid_button').click( function(event) {
+		event.preventDefault();
+		var yes = confirm("Are you sure you want to delete this entry? It will be permanently removed from the database.");
+		if (yes) {
+		    var compound_id = $('#compound_id').html();
+		    alert('Compound ID to delete: '+compound_id);
+		    
+		    $.ajax( {
+			url : '/rest/smid/'+compound_id+'/delete',
+			error: function(e) { alert('Error... '+e.responseText); },
+			success: function(r) { alert('The smid has been deleted. RIP.'); }
+		    });
+		}
+		
+	    });
+					    
 	}
 	else {
 	    login_dialog();
@@ -160,9 +178,9 @@ function store_smid() {
 	    'smiles_string' : $('#smiles_string').val(),
 	    'iupac_name' : $('#iupac_name').val(),
 	    'formula': $('#formula').val(),
+	    'doi': $('#doi').val(),
 	    'organisms': $('#organisms').val(),
 	    'curation_status' : "unverified",
-	    'organisms': $('#organisms').val(),
 	    'description': $('#description').val(),
 	    'synonyms': $('#synonyms').val()
 	}
@@ -180,6 +198,7 @@ function update_smid() {
 	    'formula': $('#formula').val(),
 	    'curation_status' : $('#curation_status').val(),
 	    'iupac_name' : $('#iupac_name').val(),
+	    'doi': $('#doi').val(),
 	    'organisms': $('#organisms').val(),
 	    'description': $('#description').val(),
 	    'synonyms': $('#synonyms').val(),
@@ -389,6 +408,7 @@ function populate_smid_data(compound_id) {
 		$('#organisms').val(r.data.organisms);
 		$('#organisms_input_div').css('visibility', 'hidden');
 
+
     has_login().then( function(p){
       if(p.user !== null && p.role == "curator"){
         $('#curation_status_manipulate').prop('value', r.data.curation_status);
@@ -410,6 +430,9 @@ function populate_smid_data(compound_id) {
     }
 
 		$('#curation_status').html(curation_status_html);
+
+		$('#doi').val(r.data.doi);
+
     if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
       $('#request_review_button').prop('style', "display:none");
     } else {$('#request_review_button').prop('disabled', false);}
@@ -435,6 +458,7 @@ function populate_smid_data(compound_id) {
 
 		$('#synonyms').val(r.data.synonyms);
 		$('#modification_history').html('<font size="2">Created: '+r.data.create_date+' Last modified: '+r.data.last_modified_date+'</font>');
+		$('#author').html(r.data.author);
 
 
 	    }
@@ -470,6 +494,7 @@ function populate_smid_data(compound_id) {
 	}
     });
 }
+
 
 function mark_smid_for_review(compound_id){
   $.ajax({
