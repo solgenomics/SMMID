@@ -101,7 +101,7 @@ return;
       $button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
     }
 
-push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."/edit\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), $button, $cur_status];
+push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), $button, $cur_status];
   }
 
   $c->stash->{rest} = { data => \@data };
@@ -273,7 +273,7 @@ sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
     my $self = shift;
     my $c = shift;
 
-    if (! $c->user() || $c->user()->get_object->user_type() ne "curator") {
+    if (! $c->user() || $c->user()->get_object()->user_type() ne "curator") {
   $c->stash->{rest} = { error => "Curator login required to verify a SMID." };
   return;
     }
@@ -315,8 +315,6 @@ sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
 }
 
 
-#Note that this one does not update curator id, last edited time, or last curated time. It is being marked for
-#review, so it is inappropriate to say that the smid has been edited or curated.
 sub mark_for_review : Chained('smid') PathPart('mark_for_review') Args(0) {
 
   my $self = shift;
@@ -324,6 +322,7 @@ sub mark_for_review : Chained('smid') PathPart('mark_for_review') Args(0) {
 
   if(! $c->user()){
     $c->stash->{rest} = {error => "Must be logged in to request a review of a smid."};
+    return;
   }
 
   my $curation_status = $self->clean($c->req->param("curation_status"));
@@ -351,8 +350,54 @@ sub mark_for_review : Chained('smid') PathPart('mark_for_review') Args(0) {
   message => "Successfully updated the curation status of smid $smid_id"
     };
 
-  print STDERR "Smid ".$smid_id." curation status updated to $curation_status NOTE TO RYAN\n";
+  print STDERR "Smid ".$smid_id." curation status updated to $curation_status\n";
   return;
+}
+
+sub mark_unverified :Chained('smid') PathPart('mark_unverified') Args(0){
+
+    my $self = shift;
+    my $c = shift;
+
+    if (! $c->user() || $c->user()->get_object()->user_type() ne "curator") {
+  $c->stash->{rest} = { error => "Curator login required to verify a SMID." };
+  return;
+    }
+
+    my $curation_status = $self->clean($c->req->param("curation_status"));
+    my $compound_id = $c->stash->{compound_id};
+    my $curator_id = $c->user()->get_object()->dbuser_id();
+    my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id} );
+
+      if (!$row){
+        $c->stash->{rest} = { error => "The SMID with id $compound_id does not exist." };
+      	return;
+      }
+
+      my $smid_id = $row->smid_id();
+
+       my $data = {
+  	 smid_id => $smid_id,
+
+  	 curation_status => $curation_status,
+
+  	 last_modified_date => 'now()',
+
+     last_curated_time => 'now()',
+
+     curator_id => $curator_id
+       };
+
+      eval{
+        $row->update($data);
+      };
+
+      $c->stash->{rest} ={
+  	message => "Successfully updated the curation status of smid $smid_id"
+      };
+
+    print STDERR "Smid ".$smid_id." curation status updated to $curation_status\n";
+    return;
 }
 
 sub update :Chained('smid') PathPart('update') Args(0) {
@@ -372,14 +417,14 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	return;
     }
 
-    my $user_id = $c->user()->get_object()->dbuser_id();
-    my $smid_owner_id = $smid_row->dbuser_id();
-
-
-    if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
-	$c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
-	return;
-    }
+  #   my $user_id = $c->user()->get_object()->dbuser_id();
+  #   my $smid_owner_id = $smid_row->dbuser_id();
+  #
+  #
+  #   if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
+	# $c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
+	# return;
+  #   }
 
     my $smid_id = $self->clean($c->req->param("smid_id"));
     my $smiles_string = $self->clean($c->req->param("smiles_string"));

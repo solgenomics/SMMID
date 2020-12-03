@@ -389,13 +389,19 @@ function populate_smid_data(compound_id) {
 		$('#organisms').val(r.data.organisms);
 		$('#organisms_input_div').css('visibility', 'hidden');
 
+    has_login().then( function(p){
+      if(p.user !== null && p.role == "curator"){
+        $('#curation_status_manipulate').prop('value', r.data.curation_status);
+      } else {$('#curation_status_manipulate').prop('style', "display: none;");}
+    })
+
     var curation_status_html = "";
     if(r.data.curation_status == "curated"){
-      curation_status_html = "Verified";
+      curation_status_html = "Verified Entry";
       $('#curation_status').prop('style',"color:green; font-size:1.5em");
     }
     if(r.data.curation_status == null || r.data.curation_status == "" || r.data.curation_status == "unverified"){
-      curation_status_html = "Unverified";
+      curation_status_html = "Unverified Entry";
       $('#curation_status').prop('style',"color:red; font-size:1.5em");
     }
     if(r.data.curation_status == "review"){
@@ -479,4 +485,42 @@ function mark_smid_for_review(compound_id){
       }
     }
   });
+}
+
+function mark_smid_unverified(compound_id){
+  $.ajax({
+    url: '/rest/smid/'+compound_id+'/mark_unverified',
+    data: {
+      'curation_status' : "unverified"
+    },
+    success: function(r){
+      if (r.error){alert(r.error);}
+      else {
+        $('#curation_status').html("Unverified Entry");
+        $('#curation_status').prop('style',"color:red; font-size:1.5em");
+      }
+    }
+  });
+}
+
+function curate_smid(compound_id){
+  $.ajax({
+    url: '/rest/smid/'+compound_id+'/curate_smid',
+    data: {
+      'curation_status' : "curated"
+    },
+    success: function(r){
+      if (r.error){alert(r.error);}
+      else {
+        $('#curation_status').html("Verified Entry");
+        $('#curation_status').prop('style',"color:green; font-size:1.5em");
+      }
+    }
+  });
+}
+
+function change_curation_status(compound_id, new_status){
+  if (new_status == "curated"){curate_smid(compound_id);}
+  else if (new_status == "unverified"){mark_smid_unverified(compound_id);}
+  else if (new_status == "review"){mark_smid_for_review(compound_id);}
 }
