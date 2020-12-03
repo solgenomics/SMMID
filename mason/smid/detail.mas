@@ -480,27 +480,9 @@ m/z        Intensity              Relative
     </div>
   </div>
 </div>
-<style>
-  .modal{
-    width: 60%;
-    height: 80%;
-    left: 20%;
-    top: 10%;
-  }
+<!-- <style>
 
-  .modal-content-msms{
-    width: 100%;
-    height: 100%;
-    background-color:white;
-    border-radius:5px;
-  }
-
-  .modal-body-msms{
-    padding:0px;
-    background-color:white;
-    border-radius:5px;
-  }
-</style>
+</style> -->
 
 
 <!-- script -->
