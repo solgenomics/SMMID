@@ -4,6 +4,9 @@ $experiment_id
 </%args>
 
 <script type="text/javascript" src="/js/source/entries/experiment_detail.js" ></script>
+<script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="/js/node_modules/d3/dist/d3.min.js"></script>
+<script src="/js/node_modules/d3/dist/d3.js"></script>
 
 <h2>Experiment <% $experiment_id %></h2>
 
@@ -43,6 +46,11 @@ $experiment_id
   </div>
 </td>
 
+<td id="msms_visual_table" width="100%">
+    <div id="msms_svg" name="msms_svg">
+    </div>
+</td>
+
 </tr>
 </table>
 
@@ -51,6 +59,7 @@ $experiment_id
   $(document).ready( function() {
 
      display_experiment(<% $experiment_id %>);
+     display_msms_visual(<% $experiment_id %>);
 
   });
 

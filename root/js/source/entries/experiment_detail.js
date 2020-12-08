@@ -72,9 +72,9 @@ function display_msms_visual(experiment_id){
       }
 
       //Set up drawing area
-      var margin = {top: 50, bottom: 50, left: 100, right: 100};
-      var width = document.querySelector('#msms_visual_table').offsetWidth;
-      var height = document.querySelector('#msms_visual_table').offsetHeight;
+      var margin = {top: 100, bottom: 100, left: 100, right: 100};
+      var width = document.querySelector('#msms_visual_table').offsetWidth / 1.2;
+      var height = document.querySelector('#msms_visual_table').offsetHeight / 2;
 
       var svg = d3.select('#msms_svg').append("svg");
 
@@ -86,12 +86,16 @@ function display_msms_visual(experiment_id){
       .range([margin.left, width]);
       var xaxis = d3.axisBottom().scale(xscale);
       svg.append("g").attr("class", "axis").attr("transform", "translate("+(0)+","+(height-margin.bottom+2)+")").call(xaxis.ticks(10)).attr("stroke-width","2");
-      //
+      ////
       var yscale = d3.scaleLinear()
       .domain([0, d3.max(ydata) + 1000])
       .range([height-margin.bottom, margin.top]);
       var yaxis = d3.axisLeft().scale(yscale);
       svg.append("g").attr("class", "axis").attr("transform", "translate("+(margin.left - 2)+","+(0)+")").call(yaxis.ticks(10)).attr("stroke-width","2");
+
+      //Draw x and y axis labels
+      svg.append("text").attr("x", width/2).attr("y", height - (margin.bottom/2)).style("text-anchor", "middle").text("m/z");
+      svg.append("text").attr("x", 0).attr("y", height/2).style("text-anchor", "middle").text("Intensity").attr("transform", "rotate(270, 20,"+(height/2)+")");
 
       //Create string representing the path the chart should take. This needs to be done because there are gaps in the data over the domain.
       var pathString = ["M"+(xscale(xdata[0]))+","+(height-margin.bottom)];
@@ -105,6 +109,10 @@ function display_msms_visual(experiment_id){
 
       svg.append("path").attr("fill", "none").attr("stroke", "blue").attr("stroke-width", "1.5").attr("d", pathString);
 
+      //Add mouseover effect
+      var tooltip = svg.append("rect").attr("class", "tooltip").style("opacity", 0);
+
+      
     }
   });
 }
