@@ -269,16 +269,16 @@ sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
     my $c = shift;
 
     print STDERR "DELETE SMID: ".$c->stash->{compound_id}." role = ".$c->user()->check_roles("curator")."\n";
-    
+
     my $error = "";
-    
+
     if ( ($c->user()) && ($c->user()->check_roles("curator"))) {
 
 	print STDERR "Deleting compound with id $c->stash->{compound_id} and associated metadata...\n";
-	
+
 	my $exp_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( { compound_id => $c->stash->{compound_id} });
 
-	while (my $exp = $exp_rs->next()) { 
+	while (my $exp = $exp_rs->next()) {
 	    $exp->delete();
 	}
 
@@ -310,7 +310,7 @@ sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
     else {
 	$c->stash->{rest} = { success => 1 };
     }
-    
+
 
 }
 
@@ -582,7 +582,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     if (! $s->dbuser()) {
 	$data->{author} = "unknown";
     }
-    else { 
+    else {
 	$data->{author} = $s->dbuser->first_name()." ".$s->dbuser->last_name();
     }
     $c->stash->{rest} = { data => $data };
@@ -665,7 +665,7 @@ sub results : Chained('smid') PathPart('results') Args(0) {
         }, function(){
           clearTimeout(timer);
         });";
-	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\">Details</a> <br></br><a href=\"/experiment/".$row->experiment_id()."/msms_spectrum\" onmouseover=\"".$mouseover."\">Spectrum</a>", $hash->{ms_spectrum_link},  $delete_link ];
+	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\" onmouseover=\"".$mouseover."\">Details</a>", $hash->{ms_spectrum_link},  $delete_link ];
 	}
     }
 

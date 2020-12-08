@@ -73,6 +73,13 @@ body {
   border-radius:5px;
 }
 
+.tooltip{
+  width: 50px;
+  height: 40px;
+  background-color:grey;
+  border-radius:5px;
+}
+
 h1 {
     text-align: center;
     color: darkgrey;
