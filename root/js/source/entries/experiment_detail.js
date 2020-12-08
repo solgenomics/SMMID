@@ -44,6 +44,13 @@ function display_ms_spectrum_experiment(r) {
 }
 
 function display_msms_visual(experiment_id){
+  var mouse_x;
+  var mouse_y;
+  window.addEventListener('mousemove', function(e){
+    mouse_x = e.x;
+    mouse_y = e.y;
+  });
+
   //Collect and format data
   //Note for learning: ajax requests are asynchronous, so attempting to treat the event as a one-time sequential operation
   //will not work. If you wish for some code to execute upon successfully gathering data from a foreign url, place
@@ -76,7 +83,7 @@ function display_msms_visual(experiment_id){
       var width = document.querySelector('#msms_visual_table').offsetWidth / 1.5;
       var height = document.querySelector('#msms_visual_table').offsetHeight / 2;
 
-      var svg = d3.select('#msms_svg').append("svg");
+      var svg = d3.select('#msms_svg').append("svg").attr("id", "svg");
 
       svg.attr('width', width).attr('height', height);
 
@@ -107,11 +114,24 @@ function display_msms_visual(experiment_id){
 
       console.log(pathString);
 
-      svg.append("path").attr("fill", "none").attr("stroke", "blue").attr("stroke-width", "1.5").attr("d", pathString);
+      var g1 = svg.append("g");
+      var path = g1.append("path").attr("fill", "none").attr("stroke", "blue").attr("stroke-width", "1.5").attr("d", pathString);
 
       //Add mouseover effect
-      var tooltip = svg.append("rect").attr("class", "tooltip").style("opacity", 0);
-
+      var g2 = svg.append("g");
+      var tooltip = g2.append("rect").attr("class", "tooltip").attr("transform", "translate(100, 0)");
+      var tooltip_text = g2.append("text").attr("transform", "translate(100, 20)").style("opacity", 0);
+      svg.on('mouseover', function(){
+        tooltip.style("opacity", 0.2);
+        tooltip_text.style("opacity", 1);
+      })
+      .on('mouseout', function(){
+        tooltip.style("opacity", 0);
+        tooltip_text.style("opacity", 0);
+      })
+      .on('mousemove', function(){
+        tooltip_text.text("m/z: " + mouse_x + ", " + "Intensity: " + mouse_y);
+      });
 
     }
   });
