@@ -110,8 +110,7 @@ function display_msms_visual(experiment_id){
       svg.append("path").attr("fill", "none").attr("stroke", "blue").attr("stroke-width", "1.5").attr("d", pathString);
 
       //Add mouseover effect
-      var mouseoverfunction ="";
-      svg.attr("onmouseover", mouseoverfunction);
+      //var tooltip = svg.append("rect").attr("width", "30px").attr("height", "20px").style("opacity", 0);
 
     }
   });
