@@ -73,7 +73,7 @@ function display_msms_visual(experiment_id){
 
       //Set up drawing area
       var margin = {top: 100, bottom: 100, left: 100, right: 100};
-      var width = document.querySelector('#msms_visual_table').offsetWidth / 1.2;
+      var width = document.querySelector('#msms_visual_table').offsetWidth / 2;
       var height = document.querySelector('#msms_visual_table').offsetHeight / 2;
 
       var svg = d3.select('#msms_svg').append("svg");
@@ -112,7 +112,7 @@ function display_msms_visual(experiment_id){
       //Add mouseover effect
       var tooltip = svg.append("rect").attr("class", "tooltip").style("opacity", 0);
 
-      
+
     }
   });
 }

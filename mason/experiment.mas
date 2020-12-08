@@ -10,7 +10,7 @@ $experiment_id
 
 <h2>Experiment <% $experiment_id %></h2>
 
-<table>
+<table id="msms_visual_table" width="100%" height="100%">
 <tr>
   <td>
   <div>
@@ -46,10 +46,10 @@ $experiment_id
   </div>
 </td>
 
-<td id="msms_visual_table" width="100%">
+  <td>
     <div id="msms_svg" name="msms_svg">
     </div>
-</td>
+  </td>
 
 </tr>
 </table>
