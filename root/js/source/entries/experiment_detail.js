@@ -44,12 +44,6 @@ function display_ms_spectrum_experiment(r) {
 }
 
 function display_msms_visual(experiment_id){
-  var mouse_x;
-  var mouse_y;
-  window.addEventListener('mousemove', function(e){
-    mouse_x = e.x;
-    mouse_y = e.y;
-  });
 
   //Collect and format data
   //Note for learning: ajax requests are asynchronous, so attempting to treat the event as a one-time sequential operation
@@ -59,7 +53,6 @@ function display_msms_visual(experiment_id){
     url: "/rest/experiment/"+experiment_id+"/msms_spectrum",
     success: function(r){
       var rawdata = r.data;
-      console.log(rawdata);
 
       //Format data to ensure that there are no gaps between peaks
       var xdata = [];
@@ -93,12 +86,21 @@ function display_msms_visual(experiment_id){
       .range([margin.left, width]);
       var xaxis = d3.axisBottom().scale(xscale);
       svg.append("g").attr("class", "axis").attr("transform", "translate("+(0)+","+(height-margin.bottom+2)+")").call(xaxis.ticks(10)).attr("stroke-width","2");
+
+      var revxscale = d3.scaleLinear()
+      .domain([margin.left, width])
+      .range([d3.min(xdata), d3.max(xdata) + 10]);
+
       ////
       var yscale = d3.scaleLinear()
       .domain([0, d3.max(ydata) + 1000])
       .range([height-margin.bottom, margin.top]);
       var yaxis = d3.axisLeft().scale(yscale);
       svg.append("g").attr("class", "axis").attr("transform", "translate("+(margin.left - 2)+","+(0)+")").call(yaxis.ticks(10)).attr("stroke-width","2");
+
+      var revyscale = d3.scaleLinear()
+      .domain([height-margin.bottom, margin.top])
+      .range([0, d3.max(ydata) + 1000]);
 
       //Draw x and y axis labels
       svg.append("text").attr("x", width/2).attr("y", height - (margin.bottom/2)).style("text-anchor", "middle").text("m/z");
@@ -112,13 +114,29 @@ function display_msms_visual(experiment_id){
 
       pathString = pathString.join("");
 
-      console.log(pathString);
-
       var g1 = svg.append("g");
       var path = g1.append("path").attr("fill", "none").attr("stroke", "blue").attr("stroke-width", "1.5").attr("d", pathString);
 
-      //Add mouseover effect
-      var g2 = svg.append("g");
+      ////Add mouseover effect
+
+      //Event handlers on window for mouse position and scrolling/resizing events
+      var mouse_x = 0;
+      var mouse_y = 0;
+      var box = document.getElementById("svg").getBoundingClientRect();
+
+      window.addEventListener('mousemove', function(e){
+        mouse_x = e.x;
+        mouse_y = e.y;
+      });
+
+      function findOffset(){
+        box = document.getElementById("svg").getBoundingClientRect();
+      }
+
+      window.onscroll = function(e){findOffset();}
+      window.onresize = function(e){findOffset();}
+
+      var g2 = svg.append("g").attr("id", "g2");
       var tooltip = g2.append("rect").attr("class", "tooltip").attr("transform", "translate(100, 0)");
       var tooltip_text = g2.append("text").attr("transform", "translate(100, 20)").style("opacity", 0);
       svg.on('mouseover', function(){
@@ -130,7 +148,7 @@ function display_msms_visual(experiment_id){
         tooltip_text.style("opacity", 0);
       })
       .on('mousemove', function(){
-        tooltip_text.text("m/z: " + mouse_x + ", " + "Intensity: " + mouse_y);
+        tooltip_text.text("m/z: " +revxscale(mouse_x - box.x) + ", " + "Intensity: " + revyscale(mouse_y - box.y));
       });
 
     }
