@@ -113,9 +113,7 @@ function display_msms_visual(experiment_id){
       }
 
       pathString = pathString.join("");
-
-      var g1 = svg.append("g");
-      var path = g1.append("path").attr("fill", "none").attr("stroke", "blue").attr("stroke-width", "1.5").attr("d", pathString);
+      var path = svg.append("path").attr("fill", "none").attr("stroke", "blue").attr("stroke-width", "1.5").attr("d", pathString);
 
       ////Add mouseover effect
 
@@ -139,16 +137,25 @@ function display_msms_visual(experiment_id){
       var g2 = svg.append("g").attr("id", "g2");
       var tooltip = g2.append("rect").attr("class", "tooltip").attr("transform", "translate(100, 0)");
       var tooltip_text = g2.append("text").attr("transform", "translate(100, 20)").style("opacity", 0);
+      var crosshair_x = svg.append("path").style("opacity", 0).attr("stroke-dasharray", "10,10").attr("stroke", "red").attr("stroke-width", "1");
+      var crosshair_y = svg.append("path").style("opacity", 0).attr("stroke-dasharray", "10,10").attr("stroke", "red").attr("stroke-width", "1");
       svg.on('mouseover', function(){
         tooltip.style("opacity", 0.2);
         tooltip_text.style("opacity", 1);
+        crosshair_x.style("opacity", 1);
+        crosshair_y.style("opacity", 1);
+        console.log("Why is this not working??");
       })
       .on('mouseout', function(){
         tooltip.style("opacity", 0);
         tooltip_text.style("opacity", 0);
+        crosshair_x.style("opacity", 0);
+        crosshair_y.style("opacity", 0);
       })
       .on('mousemove', function(){
-        tooltip_text.text("m/z: " +revxscale(mouse_x - box.x) + ", " + "Intensity: " + revyscale(mouse_y - box.y));
+        tooltip_text.text("m/z: " +revxscale(mouse_x - box.x).toFixed(4) + ", " + "Intensity: " + revyscale(mouse_y - box.y).toFixed(0));
+        crosshair_x.attr("d", "M"+margin.left+","+(mouse_y - box.y)+" L"+xscale(width-margin.right)+","+(mouse_y - box.y));
+        crosshair_y.attr("d", "M"+(mouse_x - box.x)+","+(height-margin.bottom)+"L"+(mouse_x-box.x)+","+(margin.top));
       });
 
     }
