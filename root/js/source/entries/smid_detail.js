@@ -89,16 +89,16 @@ function make_fields_editable(compound_id) {
 		if (yes) {
 		    var compound_id = $('#compound_id').html();
 		    alert('Compound ID to delete: '+compound_id);
-		    
+
 		    $.ajax( {
 			url : '/rest/smid/'+compound_id+'/delete',
 			error: function(e) { alert('Error... '+e.responseText); },
 			success: function(r) { alert('The smid has been deleted. RIP.'); }
 		    });
 		}
-		
+
 	    });
-					    
+
 	}
 	else {
 	    login_dialog();
@@ -587,7 +587,7 @@ function display_msms_visual(experiment_id){
       var width = document.querySelector('#msms_spectrum_modal').offsetWidth*0.90;
       var height = document.querySelector('#msms_spectrum_modal').offsetHeight*0.90;
 
-      var svg = d3.select('#msms_svg').append("svg");
+      var svg = d3.select('#msms_svg').append("svg").attr("id", "svg");
 
       svg.attr('width', width).attr('height', height);
 
@@ -597,12 +597,21 @@ function display_msms_visual(experiment_id){
       .range([margin.left, width]);
       var xaxis = d3.axisBottom().scale(xscale);
       svg.append("g").attr("class", "axis").attr("transform", "translate("+(0)+","+(height-margin.bottom+2)+")").call(xaxis.ticks(10)).attr("stroke-width","2");
+
+      var revxscale = d3.scaleLinear()
+      .domain([margin.left, width])
+      .range([d3.min(xdata), d3.max(xdata) + 10]);
+
       //
       var yscale = d3.scaleLinear()
       .domain([0, d3.max(ydata) + 1000])
       .range([height-margin.bottom, margin.top]);
       var yaxis = d3.axisLeft().scale(yscale);
       svg.append("g").attr("class", "axis").attr("transform", "translate("+(margin.left - 2)+","+(0)+")").call(yaxis.ticks(10)).attr("stroke-width","2");
+
+      var revyscale = d3.scaleLinear()
+      .domain([height-margin.bottom, margin.top])
+      .range([0, d3.max(ydata) + 1000]);
 
       //Draw x and y axis labels
       svg.append("text").attr("x", width/2).attr("y", height - (margin.bottom/2)).style("text-anchor", "middle").text("m/z");
@@ -619,6 +628,47 @@ function display_msms_visual(experiment_id){
       console.log(pathString);
 
       svg.append("path").attr("fill", "none").attr("stroke", "blue").attr("stroke-width", "1.5").attr("d", pathString);
+
+      //Add mouseover effect
+      var mouse_x = 0;
+      var mouse_y = 0;
+      var box = document.getElementById("svg").getBoundingClientRect();
+
+      window.addEventListener('mousemove', function(e){
+        mouse_x = e.x;
+        mouse_y = e.y;
+      });
+
+      function findOffset(){
+        box = document.getElementById("svg").getBoundingClientRect();
+      }
+
+      window.onscroll = function(e){findOffset();}
+      window.onresize = function(e){findOffset();}
+
+      var g2 = svg.append("g").attr("id", "g2");
+      var tooltip = g2.append("rect").attr("class", "tooltip").attr("transform", "translate(100, 0)");
+      var tooltip_text = g2.append("text").attr("transform", "translate(100, 20)").style("opacity", 0);
+      var crosshair_x = svg.append("path").style("opacity", 0).attr("stroke-dasharray", "10,10").attr("stroke", "red").attr("stroke-width", "1");
+      var crosshair_y = svg.append("path").style("opacity", 0).attr("stroke-dasharray", "10,10").attr("stroke", "red").attr("stroke-width", "1");
+      svg.on('mouseover', function(){
+        tooltip.style("opacity", 0.2);
+        tooltip_text.style("opacity", 1);
+        crosshair_x.style("opacity", 1);
+        crosshair_y.style("opacity", 1);
+        console.log("Why is this not working??");
+      })
+      .on('mouseout', function(){
+        tooltip.style("opacity", 0);
+        tooltip_text.style("opacity", 0);
+        crosshair_x.style("opacity", 0);
+        crosshair_y.style("opacity", 0);
+      })
+      .on('mousemove', function(){
+        tooltip_text.text("m/z: " +revxscale(mouse_x - box.x).toFixed(4) + ", " + "Intensity: " + revyscale(mouse_y - box.y).toFixed(0));
+        crosshair_x.attr("d", "M"+margin.left+","+(mouse_y - box.y)+" L"+xscale(width-margin.right)+","+(mouse_y - box.y));
+        crosshair_y.attr("d", "M"+(mouse_x - box.x)+","+(height-margin.bottom)+"L"+(mouse_x-box.x)+","+(margin.top));
+      });
 
     }
   });
