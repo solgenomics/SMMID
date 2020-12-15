@@ -87,14 +87,24 @@ function make_fields_editable(compound_id) {
 		event.preventDefault();
 		var yes = confirm("Are you sure you want to delete this entry? It will be permanently removed from the database.");
 		if (yes) {
-		    var compound_id = $('#compound_id').html();
-		    alert('Compound ID to delete: '+compound_id);
 
-		    $.ajax( {
-			url : '/rest/smid/'+compound_id+'/delete',
-			error: function(e) { alert('Error... '+e.responseText); },
-			success: function(r) { alert('The smid has been deleted. RIP.'); }
-		    });
+		    confirm("Please confirm that you want to delete this SMID.");
+		    if (yes) { 
+			var compound_id = $('#compound_id').html();
+			//alert('Compound ID to delete: '+compound_id);
+			
+			$.ajax( {
+			    url : '/rest/smid/'+compound_id+'/delete',
+			    error: function(e) { alert('Error... '+e.responseText); },
+			    success: function(r) {
+				if (r.error) { alert(r.error); }
+				else {
+				    alert('The smid has been deleted. RIP.');
+				    location.href="/smid/"+r.compound_id;
+				}
+			    }
+			});
+		    }
 		}
 
 	    });
@@ -400,7 +410,11 @@ function populate_smid_data(compound_id) {
 	url: '/rest/smid/'+compound_id+'/details',
 	error: function(r) { alert("An error occurred. "+r.responseText); },
 	success: function(r) {
-	    if (r.error) { error_message("No smid exists with id "+smid_id); }
+	    if (r.error) {
+		alert("No smid exists with id "+compound_id);
+		location.href='/browse/';
+		return;
+	    }
 	    else {
 		$('#smid_id').val(r.data.smid_id);
 		$('#smiles_string').val(r.data.smiles_string);

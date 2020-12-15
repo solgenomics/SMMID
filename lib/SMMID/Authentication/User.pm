@@ -35,10 +35,10 @@ has 'roles' => (
     default => sub {
 	my $self = shift;
 	if ($self->user()) { 
-	    return $self->user->roles();
+	    return ($self->user->get_object()->user_type());
 	}
 	else {
-	    return undef;
+	    return ();
 	}
     });
 

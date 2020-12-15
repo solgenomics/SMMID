@@ -272,8 +272,9 @@ sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
 
     my $error = "";
 
-    if ( ($c->user()) && ($c->user()->check_roles("curator"))) {
-
+    if ($c->user()) { print STDERR "HELLO! ".join(", ", $c->user()->roles()); }
+    if ( ($c->user()) && ($c->user()->get_object()->user_type() eq "curator")) {
+	
 	print STDERR "Deleting compound with id $c->stash->{compound_id} and associated metadata...\n";
 
 	my $exp_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( { compound_id => $c->stash->{compound_id} });
@@ -308,7 +309,10 @@ sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
     }
 
     else {
-	$c->stash->{rest} = { success => 1 };
+	$c->stash->{rest} = {
+	    success => 1,
+	    compound_id => $c->stash->{compound_id}
+	};
     }
 
 
@@ -558,6 +562,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     my $s = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $c->stash->{compound_id} }, { join => "dbuser" } );
 
     if (! $s) {
+	print STDERR "The specified SMID (id = ".$c->stash->{compound_id}.") does not exist!\n"; 
 	$c->stash->{rest} = { error => "Can't find smid with id ".$c->stash->{compound_id}."\n" };
 	return;
     }
