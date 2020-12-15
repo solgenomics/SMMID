@@ -268,11 +268,10 @@ sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
     my $self = shift;
     my $c = shift;
 
-    print STDERR "DELETE SMID: ".$c->stash->{compound_id}." role = ".$c->user()->check_roles("curator")."\n";
-
     my $error = "";
 
     if ($c->user()) { print STDERR "HELLO! ".join(", ", $c->user()->roles()); }
+
     if ( ($c->user()) && ($c->user()->get_object()->user_type() eq "curator")) {
 	
 	print STDERR "Deleting compound with id $c->stash->{compound_id} and associated metadata...\n";
