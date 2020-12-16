@@ -8,5 +8,5 @@ npm install
 
 cd /home/production/SMMID
 
-perl /home/production/SMMID/script/smmid_server.pl -r -p 8088
+perl /home/production/SMMID/script/smmid_server.pl -r -p 8088 2> /home/production/smmid.log
 
