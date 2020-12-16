@@ -695,9 +695,20 @@ sub compound_images :Chained('smid') PathPart('images') Args(1) {
 
 
 	my $file = "medium";
-	if ($size =~ m/thumbnail|small|medium|large/) { $file = $size.".png"; }
+	my $ext = $image->file_ext();
+	if ($size =~ m/thumbnail|small|medium|large/) { $file = $size.$ext; }
+
+	# for svg
+	my $width="";
+	if ($image->file_ext() =~ m/svg/i) {
+	    if ($size eq "thumbnail") { $width=' width="80px" '; }
+	    if ($size eq "small" ) { $width=' width="200px" '; }
+	    if ($size eq "medium") { $width=' width="400px" '; }
+	    if ($size eq "large") { $width=' width="600px" '; }
+	}
+	
 	my $image_full_url =  "/".$c->config->{image_url}."/".$image->image_subpath()."/".$file;
-	push @source_tags, "<img src=\"$image_full_url\" />$delete_link";
+	push @source_tags, "<img src=\"$image_full_url\"  $width />$delete_link";
     }
     print STDERR "returning images for compound ".$c->stash->{compound_id} ." with size $size.\n";
     $c->stash->{rest} = { html => \@source_tags };
