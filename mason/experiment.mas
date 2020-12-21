@@ -3,7 +3,8 @@
 $experiment_id
 </%args>
 
-<script type="text/javascript" src="/js/source/entries/experiment_detail.js" ></script>
+<script src="/js/source/entries/experiment_detail.js" ></script>
+<script src="/js/source/entries/smid_detail.js"></script>
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="/js/node_modules/d3/dist/d3.min.js"></script>
 <script src="/js/node_modules/d3/dist/d3.js"></script>
@@ -11,47 +12,60 @@ $experiment_id
 <h2>Experiment <% $experiment_id %></h2>
 
 <table id="msms_visual_table" width="100%" height="100%">
-<tr>
-  <td>
-  <div>
+  <tr>
+    <td width="30%" rowspan="2">
+      <div>
 
-    <div>
-    <b>Experiment type</b> <span id="experiment_type"></span>
-    </div>
+        <div>
+        <b>Experiment type</b> <span id="experiment_type"></span>
+        </div>
 
-    <div>
-    <b>Description</b> <span id="description">[none]</span>
-    </div>
+        <div>
+        <b>Description</b> <span id="description">[none]</span>
+        </div>
 
-    <div>
-    <b>Link</b> <span id="ms_spectrum_link"></span>
-    </div>
+        <div>
+        <b>Link</b> <span id="ms_spectrum_link"></span>
+        </div>
 
-    <div>
-    <b>Ionization mode</b> <span id="ms_spectrum_ionization_mode"></span>
-    </div>
+        <div>
+        <b>Ionization mode</b> <span id="ms_spectrum_ionization_mode"></span>
+        </div>
 
-    <div>
-    <b>Adduct fragmented</b> <span id="ms_spectrum_adduct_fragmented"></span>
-    </div>
+        <div>
+        <b>Adduct fragmented</b> <span id="ms_spectrum_adduct_fragmented"></span>
+        </div>
 
-    <div>
-    <b>Spectrum</b>  <span id="ms_spectrum_mz_intensity"></span>
-    </div>
+        <div>
+        <b>Spectrum</b>  <span id="ms_spectrum_mz_intensity"></span>
+        </div>
 
-    <div>
-    <b>Author</b> <span id="ms_spectrum_author"></span>
-    </div>
+        <div>
+        <b>Author</b> <span id="ms_spectrum_author"></span>
+        </div>
 
-  </div>
-</td>
+      </div>
 
-  <td>
-    <div id="msms_svg" name="msms_svg">
-    </div>
-  </td>
+    </td>
 
-</tr>
+    <td height="50%">
+      <span id="smid_structure_images" size="50">
+        <img>
+
+        </img>
+      </span>
+    </td>
+
+  </tr>
+
+  <tr>
+
+    <td id="msms_svg_container">
+      <div id="msms_svg" name="msms_svg">
+      </div>
+    </td>
+
+  </tr>
 </table>
 
 <script>
@@ -60,6 +74,8 @@ $experiment_id
 
      display_experiment(<% $experiment_id %>);
      display_msms_visual(<% $experiment_id %>);
+     var compound_id = get_compound_id(<% $experiment_id %>);
+     //embed_compound_images(compound_id, 'medium', 'smid_structure_images');
 
   });
 

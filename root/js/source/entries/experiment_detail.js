@@ -43,6 +43,15 @@ function display_ms_spectrum_experiment(r) {
     $('#ms_spectrum_adduct_fragmented').html(r.data.ms_spectrum_adduct_fragmented);
 }
 
+function get_compound_id(experiment_id){
+  $.ajax({
+    url:"/rest/experiment/"+experiment_id+"/get_compound_id_from_experiment",
+    success: function(r){
+      return r.data;
+    }
+  });
+}
+
 function display_msms_visual(experiment_id){
 
   //Collect and format data
@@ -73,8 +82,8 @@ function display_msms_visual(experiment_id){
 
       //Set up drawing area
       var margin = {top: 100, bottom: 100, left: 100, right: 100};
-      var width = document.querySelector('#msms_visual_table').offsetWidth / 1.5;
-      var height = document.querySelector('#msms_visual_table').offsetHeight / 2;
+      var width = document.querySelector('#msms_svg_container').offsetWidth*0.90;
+      var height = document.querySelector('#msms_svg_container').offsetHeight*0.90;
 
       var svg = d3.select('#msms_svg').append("svg").attr("id", "svg");
 

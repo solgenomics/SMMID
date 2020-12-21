@@ -208,6 +208,17 @@ sub delete_experiment : Chained('experiment') :PathPart('delete') Args(0) {
     }
 }
 
+sub get_compound_id_from_experiment : Chained('experiment') Pathpart('get_compound_id') Args(0) {
+  my $self = shift;
+  my $c = shift;
+
+  my $experiment = $c->stash->{experiment};
+
+  my $compound_id = $experiment->compound_id();
+
+  $c->stash->{rest} = {data => $compound_id};
+}
+
 
 
 "SMMID::Controller::REST::Results";
