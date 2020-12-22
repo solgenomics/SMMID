@@ -208,7 +208,7 @@ sub delete_experiment : Chained('experiment') :PathPart('delete') Args(0) {
     }
 }
 
-sub get_compound_id_from_experiment : Chained('experiment') Pathpart('get_compound_id') Args(0) {
+sub get_compound_id_from_experiment : Chained('experiment') Pathpart('get_compound_id_from_experiment') Args(0) {
   my $self = shift;
   my $c = shift;
 

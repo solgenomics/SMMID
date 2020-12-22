@@ -44,11 +44,12 @@ function display_ms_spectrum_experiment(r) {
 }
 
 function get_compound_id(experiment_id){
-  $.ajax({
+  return $.ajax({
     url:"/rest/experiment/"+experiment_id+"/get_compound_id_from_experiment",
-    success: function(r){
-      return r.data;
-    }
+    // success: function(r){
+    //   //alert(JSON.stringify(r.data));
+    //   data = r.data;
+    // }
   });
 }
 
