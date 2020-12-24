@@ -7,6 +7,7 @@ $user_role => undef
 
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="/js/node_modules/blueimp-file-upload/js/jquery.fileupload.js"></script>
+<script src="/js/source/entries/experiment_detail.js"></script>
 <script src="/js/source/entries/smid_detail.js" ></script>
 <script src="/js/node_modules/d3/dist/d3.min.js"></script>
 <script src="/js/node_modules/d3/dist/d3.js"></script>
@@ -159,8 +160,8 @@ $user_role => undef
 	  <td>
 	    <input id="doi" size="60" disabled  />
        	  </td>
-	  
-       
+
+
        <tr>
 	 <td colspan="2">
 	   <hr />
@@ -203,7 +204,7 @@ $user_role => undef
 	   <hr />
 	 </td>
        </tr>
-       
+
        <tr>
 	 <td>
 	    <label>SMILES</label>
@@ -497,7 +498,7 @@ m/z        Intensity              Relative
 <!-- MSMS Spectrum visualizer modal -->
 <div id="msms_spectrum_visualizer" class="modal">
   <div class="modal-body-msms">
-    <div id="msms_spectrum_modal" class="modal-content-msms">
+    <div id="msms_svg_container" class="modal-content-msms">
       <div class="modal-header">
         <h5 class="modal-title">MSMS Spectrum</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
