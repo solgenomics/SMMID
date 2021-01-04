@@ -21,14 +21,14 @@ sub login : Path('/rest/user/login') Args(0) {
     my $c = shift;
 
     my $LOGIN_COOKIE_NAME = $c->config->{login_cookie_name};
-    
+
     my $username = $c->req->param("username");
     my $password = $c->req->param("password");
     my $goto_url = $c->req->param("goto_url");
     my $logout   = $c->req->param("logout");
-    
+
     my $cookie = $c->req->param($LOGIN_COOKIE_NAME);
-    
+
     print STDERR "Goto URL = $goto_url\n";
 
     my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema() } );
@@ -45,7 +45,7 @@ sub login : Path('/rest/user/login') Args(0) {
 	#
 	$c->response->cookies->{$LOGIN_COOKIE_NAME}->{value} = $login_info->{cookie_string};
     }
-    
+
     if (exists($login_info->{incorrect_password}) && $login_info->{incorrect_password} == 1) {
 	$c->stash->{rest} = { error => "Login credentials are incorrect. Please try again." };
 	return;
@@ -72,7 +72,7 @@ sub logout :Path('/rest/user/logout') Args(0) {
 
     my $LOGIN_COOKIE_NAME = $c->config->{login_cookie_name};
     print STDERR "LOGIN COOKIE NAME = $LOGIN_COOKIE_NAME\n";
-    
+
     my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema() } );
     my $cookie = $login->logout_user();
     print STDERR "LOGOUT: COOKIE = $cookie\n";
@@ -481,13 +481,13 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
     my $c = shift;
 
 #    my $logout =  $c->req->param("logout");
-    
+
     select(STDERR);
     $|=1;
 
     my $html = "";
 
-    
+
 
 #     if ($logout eq "yes") {
 # 	    print STDERR "generating login button for logout...\n";
@@ -503,20 +503,20 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
 
 # 	    $c->stash->{rest} = { html => $html };
 # 	    return;
-	    
+
 #     }
 
     if ( $c->config->{disable_login} ) {
 	$html =  '<div class="btn-group" role="group" aria-label="..." style="height:34px; margin: 1px 0px 0px 0px" > <button class="btn btn-primary disabled" type="button" style="margin: 7px 7px 0px 0px">Login</button> </div>';
-	
-	
+
+
 	$c->stash->{rest} = { html => $html };
 	return;
     }
 
-    if( $c->config->{'is_mirror'} ) {    
+    if( $c->config->{'is_mirror'} ) {
 	my $production_site = $c->config->{main_production_site_url};
-	
+
 	# if the site is a mirror, gray out the login/logout links
 	#
 	print STDERR "generating login button for mirror site...\n";
@@ -524,28 +524,53 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
 
 	$c->stash->{rest} = { html => $html };
 	return;
-    }	    
-	
+    }
+
     if ( $c->user() ) {
 	print STDERR "Generate login button for logged in user...\n";
 	my $sp_person_id = $c->user->get_object->dbuser_id();
 	my $username = $c->user->id();
-	my $display_name = "Hi, ".$c->user->get_object()->first_name();
-	$html = qq|
-	$display_name
-	&nbsp;
-	    <button id="navbar_logout" class="btn btn-primary" type="button" onclick="logout();" title="Logout">Logout</button>
-|;
+  print STDERR "This user is ".$sp_person_id."\n";
+  #"Hi, ".$c->user->get_object()->first_name();
+  my $welcome_sign = "Hi, ".$c->user->get_object()->first_name();
+	my $display_name = qq(
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-white">
+
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            $welcome_sign
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="/user/$sp_person_id">Your Profile</a>
+            <a class="dropdown-item"><button id="navbar_logout" class="btn btn-primary" type="button" onclick="logout();" title="Logout">Logout</button></a>
+
+          </div>
+        </li>
+      </ul>
+    </div>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+  </button>
+
+  </nav>
+
+
+  );
+
+  $html = $display_name;
 
 
 	print STDERR "GENERATED HTML = $html\n";
 	$c->stash->{rest} = { html => $html };
 	return;
-	
+
     }
 
     ### Generate regular login button
-    
+
     print STDERR "generating regular login button..\n";
     $html = qq | <button id="site_login_button" name="site_login_button" class="btn btn-primary" type="button">Login</button> |;
 
