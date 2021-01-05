@@ -661,5 +661,28 @@ ername.";}
     }
 }
 
+sub user :Chained('rest') PathPart('user') CaptureArgs(1){
+  my $self = shift;
+  my $c = shift;
+
+  my $sp_person_id = shift;
+
+  $c->stash->{sp_person_id} = $sp_person_id;
+}
+
+sub user_profile :Chained('user') PathPart('profile') Args(0){
+  my $self = shift;
+  my $c = shift;
+
+  my $sp_person_id = $c->stash->{sp_person_id};
+
+  #data to be gathered:
+  # First name, Last name
+  # email (stored as username I believe)
+  # user type
+  # list of smids with this user as author
+  # list of experiments with this user as author 
+}
+
 
 1;
