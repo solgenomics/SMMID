@@ -1,0 +1,62 @@
+
+<%args>
+$sp_person_id
+</%args>
+
+<script src="/js/source/entries/user_profile.js" ></script>
+
+<link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css" />
+
+<h1> User Profile </h1>
+
+<table width="90%" id="user_profile_table">
+  <tr style="border-bottom: 1px solid lightblue">
+    <td width="30%">
+      <label for="user_name">Name</label>
+    </td>
+    <td>
+      <span id="user_name"></span>
+    </td>
+  </tr>
+  <tr style="border-bottom: 1px solid lightblue">
+    <td width="30%">
+      <label for="user_email">Email</label>
+    </td>
+    <td>
+      <span id="user_email"></span>
+    </td>
+  </tr>
+  <tr style="border-bottom: 1px solid lightblue">
+    <td width="30%">
+      <label for="user_type">User Type</label>
+    </td>
+    <td>
+      <span id="user_type"></span>
+    </td>
+  </tr>
+</table>
+
+<h2>Authored SMIDs</h2>
+
+<table id="user_authored_smids" class="display" style="width:90%">
+  <thead>
+    <tr>
+      <th>SMID ID</th>
+      <th>Formula</th>
+      <th>Molecular Weight</th>
+      <th>Curation Status</th>
+    </tr>
+  </thead>
+</table>
+
+<h2>Authored Experiments</h2>
+
+<table id="user_authored_experiments" class="display" style="width:90%">
+  <thead>
+    <tr>
+      <th>Experiment Link</th>
+      <th>Experiment Type</th>
+      <th>Link to SMID</th>
+    </tr>
+  </thead>
+</table>
