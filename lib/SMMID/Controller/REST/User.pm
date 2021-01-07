@@ -530,8 +530,6 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
 	print STDERR "Generate login button for logged in user...\n";
 	my $sp_person_id = $c->user->get_object->dbuser_id();
 	my $username = $c->user->id();
-  print STDERR "This user is ".$sp_person_id."\n";
-  #"Hi, ".$c->user->get_object()->first_name();
   my $welcome_sign = "Hi, ".$c->user->get_object()->first_name();
 	my $display_name = qq(
 
@@ -661,27 +659,50 @@ ername.";}
     }
 }
 
-sub user :Chained('rest') PathPart('user') CaptureArgs(1){
+sub user :Chained('/') :PathPart('rest/user') CaptureArgs(1){
   my $self = shift;
   my $c = shift;
 
-  my $sp_person_id = shift;
+  if (!$c->user()) {
+    $c->stash->{rest} = { error => "Sorry, you need to be logged in to view user profiles." };
+    return;
+ }
 
-  $c->stash->{sp_person_id} = $sp_person_id;
+  my $dbuser_id = shift;
+
+  $c->stash->{dbuser_id} = $dbuser_id;
 }
 
-sub user_profile :Chained('user') PathPart('profile') Args(0){
+sub profile :Chained('user') :PathPart('profile') Args(0){
   my $self = shift;
   my $c = shift;
 
-  my $sp_person_id = $c->stash->{sp_person_id};
+  if (!$c->user()) {
+    $c->stash->{rest} = { error => "Sorry, you need to be logged in to view user profiles." };
+    return;
+ }
 
   #data to be gathered:
   # First name, Last name
   # email (stored as username I believe)
   # user type
-  # list of smids with this user as author
-  # list of experiments with this user as author 
+
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find( {dbuser_id => $c->stash->{dbuser_id}} );
+
+  my $data;
+  $data->{full_name} = $rs->first_name()." ".$rs->last_name();
+  $data->{email_address} = $rs->username();
+  $data->{user_role} = $rs->user_type;
+
+  $c->stash->{rest} = {data => $data};
+}
+
+sub authored_smids :Chained('profile') :PathPart('authored_smids') Args(0){
+
+}
+
+sub authored_experiments :Chained('profile') :PathPart('authored_experiments') Args(0){
+
 }
 
 

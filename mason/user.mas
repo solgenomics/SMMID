@@ -1,21 +1,22 @@
 
 <%args>
-$sp_person_id
+$dbuser_id
 </%args>
 
+<script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="/js/source/entries/user_profile.js" ></script>
 
 <link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css" />
 
 <h1> User Profile </h1>
 
-<table width="90%" id="user_profile_table">
+<table width="50%" id="user_profile_table">
   <tr style="border-bottom: 1px solid lightblue">
     <td width="30%">
       <label for="user_name">Name</label>
     </td>
     <td>
-      <span id="user_name"></span>
+      <span id="user_name" ></span>
     </td>
   </tr>
   <tr style="border-bottom: 1px solid lightblue">
@@ -23,7 +24,7 @@ $sp_person_id
       <label for="user_email">Email</label>
     </td>
     <td>
-      <span id="user_email"></span>
+      <span id="user_email" ></span>
     </td>
   </tr>
   <tr style="border-bottom: 1px solid lightblue">
@@ -31,7 +32,7 @@ $sp_person_id
       <label for="user_type">User Type</label>
     </td>
     <td>
-      <span id="user_type"></span>
+      <span id="user_type" ></span>
     </td>
   </tr>
 </table>
@@ -60,3 +61,10 @@ $sp_person_id
     </tr>
   </thead>
 </table>
+
+<script>
+  $(document).ready(function(){
+    var dbuser_id = <% $dbuser_id %>;
+    populate_profile_data(dbuser_id);
+  });
+</script>
