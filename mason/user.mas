@@ -55,7 +55,6 @@ $dbuser_id
 <table id="user_authored_experiments" class="display" style="width:90%">
   <thead>
     <tr>
-      <th>Experiment Link</th>
       <th>Experiment Type</th>
       <th>Link to SMID</th>
     </tr>
@@ -66,5 +65,7 @@ $dbuser_id
   $(document).ready(function(){
     var dbuser_id = <% $dbuser_id %>;
     populate_profile_data(dbuser_id);
+    populate_authored_smids(dbuser_id);
+    populate_authored_experiments(dbuser_id);
   });
 </script>

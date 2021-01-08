@@ -697,12 +697,39 @@ sub profile :Chained('user') :PathPart('profile') Args(0){
   $c->stash->{rest} = {data => $data};
 }
 
-sub authored_smids :Chained('profile') :PathPart('authored_smids') Args(0){
+sub authored_smids :Chained('user') :PathPart('authored_smids') Args(0){
+  my $self = shift;
+  my $c = shift;
 
+  if (!$c->user()) {
+    $c->stash->{rest} = { error => "Sorry, you need to be logged in to view user profiles." };
+    return;
+ }
+
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search( {dbuser_id => $c->stash->{dbuser_id}} );
+  my @data;
+  while (my $r = $rs->next()){
+      push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status()];
+  }
+  $c->stash->{rest} = {data => \@data};
 }
 
-sub authored_experiments :Chained('profile') :PathPart('authored_experiments') Args(0){
+sub authored_experiments :Chained('user') :PathPart('authored_experiments') Args(0){
+  my $self = shift;
+  my $c = shift;
 
+  if (!$c->user()) {
+    $c->stash->{rest} = { error => "Sorry, you need to be logged in to view user profiles." };
+    return;
+ }
+
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( {dbuser_id => $c->stash->{dbuser_id}} );
+  my @data;
+
+  while (my $r = $rs->next()){
+      push @data, [$r->experiment_type(), "<a href=\"/smid/".$r->compound_id()."\">View this SMID</a>"];
+  }
+  $c->stash->{rest} = {data => \@data};
 }
 
 
