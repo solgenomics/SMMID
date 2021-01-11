@@ -35,6 +35,14 @@ $dbuser_id
       <span id="user_type" ></span>
     </td>
   </tr>
+  <tr style="border-bottom: 1px solid lightblue">
+    <td width="30%">
+      <label for="user_organization">Organization/Institution</label>
+    </td>
+    <td>
+      <span id="user_organization" ></span>
+    </td>
+  </tr>
 </table>
 
 <h2>Authored SMIDs</h2>

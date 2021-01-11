@@ -8,6 +8,7 @@ function populate_profile_data(user_id){
         $('#user_name').html(r.data.full_name);
         $('#user_email').html(r.data.email_address);
         $('#user_type').html(r.data.user_role);
+        $('#user_organization').html(r.data.user_organization);
       }
     },
     error: function(r){

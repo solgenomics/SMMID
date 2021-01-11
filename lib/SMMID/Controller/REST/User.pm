@@ -693,6 +693,7 @@ sub profile :Chained('user') :PathPart('profile') Args(0){
   $data->{full_name} = $rs->first_name()." ".$rs->last_name();
   $data->{email_address} = $rs->username();
   $data->{user_role} = $rs->user_type;
+  $data->{organization} = $rs->organization();
 
   $c->stash->{rest} = {data => $data};
 }
