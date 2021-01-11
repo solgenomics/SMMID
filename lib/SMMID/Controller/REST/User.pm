@@ -664,7 +664,7 @@ sub user :Chained('/') :PathPart('rest/user') CaptureArgs(1){
   my $c = shift;
 
   if (!$c->user()) {
-    $c->stash->{rest} = { error => "Sorry, you need to be logged in to view user profiles." };
+    $c->stash->{rest} = { error => "Sorry, you need to be logged in." };
     return;
  }
 
@@ -709,7 +709,7 @@ sub authored_smids :Chained('user') :PathPart('authored_smids') Args(0){
   my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search( {dbuser_id => $c->stash->{dbuser_id}} );
   my @data;
   while (my $r = $rs->next()){
-      push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status()];
+    push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status()];
   }
   $c->stash->{rest} = {data => \@data};
 }
@@ -723,11 +723,18 @@ sub authored_experiments :Chained('user') :PathPart('authored_experiments') Args
     return;
  }
 
-  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( {dbuser_id => $c->stash->{dbuser_id}} );
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( {dbuser_id => $c->stash->{dbuser_id} } );
   my @data;
 
   while (my $r = $rs->next()){
-      push @data, [$r->experiment_type(), "<a href=\"/smid/".$r->compound_id()."\">View this SMID</a>"];
+    my $smid = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find({compound_id => $r->compound_id()});
+    my $experiment_type;
+    if ($r->experiment_type() eq "hplc_ms"){
+      $experiment_type = "HPLC-MS";
+    } else {
+      $experiment_type = "MS/MS";
+    }
+    push @data, [$experiment_type, "<a href=\"/smid/".$r->compound_id()."\">".$smid->smid_id()."</a>"];
   }
   $c->stash->{rest} = {data => \@data};
 }
