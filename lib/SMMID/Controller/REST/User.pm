@@ -724,18 +724,17 @@ sub authored_experiments :Chained('user') :PathPart('authored_experiments') Args
     return;
  }
 
-  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( {dbuser_id => $c->stash->{dbuser_id} } );
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( {'me.dbuser_id' => $c->stash->{dbuser_id} }, {join => 'compound'} );
   my @data;
 
   while (my $r = $rs->next()){
-    my $smid = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find({compound_id => $r->compound_id()});
     my $experiment_type;
     if ($r->experiment_type() eq "hplc_ms"){
       $experiment_type = "HPLC-MS";
     } else {
       $experiment_type = "MS/MS";
     }
-    push @data, [$experiment_type, "<a href=\"/smid/".$r->compound_id()."\">".$smid->smid_id()."</a>"];
+    push @data, [$experiment_type, "<a href=\"/smid/".$r->compound_id()."\">".$r->compound()->smid_id()."</a>"];
   }
   $c->stash->{rest} = {data => \@data};
 }

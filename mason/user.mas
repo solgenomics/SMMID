@@ -1,6 +1,7 @@
 
 <%args>
 $dbuser_id
+$sp_person_id
 </%args>
 
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
@@ -11,39 +12,72 @@ $dbuser_id
 <h1> User Profile </h1>
 
 <table width="50%" id="user_profile_table">
-  <tr style="border-bottom: 1px solid lightblue">
-    <td width="30%">
+  <tr>
+    <td width="20%" style="border-bottom: 1px solid lightblue">
       <label for="user_name">Name</label>
     </td>
-    <td>
-      <span id="user_name" ></span>
+    <td width="20%" style="border-bottom: 1px solid lightblue">
+      <span id="user_name" disabled></span>
     </td>
   </tr>
-  <tr style="border-bottom: 1px solid lightblue">
-    <td width="30%">
+  <tr>
+    <td width="20%" style="border-bottom: 1px solid lightblue">
       <label for="user_email">Email</label>
     </td>
-    <td>
-      <span id="user_email" ></span>
+    <td width="20%" style="border-bottom: 1px solid lightblue">
+      <span id="user_email" disabled></span>
     </td>
   </tr>
-  <tr style="border-bottom: 1px solid lightblue">
-    <td width="30%">
+  <tr>
+    <td width="20%" style="border-bottom: 1px solid lightblue">
       <label for="user_type">User Type</label>
     </td>
-    <td>
-      <span id="user_type" ></span>
+    <td width="20%" style="border-bottom: 1px solid lightblue">
+      <span id="user_type" disabled></span>
     </td>
   </tr>
-  <tr style="border-bottom: 1px solid lightblue">
-    <td width="30%">
+  <tr>
+    <td width="20%" style="border-bottom: 1px solid lightblue">
       <label for="user_organization">Organization/Institution</label>
     </td>
-    <td>
-      <span id="user_organization" ></span>
+    <td width="20%" style="border-bottom: 1px solid lightblue">
+      <span id="user_organization" disabled></span>
     </td>
   </tr>
 </table>
+
+% if($sp_person_id == $dbuser_id){
+
+<button id="change_user_data_button" class="btn btn-primary" type="button" onclick="edit_profile()">Edit Your Profile</button>
+
+<p><table id="change_user_data_form" width="50%" style="display:none">
+  <tr>
+    <td>First Name</td>
+    <td><textarea id="edit_first_name" rows="1" cols="60" style="display:none"></textarea></td>
+  </tr>
+  <tr>
+    <td>Last Name</td>
+    <td><textarea id="edit_last_name" rows="1" cols="60" style="display:none"></textarea></td>
+  </tr>
+  <tr>
+    <td>Email Address</td>
+    <td><textarea id="edit_email" rows="1" cols="60" style="display:none"></textarea></td>
+  </tr>
+  <tr>
+    <td>Organization/Institution</td>
+    <td><textarea id="edit_organization" rows="1" cols="60" style="display:none"></textarea></td>
+  </tr>
+  <tr>
+    <td>New Password</td>
+    <td><input id="edit_password" rows="1" cols="60" style="display:none" type="password"></input></td>
+  </tr>
+  <tr>
+    <td>Confirm New Password</td>
+    <td><input id="edit_password_confirm" rows="1" cols="60" style="display:none" type="password"></input></td>
+  </tr>
+</table></p>
+
+% }
 
 <h2>Authored SMIDs</h2>
 

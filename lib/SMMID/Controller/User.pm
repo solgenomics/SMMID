@@ -15,6 +15,11 @@ sub profile :Chained('user') PathPart(''){
   my $self = shift;
   my $c = shift;
 
+  if ($c->user()){
+    $c->stash->{sp_person_id} = $c->user()->dbuser_id();
+  } else {
+      $c->stash->{sp_person_id} = undef;
+  }
   $c->stash->{template} = '/user.mas';
 }
 
