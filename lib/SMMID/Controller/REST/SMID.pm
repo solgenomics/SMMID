@@ -646,31 +646,31 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 
     my $delete_link = "X";
     while (my $row = $rs->next()) {
-	my $experiment_id = $row->experiment_id();
-	if ($c->user()) {
-	    $delete_link = "<a href=\"javascript:delete_experiment($experiment_id)\"><font color=\"red\">X</font></a>";
-	}
+    	my $experiment_id = $row->experiment_id();
+    	if ($c->user()) {
+    	    $delete_link = "<a href=\"javascript:delete_experiment($experiment_id)\"><font color=\"red\">X</font></a>";
+    	}
 
-	if ($experiment_type eq "hplc_ms") {
-	    my $json = $row->data();
-	    my $hash = JSON::XS->new()->decode($json);
-	    push @data, [ $hash->{hplc_ms_author}, $hash->{hplc_ms_method_type}, $hash->{hplc_ms_retention_time}, $hash->{hplc_ms_ionization_mode}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_scan_number}, $hash->{hplc_ms_link}, $delete_link ];
-	}
-	if ($experiment_type eq "ms_spectrum") {
-	    my $json = $row->data();
-	    my $hash = JSON::XS->new()->decode($json);
-      my $mouseover= "
-        var timer;
-        var delay = 1000;
-        \$(this).hover(function(){
-          timer=setTimeout(function(){
-            display_msms_visual(".$row->experiment_id().")
-          }, delay);
-        }, function(){
-          clearTimeout(timer);
-        });";
-	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\" onmouseover=\"".$mouseover."\">Details</a>", $hash->{ms_spectrum_link},  $delete_link ];
-	}
+    	if ($experiment_type eq "hplc_ms") {
+    	    my $json = $row->data();
+    	    my $hash = JSON::XS->new()->decode($json);
+    	    push @data, [ $hash->{hplc_ms_author}, $hash->{hplc_ms_method_type}, $hash->{hplc_ms_retention_time}, $hash->{hplc_ms_ionization_mode}, $hash->{hplc_ms_adducts_detected}, $hash->{hplc_ms_scan_number}, $hash->{hplc_ms_link}, $delete_link ];
+    	}
+    	if ($experiment_type eq "ms_spectrum") {
+    	    my $json = $row->data();
+    	    my $hash = JSON::XS->new()->decode($json);
+          my $mouseover= "
+            var timer;
+            var delay = 1000;
+            \$(this).hover(function(){
+              timer=setTimeout(function(){
+                display_msms_visual_smid(".$row->experiment_id().");
+              }, delay);
+            }, function(){
+              clearTimeout(timer);
+            });";
+    	    push @data, [ $hash->{ms_spectrum_author}, $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\" onmouseover=\"".$mouseover."\">Details</a>", $hash->{ms_spectrum_link},  $delete_link ];
+    	}
     }
 
     $c->stash->{rest} = { data => \@data };
