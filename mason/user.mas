@@ -22,6 +22,14 @@ $sp_person_id
   </tr>
   <tr>
     <td width="20%" style="border-bottom: 1px solid lightblue">
+      <label for="user_username">Username</label>
+    </td>
+    <td width="20%" style="border-bottom: 1px solid lightblue">
+      <span id="user_username" disabled></span>
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" style="border-bottom: 1px solid lightblue">
       <label for="user_email">Email</label>
     </td>
     <td width="20%" style="border-bottom: 1px solid lightblue">
@@ -48,7 +56,9 @@ $sp_person_id
 
 % if($sp_person_id == $dbuser_id){
 
-<button id="change_user_data_button" class="btn btn-primary" type="button" onclick="edit_profile()">Edit Your Profile</button>
+<button id="change_user_data_button" class="btn btn-primary" type="button" onclick="edit_profile(<% $dbuser_id %>)">Edit Your Profile</button>
+&nbsp; &nbsp;
+<button id="change_password_button" class="btn btn-primary" type="button" onclick="change_password(<% $dbuser_id %>)">Change Password</button>
 
 <p><table id="change_user_data_form" width="50%" style="display:none">
   <tr>
@@ -64,16 +74,27 @@ $sp_person_id
     <td><textarea id="edit_email" rows="1" cols="60" style="display:none"></textarea></td>
   </tr>
   <tr>
+    <td>Username</td>
+    <td><textarea id="edit_username" rows="1" cols="60" style="display:none"></textarea></td>
+  </tr>
+  <tr>
     <td>Organization/Institution</td>
     <td><textarea id="edit_organization" rows="1" cols="60" style="display:none"></textarea></td>
   </tr>
+</table>
+
+<table id="change_password_form" width="50%" style="display:none">
   <tr>
-    <td>New Password</td>
-    <td><input id="edit_password" rows="1" cols="60" style="display:none" type="password"></input></td>
+    <td>Old Password</td>
+    <td><input id="old_password" rows="1" cols="60" style="display:none" type="password"></input></td>
+  </tr>
+  <tr>
+    <td>New Password (Must be 7 or more characters)</td>
+    <td><input id="new_password" rows="1" cols="60" style="display:none" type="password"></input></td>
   </tr>
   <tr>
     <td>Confirm New Password</td>
-    <td><input id="edit_password_confirm" rows="1" cols="60" style="display:none" type="password"></input></td>
+    <td><input id="new_password_confirm" rows="1" cols="60" style="display:none" type="password"></input></td>
   </tr>
 </table></p>
 

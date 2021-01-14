@@ -2,10 +2,13 @@
 package SMMID::Controller::REST::User;
 
 use Moose;
+use utf8;
+use Unicode::Normalize;
 use IO::File;
 use Data::Dumper;
 use HTML::Entities;
 use SMMID::Login;
+#use JSON::XS;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -15,6 +18,17 @@ __PACKAGE__->config(
     map       => { 'application/json' => 'JSON' },
    );
 
+
+ sub clean {
+     my $self = shift;
+     my $str = shift;
+
+     # remove script tags
+     $str =~ s/\<script\>//gi;
+     $str =~ s/\<\/script\>//gi;
+
+     return $str;
+ }
 
 sub login : Path('/rest/user/login') Args(0) {
     my $self = shift;
@@ -682,16 +696,14 @@ sub profile :Chained('user') :PathPart('profile') Args(0){
     return;
  }
 
-  #data to be gathered:
-  # First name, Last name
-  # email (stored as username I believe)
-  # user type
-
   my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find( {dbuser_id => $c->stash->{dbuser_id}} );
 
   my $data;
+  $data->{first_name} = $rs->first_name();
+  $data->{last_name} = $rs->last_name();
   $data->{full_name} = $rs->first_name()." ".$rs->last_name();
-  $data->{email_address} = $rs->username();
+  $data->{email_address} = $rs->email();
+  $data->{username} = $rs->username();
   $data->{user_role} = $rs->user_type;
   $data->{organization} = $rs->organization();
 
@@ -739,5 +751,94 @@ sub authored_experiments :Chained('user') :PathPart('authored_experiments') Args
   $c->stash->{rest} = {data => \@data};
 }
 
+sub change_profile :Chained('user') :PathPart('change_profile') Args(0) {
+
+  my $self = shift;
+  my $c = shift;
+
+  my $error = "";
+
+  my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find( {dbuser_id => $c->stash->{dbuser_id}} );
+
+  if (!$c->user() || $c->user()->dbuser_id() != $c->stash->{dbuser_id}){
+    $c->stash->{rest} = { error => "Sorry, you need to have a valid login to edit user data." };
+    return;
+  }
+
+  print STDERR "Found user profile editor...\n";
+
+  my $first_name = $self->clean($c->req->param("first_name"));
+  my $last_name = $self->clean($c->req->param("last_name"));
+  my $email_address = $self->clean($c->req->param("email_address"));
+  my $organization = $self->clean($c->req->param("organization"));
+  my $username = $self->clean($c->req->param("username"));
+
+  if (length($first_name) == 0){$error .= "First name may not be blank. ";}
+  if (length($last_name) == 0){$error .= "Last name may not be blank. ";}
+  if (length($email_address) == 0){$error .= "Email may not be blank. ";}
+  if (length($organization) == 0){$error .= "Organization may not be blank. ";}
+  if (length($username) == 0){$error .= "Username may not be blank. ";}
+
+  if ($error) {
+    $c->stash->{rest} = { error => $error };
+    return;
+  }
+
+  my $data;
+  $data->{first_name} = $first_name;
+  $data->{last_name} = $last_name;
+  $data->{email} = $email_address;
+  $data->{username} = $username;
+  $data->{organization} = $organization;
+
+
+  eval{
+    $row->update($data);
+    print STDERR "Updated user profile.\n";
+  };
+
+  return;
+
+}
+
+sub change_password :Chained('user') :PathPart('change_password') Args(0) {
+
+  my $self = shift;
+  my $c = shift;
+
+  my $error = "";
+
+  my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find( {dbuser_id => $c->stash->{dbuser_id}} );
+
+  if (!$c->user() || $c->user()->dbuser_id() != $c->stash->{dbuser_id}){
+    $c->stash->{rest} = { error => "Sorry, you need to have a valid login to edit user data." };
+    return;
+  }
+
+  print STDERR "This user's old password is".$row->password()."\n";
+
+  my $old_password = $self->clean($c->req->param("old_password"));
+  my $new_password = $self->clean($c->req->param("new_password"));
+  my $new_password_confirm = $self->clean($c->req->param("new_password_confirm"));
+
+  if ($old_password ne $row->password()){$error .= "Incorrect password. ";}
+  if (length($new_password) < 7){$error .= "New password must be at least 7 characters long. ";}
+  if ($new_password ne $new_password_confirm){$error .= "Please confirm that the new password is entered twice. ";}
+
+  if ($error) {
+    $c->stash->{rest} = { error => $error };
+    return;
+  }
+
+  my $data;
+  $data->{password} = $new_password;
+
+  eval {
+    $row->update($data);
+  };
+
+  return;
+
+}
 
 1;
