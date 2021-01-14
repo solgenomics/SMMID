@@ -815,8 +815,6 @@ sub change_password :Chained('user') :PathPart('change_password') Args(0) {
     return;
   }
 
-  print STDERR "This user's old password is".$row->password()."\n";
-
   my $old_password = $self->clean($c->req->param("old_password"));
   my $new_password = $self->clean($c->req->param("new_password"));
   my $new_password_confirm = $self->clean($c->req->param("new_password_confirm"));
