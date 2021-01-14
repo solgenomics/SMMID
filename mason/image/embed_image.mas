@@ -1,0 +1,29 @@
+
+<%args>
+$image_id
+$size => "medium"
+$div
+</%args>
+
+<script>
+
+$(document).ready( function() {
+
+  function embed_image(image_id, image_size, image_div) {
+    $.ajax( {
+      url : '/rest/image/'+image_id+'/img/'+image_size,
+      error: function(e) { alert('An error occurred'); },
+      success: function(r) {
+        if (r.error) { alert(r.error); }
+        else { 
+          $('#'+image_div).html(r.tag);
+        }
+      }
+    });
+  }
+
+ embed_image("<% $image_id %>", "<% $size %>", "<% $div %>");
+
+});
+
+</script>

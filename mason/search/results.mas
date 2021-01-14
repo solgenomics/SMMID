@@ -1,0 +1,35 @@
+
+<%args>
+$data
+</%args>
+
+<script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css" />
+
+<table id="result_data_table">
+  <tr>
+    <thead>
+    <th>SMID ID</th>
+    <th>Formula</th>
+    <th>SMILES</th>
+    </thead>
+  </tr>
+</table>
+
+<script>
+  $(document).ready( function() {
+
+  var data = '<% $data %>';
+
+  var data_object = JSON.parse(data);
+  
+  $('#result_data_table').DataTable( {
+    'language' : {
+      'search' : 'Filter results'
+    },
+    'data' : data_object
+  });
+
+  });
+
+</script>

@@ -1,61 +1,203 @@
 
+
+@font-face {
+  font-family: 'fira sans';
+  src: url('/src/fonts/firasans-regular-webfont.woff2') format('woff2'),
+  url('/src/fonts/firasans-regular-webfont.woff') format('woff')
+}
+
+@font-face {
+  font-family: 'fira sans ultra';
+  src: url('/src/fonts/firasans-ultra-webfont.woff2') format('woff2'),
+  url('/src/fonts/firasans-ultra-webfont.woff') format('woff')
+}
+
+
 html {
     height: 100%;
 }
 
-body { 
-    background-color: [% site.col.page %];
-    font-family: arial;
-    color: [% site.col.text %];
-    margin: 0px;
-    padding: 0px;
+body {
+    background-color: white;
+    font-family: fira sans;
+    color: dark grey;
+    margin: 10px;
+    padding: 10px;
     height: 100%;
-    font-face: arial;
+    font-face: fira sans;
 }
 
-#header {
+.header {
     margin: 0 auto;
-    background-color: [% site.col.head %];
-    font-color: [% site.col.title %];
-    border-bottom: 1px solid [% site.col.line %];
-    width: [% site.width %];
+    background-color: litegray;
+    font-color: darkblue;
+    border-bottom: 5px solid lightblue;
+    width: 100%;
 }
 
-#footer {
-    background-color: [% site.col.head %];
+.footer {
+    font: fira sans;
+    background-color: white;
     text-align: left;
-    border-top: 1px solid [% site.col.line %];
-    width: [% site.width %];
-    padding: 4px;
-    margin: 0 auto;
+    font-size: 11pt;
+    color: lightblue;
+    border-top: 1px solid lightblue;
+    width: 100%;
+    padding-top: 10px;
+    margin: 10px;
 }
 
-#content {
+.content {
     padding: 10px;
     margin: 0 auto;
-    width: [% site.width %];
+    width: 90%;
 }
 
-h1.title {
-    padding: 4px;
-    margin: 0px;
+.modal{
+  width: 60%;
+  height: 80%;
+  left: 20%;
+  top: 10%;
+}
+
+.modal-content-msms{
+  width: 100%;
+  height: 90%;
+  background-color:white;
+  border-radius:5px;
+}
+
+.modal-body-msms{
+  padding:0px;
+  background-color:white;
+  border-radius:5px;
+}
+
+.tooltip{
+  width: 300px;
+  height: 30px;
+  background-color:grey;
+  border-radius:5px;
+  opacity:0;
+}
+
+h1 {
+    text-align: center;
+    color: darkgrey;
+    font-family: fira sans;
+    font-weight: 1000;
+    font-size: 24pt;
+    padding: 20px;
     text-decorations: none;
 }
 
-.sitetitle { 
-    font-family: arial;
-    text-decoration: none;
-    font-size: 24pt;
-    font-weight: bold;
-    color: [% site.rgb.blue %];
-    margin-bottom: 0px;
-    
+h2 {
+    text-align: center;
+    color: darkgrey;
+    font-family: fira sans;
+    font-weight: 1000;
+    font-size: 18pt;
+    padding: 20px;
+    text-decorations: none;
 }
 
-.message {
-    color: [% site.col.message %];
+
+.sitetitle {
+    font-family: fira sans ultra;
+    text-decoration: none;
+    font-size: 28pt;
+    font-weight: 1000;
+    color: lightblue;
+    margin-bottom: 0px;
+}
+
+.sitetitle:hover {
+    text-decoration: none;
+    color: lightblue;
+}
+
+.header_link:link {
+    font-family: fira sans;
+    font-size:14pt;
+    font-weight: bold;
+    color: lightblue;
+    text-decoration: none;
+    margin-right: 20pt;
+}
+
+.header_link:visited {
+    color: lightblue;
+}
+
+.error_message {
+    border: 1px;
+    background-color: red;
+    font-color: green;
+    margin: auto;
+    padding: 100px;
 }
 
 .error {
-    color: [% site.col.error %];
+    color: red;
+}
+
+input {
+    color: darkblue;
+    background: lightgrey;
+}
+
+input:disabled {
+    border: none;
+    color: black;
+    background: white;
+    font-weight: bold;
+}
+
+textarea {
+    color: darkblue;
+    background: lightgrey;
+}
+
+textarea:disabled {
+    border: none;
+    color: black;
+    background: white;
+    font-weight: bold;
+}
+
+hr {
+    background-color: lightblue;
+}
+
+.css-grid-table,
+.css-grid-table-header,
+.css-grid-table-body {
+display: grid;
+}
+
+.css-grid-table {
+grid-template-rows: 24px 72px;
+width: 80%;
+}
+
+.css-grid-table-header,
+.css-grid-table-body {
+grid-template-columns: auto auto minmax(150px, 25%);
+line-height: 24px;
+}
+
+.css-grid-table-header {
+grid-column-gap: 2px;
+grid-template-rows: auto;
+}
+
+.css-grid-table-body {
+//    grid-template-rows: auto auto;
+    background-color:rgb(100,0,0);
+}
+
+.css-grid-table-header div {
+text-align: center;
+font-weight: bold;
+background-color: rgb(191, 191, 191);
 }

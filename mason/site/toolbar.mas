@@ -1,0 +1,104 @@
+
+<!-- start toolbar -->
+
+<script type="text/javascript" src="/js/source/entries/toolbar.js" ></script>
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+       <tr>
+	<td><a href="/" class="sitetitle"></a></td><td align="right">
+
+      	<nav class="navbar navbar-expand-lg navbar-light bg-white">
+      	     <a class="sitetitle" style="color:lightblue;" href="/">SMID-DB</a>
+	
+	      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+	  	<ul class="navbar-nav">
+	    	<li class="nav-item">
+	      	<a class="nav-link header_link" style="color:lightblue; margin-left:40px; " href="/">Home</a>
+	    	</li>
+	    	<li class="nav-item dropdown">
+	      	<a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		About
+	      	</a>
+	      	<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+			<a class="dropdown-item" href="/about">About SMIDs</a>
+			<a class="dropdown-item" href="/contact">Contact</a>
+			<a class="dropdown-item" href="/cite">Cite SMID-DB</a>
+		
+	      	</div>
+	    	</li>
+	    
+	    
+		<li class="nav-item dropdown">
+	      	    <a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		Search
+	      	     </a>
+	      	     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+		     <a class="dropdown-item" href="/browse">Browse</a>
+		     <a class="dropdown-item" href="/search">Advanced Search</a>
+		     <a class="dropdown-item" href="/curator">Curation tool</a>
+		     <a class="dropdown-item" href="/download">Download</a>
+	      	     </div>
+	    	 </li>
+	       </ul>
+	    </div>
+	    	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+	  <span class="navbar-toggler-icon"></span>
+	</button>
+
+	   </nav>
+	   </td> <td>
+	<table cellpadding="0"><tr style="margin-bottom:0px">
+	    <td>
+	      <span id="login_button_html_div">Login</span>
+	    </td>
+	    <td>
+	      &nbsp;
+	    </td>
+	    <td >
+	      <form action="/search/results" style="margin-bottom:0px">
+		<input name="term" size="10" />
+		<button id="site_search" type="submit" class="btn btn-info">search</button>
+	      </form>
+	    </td>
+	  </tr>
+	</table>
+    </td>
+  </tr>
+</table>
+<hr style="margin-top: 0px; " />
+
+<div id="working_modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Working...</h5>
+      </div>
+      <div class="modal-body">
+<center><img src="/static/images/life_game.gif" /></center>
+	<div id="working_further_information"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="error_message_modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Error</h5>
+        <!-- button type="button" class="close" data-dismiss="modal" aria-label="Close" -->
+        <!-- <span aria-hidden="true">&times;</span -->
+        <!-- /button -->
+      </div>
+      <div class="modal-body">
+        <div id="error_message">....</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+<!-- end toolbar -->

@@ -1,0 +1,47 @@
+
+
+RESTful interface for SMID DB
+
+Endpoints
+
+user management
+
+* /rest/user/login
+
+* /rest/user/logout
+
+/rest/user/list
+
+/rest/user/search
+
+/rest/user/new
+
+* /rest/user/{id}/view
+
+/rest/user/{id}/delete
+
+compounds
+
+* /rest/compound/{id}/details  - view compound with id {id}
+
+/rest/compound/{id}/delete
+
+* /rest/compound/{id}/store
+
+* /rest/compound/new  - add a new compound
+
+/rest/compound     - list all compounds
+
+* /rest/compound/search
+
+
+
+results
+
+* /rest/result/{id}/details
+
+* /rest/result/new
+
+* /rest/result/{id}/store
+
+/rest/result/search

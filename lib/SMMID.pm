@@ -13,7 +13,7 @@ SMMID - Catalyst based application
 package SMMID;
 
 use Moose;
-
+use Data::Dumper;
 use Catalyst::Runtime '5.70';
 
 # Set flags and add plugins for the application
@@ -33,7 +33,15 @@ use File::Path ();
 use Catalyst qw(
                 ConfigLoader
                 Static::Simple
-               );
+                SmartURI
+                Authentication
+                +SMMID::Authentication::Store
+                +SMMID::Authentication::User
+                Authorization::Roles
+                +SMMID::Role::Site::Exceptions
+                +SMMID::Role::Site::Files
+);
+
 our $VERSION = '0.01';
 
 
@@ -54,20 +62,61 @@ my $logdir = File::Spec->catfile( File::Spec->rootdir,
 				);
 
 __PACKAGE__->config(
-		    name => 'SMMID',
-		    access_log => File::Spec->catfile( $logdir, 'access.log' ),
-		    error_log  => File::Spec->catfile( $logdir, 'error.log'  ),
+    name => 'smmid',
+    access_log => File::Spec->catfile( $logdir, 'access.log' ),
+    error_log  => File::Spec->catfile( $logdir, 'error.log'  ),
+    default_view => 'Mason',
+    #root => 'static',
 
-		    # our conf file is by default in /etc/cxgn/SMMID.conf
-		   ### 'Plugin::ConfigLoader' => { file => File::Spec->catfile( File::Spec->rootdir, 'etc', 'cxgn', 'SMMID.conf') },
-                   );
+    # our conf file is by default in /etc/cxgn/SMMID.conf
+    'Plugin::ConfigLoader' => {
+	#file => File::Spec->catfile( File::Spec->rootdir, __PACKAGE__->config->{home}.'/../../smmid_local.conf')
+    },
+    
+    
+    'Plugin::Authentication' => {
+	default_realm => 'default',
+	default => {
+	    credential => {
+		class => '+SMMID::Authentication::Credentials',
+	    },
+ 	    
+	    store => {
+		class => "+SMMID::Authentication::Store",
+		user_class => "+SMMID::Authentication::User",
+		###		    role_column => 'roles',
+	    },
+	},
+
+    },
+
+
+    'Plugin::Static::Simple' => {
+	dirs => [ 'js', 'tempfiles', 'static' ],
+    }
+);
+
+after 'setup_finalize' => sub {
+    my $self = shift;
+
+    $self->config->{basepath} = $self->config->{home};
+
+    
+    
+    # all files written by web server should be group-writable
+    umask 000002;
+};
+
+
+
 
 # Start the application
 __PACKAGE__->setup();
 
 # also load SMMIDDb, since it won't be found by the regular Catalyst
 # requires
-require SMMIDDb;
+
+#require SMMIDDB;
 
 
 =head1 CLASS METHODS
@@ -115,70 +164,70 @@ require SMMIDDb;
 
 =cut
 
-sub configure_mod_perl {
-    my $class = shift;
-    my %args = @_;
+# sub configure_mod_perl {
+#     my $class = shift;
+#     my %args = @_;
 
-    exists $args{vhost}
-        or die "must pass 'vhost' argument to configure_mod_perl()\n";
+#     exists $args{vhost}
+#         or die "must pass 'vhost' argument to configure_mod_perl()\n";
 
-    require Apache2::ServerUtil;
-    require Apache2::ServerRec;
+#     require Apache2::ServerUtil;
+#     require Apache2::ServerRec;
 
-    my $app_name = $class;
-    my $cfg = $class->config;
-    -d $cfg->{home} or die <<EOM;
-FATAL: Catalyst could not figure out the home dir for $app_name, it
-guessed '$cfg->{home}', but that directory does not exist.  Aborting start.
-EOM
-    # add some other configuration to the web server
-    my $server = Apache2::ServerUtil->server;
-    $server = $server->next if $args{vhost}; #< vhost currently being
-                                             #configured should be first
-                                             #in the list
-    $server->add_config( $_ ) for map [ split /\n/, $_ ],
-        (
-         'ServerSignature Off',
+#     my $app_name = $class;
+#     my $cfg = $class->config;
+#     -d $cfg->{home} or die <<EOM;
+# FATAL: Catalyst could not figure out the home dir for $app_name, it
+# guessed '$cfg->{home}', but that directory does not exist.  Aborting start.
+# EOM
+#     # add some other configuration to the web server
+#     my $server = Apache2::ServerUtil->server;
+#     $server = $server->next if $args{vhost}; #< vhost currently being
+#                                              #configured should be first
+#                                              #in the list
+#     $server->add_config( $_ ) for map [ split /\n/, $_ ],
+#         (
+#          'ServerSignature Off',
 
-         #respond to all requests by looking in this directory...
-         "DocumentRoot $cfg->{home}",
+#          #respond to all requests by looking in this directory...
+#          "DocumentRoot $cfg->{home}",
 
-         #where to write error messages
-         "ErrorLog "._check_logfile( $cfg->{error_log} ),
-         "CustomLog "._check_logfile( $cfg->{access_log} ).' combined',
+#          #where to write error messages
+#          "ErrorLog "._check_logfile( $cfg->{error_log} ),
+#          "CustomLog "._check_logfile( $cfg->{access_log} ).' combined',
 
-         'ErrorDocument 500 "Internal server error: The server encountered an internal error or misconfiguration and was unable to complete your request. Feel free to contact us at sgn-feedback@sgn.cornell.edu and inform us of the error.',
-
-
-         # allow symlinks, allow access from anywhere
-         "<Directory />
-
-             Options +FollowSymLinks
-
-             Order allow,deny
-             Allow from all
-
-          </Directory>
-         ",
+#          'ErrorDocument 500 "Internal server error: The server encountered an internal error or misconfiguration and was unable to complete your request. Feel free to contact us at sgn-feedback@sgn.cornell.edu and inform us of the error.',
 
 
-         # set our application to handle most requests by default
-         "<Location />
-             SetHandler modperl
-             PerlResponseHandler SMMID
-          </Location>
-         ",
+#          # allow symlinks, allow access from anywhere
+#          "<Directory />
 
-         # except set up serving /static files directly from apache,
-         # bypassing any perl code
-         'Alias /static '.File::Spec->catdir( $cfg->{home}, 'root', 'static' ),
-         "<Location /static>
-             SetHandler  default-handler
-          </Location>
-         ",
-        );
+#              Options +FollowSymLinks
 
-}
+#              Order allow,deny
+#              Allow from all
+
+#           </Directory>
+#          ",
+
+
+#          # set our application to handle most requests by default
+#          "<Location />
+#              SetHandler modperl
+#              PerlResponseHandler SMMID
+#           </Location>
+#          ",
+
+#          # except set up serving /static files directly from apache,
+#          # bypassing any perl code
+#          'Alias /static '.File::Spec->catdir( $cfg->{home}, 'root', 'static' ),
+#          "<Location /static>
+#              SetHandler  default-handler
+#           </Location>
+#          ",
+#         );
+
+# }
 
 sub _check_logfile {
     my $file = File::Spec->catfile(@_);

@@ -1,0 +1,33 @@
+
+<%args>
+
+</%args>
+
+<h1>Search SMIDs</h1>
+
+<center>
+<form action="/search/results" method="POST">
+<table cellpadding="10">
+
+<tr><td>SMID name</td><td><input id="smid_id" name="smid_id" /><br /></td></tr>
+
+<tr><td>Formula</td><td> <input id="formula" name="formula" /><br /></td></tr>
+
+<tr><td>SMILES</td><td> <input id="smiles" name="smiles" /></td></tr>
+
+<tr><td>Molecular weight</td><td> <input id="molecular_weight" name="molecular_weight"  size="10" /> &plusmn; <input id="molecular_weight_range" name="molecular_weight_range" size="5" /></td></tr>
+
+<tr><td>Retention time </td><td><input id="retention_time" name="retention_time" size="10" disabled /> &plusmn; <input id="retention_time_range" name="retention_time_range" size="5" disabled /></td></tr>
+
+</table>
+
+<br />
+<br />
+
+<button type="submit" class="btn btn-primary">Search!</button>
+</form>
+</center>
+
+
+
+

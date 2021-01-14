@@ -1,0 +1,33 @@
+
+<%args>
+</%args>
+
+
+  
+  <h1>Contact information</h1>
+
+  <div class="content">
+    The SMID database is maintained by Frank Schroeder's lab at the Boyce Thompson Institute (BTI) with database support by the Mueller lab at the BTI.
+  </div>
+  <div class="content">
+    Currently, the database is maintained by Tyler Schwertfeger from the Schroeder lab. Previous maintainers were Joshua Judkins and Maro Kariya.
+  </div>
+
+  <div class="content">
+    The SMID-DB is a collaboration with <a href="//wormbase.org" target="_top">Wormbase</a>.
+  </div>
+
+  <div class="content">
+    Issues can be reported on <a href="https://github.com/solgenomics/SMMID/issues" target="_blank">the SMID-DB GitHub page</a>.
+  </div>
+
+  <div class="content">
+    For questions and comments or to submit new compounds, please contact <a href="mailto:smid-db@cornell.edu">smid-db@cornell.edu</a>.
+  </div>
+ 
+
+<br /><br /><br /><br />
+
+
+
+
