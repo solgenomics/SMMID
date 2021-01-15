@@ -131,3 +131,30 @@ function submit_new_password(dbuser_id){
     },
   });
 }
+
+function submit_new_user_data(){
+  $.ajax({
+    url:'/rest/user/new',
+    data: {
+      'first_name' : $('#edit_first_name').val(),
+      'last_name' : $('#edit_last_name').val(),
+      'email_address' : $('#edit_email').val(),
+      'organization' : $('#edit_organization').val(),
+      'username' : $('#edit_username').val(),
+      'password' : $('#new_password').val(),
+      'confirm_password' : $('#new_password_confirm').val(),
+      'user_type' : $('#edit_user_type').val(),
+    },
+    success: function(r){
+      if (r.error){alert(r.error);}
+      else{
+        alert(r.success);
+        location.reload();
+      }
+    },
+    error: function(r){
+      alert("Sorry, an error occurred. "+r.responseText);
+      location.reload();
+    }
+  })
+}

@@ -11,7 +11,7 @@ sub user :Chained('/') PathPart('user') CaptureArgs(1){
   $c->stash->{dbuser_id} = shift;
 }
 
-sub profile :Chained('user') PathPart(''){
+sub profile :Chained('user') PathPart('profile'){
   my $self = shift;
   my $c = shift;
 

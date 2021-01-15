@@ -116,112 +116,67 @@ sub new_account :Path('/rest/user/new') Args(0) {
     my $self = shift;
     my $c = shift;
 
-    print STDERR "Adding new account...\n";
-    if ($c->config->{is_mirror}) {
-	$c->stash->{template} = '/system_message.mas';
-	$c->stash->{message} = "This site is a mirror site and does not support adding users. Please go to the main site to create an account.";
-	return;
+    my $error="";
+
+    if (!$c->user() || $c->user()->get_object()->user_type() ne "curator"){
+      $error .= "You must be logged in as a curator to create new accounts.";
+      $c->stash->{rest} = {error => $error};
+      return;
     }
 
+    my $first_name = $self->clean($c->req->param("first_name"));
+    my $last_name = $self->clean($c->req->param("last_name"));
+    my $email_address = $self->clean($c->req->param("email_address"));
+    my $organization = $self->clean($c->req->param("organization"));
+    my $username = $self->clean($c->req->param("username"));
+    my $user_type = $self->clean($c->req->param("user_type"));
 
-    my ($first_name, $last_name, $username, $password, $confirm_password, $email_address, $organization)
-	= map { $c->req->params->{$_} } (qw|first_name last_name username password confirm_password email_address organization|);
+    my $already_exists = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find({username => $username});
+    if ($already_exists){$error .= "A user with this username already exists.\n";}
 
-    if ($username) {
-	#
-	# check password properties...
-	#
-	my @fail = ();
-	if (length($username) < 7) {
-	    push @fail, "Username is too short. Username must be 7 or more characters";
-	} else {
-	    # does user already exist?
-	    #
-	    my $existing_login; # REWRITE USING SMMID::Result::User -> get_login($c->dbc()->dbh(), $username);
+    if(length($first_name) == 0){$error .= "Need a first name or a first initial.\n";}
+    if(length($last_name) == 0){$error .= "Need a last name.\n";}
+    if(length($email_address) == 0){$error .= "Need an email address.\n";}
+    if(length($username) == 0){$error .= "Need a username. This is often the same as the email.\n";}
 
-	    if ($existing_login->get_username()) {
-		push @fail, "Username \"$username\" is already in use. Please pick a different username.";
-	    }
+    my $password = $self->clean($c->req->param("password"));
+    my $confirm_password = $self->clean($c->req->param("confirm_password"));
 
-	}
-	if (length($password) < 7) {
-	    push @fail, "Password is too short. Password must be 7 or more characters";
-	}
-	if ("$password" ne "$confirm_password") {
-	    push @fail, "Password and confirm password do not match.";
-	}
+    if (length($password) < 7){$error .= "Password must be at least 7 characters long.\n";}
+    if ($password ne $confirm_password){$error .= "Please confirm that the password is entered twice.\n";}
 
-	if (!$organization) {
-	    push @fail, "'Organization' is required.'";
-	}
-
-	if ($password eq $username) {
-	    push @fail, "Password must not be the same as your username.";
-	}
-	if ($email_address !~ m/[^\@]+\@[^\@]+/) {
-	    push @fail, "Email address is invalid.";
-	}
-	unless($first_name) {
-	    push @fail,"You must enter a first name or initial.";
-	}
-	unless($last_name) {
-	    push @fail,"You must enter a last name.";
-	}
-
-	if (@fail) {
-	    $c->stash->{rest} = { error => "Account creation failed for the following reason(s): ".(join ", ", @fail) };
-	    return;
-	}
+    if ($error){
+      $c->stash->{rest} = {error => $error};
+      return;
     }
 
-    my $confirm_code = $self->tempname();
-    my $new_user = CXGN::People::Login->new($c->dbc->dbh());
-    $new_user -> set_username($username);
-    $new_user -> set_pending_email($email_address);
-    $new_user -> set_disabled('unconfirmed account');
-    $new_user -> set_organization($organization);
-    $new_user -> store();
+    my $row;
+    $row = {
+      first_name => $first_name,
+      last_name => $last_name,
+      email => $email_address,
+      organization => $organization,
+      username => $username,
+      user_type => $user_type,
+      password => crypt($password, 'bf'),
+      creation_date => 'now()',
+      last_modified_date => 'now()',
+    };
 
-    print STDERR "Generated sp_person_id ".$new_user->get_sp_person_id()."\n";
-    print STDERR "Update password and confirm code...\n";
-    $new_user->update_password($password);
-    $new_user->update_confirm_code($confirm_code);
+    my $new_dbuser;
 
-    print STDERR "Store Person object...\n";
-    #this is being added because the person object still uses two different objects, despite the fact that we've merged the tables
-    my $person_id=$new_user->get_sp_person_id();
-    my $new_person=CXGN::People::Person->new($c->dbc->dbh(),$person_id);
-    $new_person->set_first_name($first_name);
-    $new_person->set_last_name($last_name);
-    $new_person->store();
+    eval {
+      my $new = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->new($row);
+      $new->insert();
+      $new_dbuser = $new->dbuser_id();
+    };
 
-    my $host = $c->config->{main_production_site_url};
-    my $project_name = $c->config->{project_name};
-    my $subject="[$project_name] Email Address Confirmation Request";
-    my $body=<<END_HEREDOC;
+    if ($@) {
+	    $c->stash->{rest} = { error => "Sorry, an error occurred storing the user ($@)" };
+    } else {
+      $c->stash->{rest} = {success => "Successfully stored the new user with id=$new_dbuser"};
+    }
 
-Please do *NOT* reply to this message. The return address is not valid.
-Use the contact form instead ($host/contact/form).
-
-This message is sent to confirm the email address for community user
-\"$username\"
-
-Please click (or cut and paste into your browser) the following link to
-confirm your account and email address:
-
-$host/user/confirm?username=$username&confirm_code=$confirm_code
-
-Thank you,
-$project_name Team
-
-END_HEREDOC
-
-CXGN::Contact::send_email($subject,$body,$email_address);
-    $c->stash->{rest} = { message => qq | <table summary="" width="80%" align="center">
-<tr><td><p>Account was created with username \"$username\". To continue, you must confirm that SGN staff can reach you via email address \"$email_address\". An email has been sent with a URL to confirm this address. Please check your email for this message and use the link to confirm your email address.</p></td></tr>
-<tr><td><br /></td></tr>
-</table>
-| };
 }
 
 
@@ -556,7 +511,7 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
             $welcome_sign
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="/user/$sp_person_id">Your Profile</a>
+            <a class="dropdown-item" href="/user/$sp_person_id/profile">Your Profile</a>
             <a class="dropdown-item"><button id="navbar_logout" class="btn btn-primary" type="button" onclick="logout();" title="Logout">Logout</button></a>
 
           </div>
@@ -698,16 +653,25 @@ sub profile :Chained('user') :PathPart('profile') Args(0){
 
   my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find( {dbuser_id => $c->stash->{dbuser_id}} );
 
-  my $data;
-  $data->{first_name} = $rs->first_name();
-  $data->{last_name} = $rs->last_name();
-  $data->{full_name} = $rs->first_name()." ".$rs->last_name();
-  $data->{email_address} = $rs->email();
-  $data->{username} = $rs->username();
-  $data->{user_role} = $rs->user_type;
-  $data->{organization} = $rs->organization();
+  if (!$rs){
+    $c->stash->{rest} = {error => "Sorry, this user does not exist."};
+  } else {
+    my $user_type;
+    if ($rs->user_type() eq "curator"){$user_type = "Curator";}
+    else {$user_type = "Standard User";}
 
-  $c->stash->{rest} = {data => $data};
+    my $data;
+    $data->{first_name} = $rs->first_name();
+    $data->{last_name} = $rs->last_name();
+    $data->{full_name} = $rs->first_name()." ".$rs->last_name();
+    $data->{email_address} = $rs->email();
+    $data->{username} = $rs->username();
+    $data->{user_role} = $user_type;
+    $data->{organization} = $rs->organization();
+
+    $c->stash->{rest} = {data => $data};
+  }
+
 }
 
 sub authored_smids :Chained('user') :PathPart('authored_smids') Args(0){
@@ -797,7 +761,11 @@ sub change_profile :Chained('user') :PathPart('change_profile') Args(0) {
     print STDERR "Updated user profile.\n";
   };
 
-  return;
+  if ($@) {
+      $c->stash->{rest} = {success => 0};
+  } else {
+      $c->stash->{rest} = {success => 1};
+  }
 
 }
 
@@ -808,9 +776,11 @@ sub change_password :Chained('user') :PathPart('change_password') Args(0) {
 
   my $error = "";
 
-  my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find( {dbuser_id => $c->stash->{dbuser_id}} );
+  my $dbuser_id = $c->stash->{dbuser_id};
 
-  if (!$c->user() || $c->user()->dbuser_id() != $c->stash->{dbuser_id}){
+  my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find( {dbuser_id => $dbuser_id} );
+
+  if (!$c->user() || $c->user()->get_object()->dbuser_id() != $dbuser_id){
     $c->stash->{rest} = { error => "Sorry, you need to have a valid login to edit user data." };
     return;
   }
@@ -819,7 +789,9 @@ sub change_password :Chained('user') :PathPart('change_password') Args(0) {
   my $new_password = $self->clean($c->req->param("new_password"));
   my $new_password_confirm = $self->clean($c->req->param("new_password_confirm"));
 
-  if ($old_password ne $row->password()){$error .= "Incorrect password. ";}
+  my $login = SMMID::Login->new( { schema => $c->model("SMIDDB")->schema() } );
+  my $current_user = $login->user_from_credentials($c->user()->get_object()->username(), $old_password);
+  if (!$current_user){$error .= "Incorrect password. ";}
   if (length($new_password) < 7){$error .= "New password must be at least 7 characters long. ";}
   if ($new_password ne $new_password_confirm){$error .= "Please confirm that the new password is entered twice. ";}
 
@@ -828,15 +800,15 @@ sub change_password :Chained('user') :PathPart('change_password') Args(0) {
     return;
   }
 
-  my $data;
-  $data->{password} = $new_password;
 
-  eval {
-    $row->update($data);
-  };
+  my $masked_new_password = $login->schema()->storage->dbh()->prepare("UPDATE dbuser SET password=crypt(?, password) WHERE dbuser_id=?");
+  $masked_new_password->execute($new_password, $dbuser_id);
 
-  return;
-
+  if ($@) {
+      $c->stash->{rest} = {success => 0};
+  } else {
+      $c->stash->{rest} = {success => 1};
+  }
 }
 
 1;

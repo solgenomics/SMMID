@@ -68,7 +68,7 @@ has 'login_cookie' => (isa => 'Str', is => 'rw');
 
  Usage:        my $login = SMMID::Login->new( { schema => $schema, cookie_string )
  Desc:         creates a new login object
- Ret:          
+ Ret:
  Args:         a database handle
  Side Effects: connects to database
  Example:
@@ -91,7 +91,7 @@ sub get_login_status {
 
     my $sth = $self->get_sql("stats_aggregate");
 
-    
+
     $sth->execute($LOGIN_TIMEOUT);
 
     my %logins = ();
@@ -140,8 +140,8 @@ sub get_login_status {
 =head2 verify_session
 
  Usage:        $login->verify_session($user_type)
- Desc:         checks whether a user is logged in currently and 
-               is of the minimum user type $user_type. 
+ Desc:         checks whether a user is logged in currently and
+               is of the minimum user type $user_type.
                user types have the following precedence:
                user < submitter < sequencer < curator
  Ret:          the person_id, if a session exists
@@ -227,7 +227,7 @@ sub has_session {
     # Ok, they are logged in! yay! #
     ################################
 
-    my $login_info = { 
+    my $login_info = {
 	person_id => $dbuser_id,
 	cookie_string => $self->cookie_string(),
 	user_type => $user_type,
@@ -253,33 +253,33 @@ sub query_from_cookie {
     my $cookie_string = shift;
 
     my @result = (undef, undef, undef, undef);
-    
-    
+
+
     my $row = $self->user_from_cookie_string();
 
     my $expired = 0;
-    if ($row && $self->cookie_string()) { 
-	
+    if ($row && $self->cookie_string()) {
+
 	@result = ($row->dbuser_id(), $row->user_type(), $row->user_prefs(), $row->last_access_time());
 
-	if ($result[2]) { 
+	if ($result[2]) {
 	    my $iso8601 = DateTime::Format::ISO8601->new;
 	    my $last_access_time = $iso8601->parse_datetime( $result[2] );
-	    
+
 	    my $current_time = DateTime->now();
-	    
+
 	    my $seconds_since_last_login = $current_time->epoch()-$last_access_time->epoch();
-	    
+
 	    print STDERR "SECONDS SINCE LAST LOGIN : $seconds_since_last_login\n";
 	    if ($seconds_since_last_login > $LOGIN_TIMEOUT) {
 		print STDERR "LOGOUT IS EXPIRED!\n";
 		$expired =1;
 	    }
 	}
-	
+
 
     }
-    
+
     if (wantarray) {
         return ($result[0], $result[1], $result[2], $expired);
     }
@@ -290,9 +290,9 @@ sub query_from_cookie {
 
 sub user_from_cookie_string {
     my $self = shift;
-    
+
     my $row = $self->schema()->resultset('SMIDDB::Result::Dbuser')->find( { cookie_string => $self->cookie_string() } );
-    
+
     if (!$row) { return; }
 
     else {
@@ -306,18 +306,16 @@ sub user_from_credentials {
     my $username = shift;
     my $password = shift;
 
-    if ($username && $password) { 
-	my $user_h = $self->schema()
+    if ($username && $password) {
+	     my $user_h = $self->schema()
 	    ->storage
 	    ->dbh()
 	    ->prepare("SELECT dbuser_id FROM dbuser WHERE username=? and password=crypt(?, password)");
-	
+
 	$user_h->execute($username, $password);
 
-
-	if (my ($user_id) = $user_h->fetchrow_array()) { 
+	if (my ($user_id) = $user_h->fetchrow_array()) {
 	    my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { dbuser_id => $user_id } );
-	    
 	    return $row;
 	}
     }
@@ -328,9 +326,9 @@ sub exists_user {
     my $self = shift;
     my $username = shift;
 
-    if ($username) { 
+    if ($username) {
 	my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { username => { ilike => $username } }  );
-	
+
 	if ($row) {
 	    return $row;
 	}
@@ -354,7 +352,7 @@ sub login_allowed {
 #        not some mirror or some sandbox, because logged-in users can CHANGE data in the database and we
 #        don't want to lose or ignore those changes.
     if (
-            !$self->disable_login() 
+            !$self->disable_login()
         and !$self->is_mirror()
 
 #we haven't decided whether it's a good idea to comment this next line by default -- Evan
@@ -397,7 +395,7 @@ sub login_user {
     elsif (! $password) {
 	$login_info->{error} = "Please provide a password.";
     }
-    else { 
+    else {
 
 	my $row = $self->user_from_credentials($username, $password);
 
@@ -434,11 +432,11 @@ sub login_user {
 "ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
                   );
 		my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { dbuser_id => $person_id });
-		$row->update( 
+		$row->update(
 		    {
 			cookie_string => $new_cookie_string
 		    });
-		
+
 		$login_info->{person_id}     = $person_id;
 		$login_info->{first_name}     = $first_name;
 		$login_info->{last_name}     = $last_name;
@@ -458,7 +456,7 @@ sub login_user {
 
  Usage:        $login->logout_user();
  Desc:         log out the current logged in user
- Ret:          nothing  
+ Ret:          nothing
  Args:         none
  Side Effects: resets the cookie to empty
  Example:
@@ -482,7 +480,7 @@ sub logout_user {
 =head2 update_timestamp
 
  Usage:        $login->update_timestamp();
- Desc:         updates the timestamp, such that users don't 
+ Desc:         updates the timestamp, such that users don't
                get logged out when they are active on the site.
  Ret:          nothing
  Args:         none
@@ -494,21 +492,21 @@ sub logout_user {
 sub update_timestamp {
     my $self   = shift;
     my $dbuser_id = shift;
-    
+
     my $cookie = $self->cookie_string();
     if ($cookie) {
         # my $sth = $self->get_sql("refresh_cookie");
-	
-        #   "	UPDATE 
-	# 			sgn_people.sp_person 
-	# 		SET 
-	# 			last_access_time=current_timestamp 
-	# 		WHERE 
+
+        #   "	UPDATE
+	# 			sgn_people.sp_person
+	# 		SET
+	# 			last_access_time=current_timestamp
+	# 		WHERE
 	# 			cookie_string=?",
-	
+
 	my $row = $self->schema()->resultset("SMIDDB::Result::Dbuser")->find( { dbuser_id => $dbuser_id });
 	$row->update( { last_access_time => $self->now() });
-	
+
     }
 }
 
@@ -524,7 +522,7 @@ sub now {
 #  Usage:        my $cookie = $login->get_login_cookie();
 #  Desc:         returns the cookie for the current login
 #  Args:         none
-#  Side Effects: 
+#  Side Effects:
 #  Example:
 
 # =cut
@@ -565,91 +563,91 @@ sub set_sql {
 
         user_from_cookie =>    #send: session_time_in_secs, cookiestring
 
-          "	SELECT 
+          "	SELECT
 				sp_person_id,
 				sgn_people.sp_roles.name as user_type,
 				user_prefs,
-				extract (epoch FROM current_timestamp-last_access_time)>? AS expired 
-			FROM 
-				sgn_people.sp_person JOIN sgn_people.sp_person_roles using(sp_person_id) join sgn_people.sp_roles using(sp_role_id) 
-			WHERE 
+				extract (epoch FROM current_timestamp-last_access_time)>? AS expired
+			FROM
+				sgn_people.sp_person JOIN sgn_people.sp_person_roles using(sp_person_id) join sgn_people.sp_roles using(sp_role_id)
+			WHERE
 				cookie_string=?
                         ORDER BY sp_role_id
                         LIMIT 1",
 
         user_from_uname_pass =>
 
-           "	SELECT 
+           "	SELECT
 				sp_person_id, disabled, user_prefs, first_name, last_name
-			FROM 
-				sgn_people.sp_person 
-			WHERE 
-				UPPER(username)=UPPER(?) 
+			FROM
+				sgn_people.sp_person
+			WHERE
+				UPPER(username)=UPPER(?)
 				AND (sp_person.password = crypt(?, sp_person.password))",
 
         cookie_string_exists =>
 
-          "	SELECT 
-				cookie_string 
-			FROM 
-				sgn_people.sp_person 
-			WHERE 
+          "	SELECT
+				cookie_string
+			FROM
+				sgn_people.sp_person
+			WHERE
 				cookie_string=?",
 
         login =>    #send: cookie_string, sp_person_id
 
-          "	UPDATE 
-				sgn_people.sp_person 
-			SET 
+          "	UPDATE
+				sgn_people.sp_person
+			SET
 				cookie_string=?,
-				last_access_time=current_timestamp 
-			WHERE 
+				last_access_time=current_timestamp
+			WHERE
 				sp_person_id=?",
 
         logout =>    #send: cookie_string
 
-          "	UPDATE 
-				sgn_people.sp_person 
-			SET 
+          "	UPDATE
+				sgn_people.sp_person
+			SET
 				cookie_string=null,
-				last_access_time=current_timestamp 
-			WHERE 
+				last_access_time=current_timestamp
+			WHERE
 				cookie_string=?",
 
         refresh_cookie =>    #send: cookie_string  (updates the timestamp)
 
-          "	UPDATE 
-				sgn_people.sp_person 
-			SET 
-				last_access_time=current_timestamp 
-			WHERE 
+          "	UPDATE
+				sgn_people.sp_person
+			SET
+				last_access_time=current_timestamp
+			WHERE
 				cookie_string=?",
 
         stats_aggregate => #send:  session_timeout_in_secs (gets aggregate login data)
 
-          "	SELECT  
-				sp_roles.name, count(*) 
-			FROM 
+          "	SELECT
+				sp_roles.name, count(*)
+			FROM
 				sgn_people.sp_person
                         JOIN    sgn_people.sp_person_roles USING(sp_person_id)
                         JOIN    sgn_people.sp_roles USING(sp_role_id)
-           
-			WHERE 
-				last_access_time IS NOT NULL 
-				AND cookie_string IS NOT NULL 	
-				AND extract(epoch from now()-last_access_time)<? 
-			GROUP BY 	
+
+			WHERE
+				last_access_time IS NOT NULL
+				AND cookie_string IS NOT NULL
+				AND extract(epoch from now()-last_access_time)<?
+			GROUP BY
 				sp_roles.name",
 
         stats_private => #send: session_timeout_in_secs (gets all logged-in users)
 
-          "	SELECT 
-				sp_roles.name as user_type, username, contact_email 
-			FROM 
+          "	SELECT
+				sp_roles.name as user_type, username, contact_email
+			FROM
 				sgn_people.sp_person JOIN sgn_people.sp_person_roles using(sp_person_id) JOIN sgn_people.sp_roles using (sp_role_id)
-			WHERE 
-				last_access_time IS NOT NULL 
-				AND cookie_string IS NOT NULL	
+			WHERE
+				last_access_time IS NOT NULL
+				AND cookie_string IS NOT NULL
 				AND extract(epoch from now()-last_access_time)<?",
 
     };
@@ -669,4 +667,3 @@ sub get_sql {
 ###
 1;    #do not remove
 ###
-

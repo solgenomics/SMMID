@@ -9,6 +9,53 @@ $sp_person_id
 
 <link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css" />
 
+% if($dbuser_id == 0){ #This is a new user. Security will be handled on the Perl side
+
+<h1> Enter New User Data </h1>
+
+<table id="new_user_data_form" width="100%" style="display">
+  <tr>
+    <td>First Name</td>
+    <td><textarea id="edit_first_name" rows="1" cols="60" style="display"></textarea></td>
+    <td>Password (Must be 7 or more characters)</td>
+    <td><input id="new_password" rows="1" cols="60" style="display" type="password"></input></td>
+  </tr>
+  <tr>
+    <td>Last Name</td>
+    <td><textarea id="edit_last_name" rows="1" cols="60" style="display"></textarea></td>
+    <td>Confirm Password</td>
+    <td><input id="new_password_confirm" rows="1" cols="60" style="display" type="password"></input></td>
+  </tr>
+  <tr>
+    <td>Email Address</td>
+    <td><textarea id="edit_email" rows="1" cols="60" style="display"></textarea></td>
+    <td colspan="2">(Keep careful track of the password you choose, you will have to give it to the new user)</td>
+  </tr>
+  <tr>
+    <td>Username</td>
+    <td><textarea id="edit_username" rows="1" cols="60" style="display"></textarea></td>
+  </tr>
+  <tr>
+    <td>Organization/Institution</td>
+    <td><textarea id="edit_organization" rows="1" cols="60" style="display"></textarea></td>
+    <td>User Type</td>
+    <td>
+      <select id="edit_user_type" name="edit_user_type">
+        <option value="">Regular User</option>
+        <option value="curator">Curator</option>
+      </select>
+    </td>
+  </tr>
+</table>
+
+<p>&nbsp;</p>
+
+<center><button id="submit_new_user_data_button" type="button" class="btn btn-primary" onclick="submit_new_user_data()">Submit new user data</button></center>
+
+% }
+
+% if($dbuser_id != 0) {
+
 <h1> User Profile </h1>
 
 <table width="50%" id="user_profile_table">
@@ -132,3 +179,5 @@ $sp_person_id
     populate_authored_experiments(dbuser_id);
   });
 </script>
+
+% }
