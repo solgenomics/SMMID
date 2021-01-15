@@ -642,6 +642,7 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 
     my $delete_link = "X";
     while (my $row = $rs->next()) {
+
 	my $experiment_id = $row->experiment_id();
 	if ($c->user()) {
 	    $delete_link = "<a href=\"javascript:delete_experiment($experiment_id)\"><font color=\"red\">X</font></a>";
@@ -667,6 +668,7 @@ sub results : Chained('smid') PathPart('results') Args(0) {
         });";
 	    push @data, [ "<a href=\"/user/".$row->dbuser_id()."/profile\">".$hash->{ms_spectrum_author}."</a>", $hash->{ms_spectrum_ionization_mode}, $hash->{ms_spectrum_collision_energy}, $hash->{ms_spectrum_adduct_fragmented}, "<a href=\"/experiment/".$row->experiment_id()."\" onmouseover=\"".$mouseover."\">Details</a>", $hash->{ms_spectrum_link},  $delete_link ];
 	}
+
     }
 
     $c->stash->{rest} = { data => \@data };
