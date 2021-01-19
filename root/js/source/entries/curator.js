@@ -2,6 +2,8 @@
 
 function curator_html() {
 
+      $('#new_account_button').attr('style', 'display');
+
       $('#browse_c_smid_data_div').DataTable({
         'ajax': 'rest/curator/datatable',
         'paging': true,
@@ -21,7 +23,7 @@ function curator_html() {
 
   	}
 
-  function curate_smid(compound_id){
+function curate_smid(compound_id){
     //$('#curate_'+compound_id).prop('disabled', true);
     //$('#unverify_'+compound_id).prop('disabled', false);
     $.ajax({
