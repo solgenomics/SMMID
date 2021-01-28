@@ -49,7 +49,10 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
       if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){$cur_char = "<p style=\"color:red\">Unverified</p>";}
       elsif($r->curation_status() eq "review"){$cur_char = "<p style=\"color:blue\">Marked for Review</p>";}
 
-	push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $cur_char ];
+      my $formula_subscripts = $r->formula();
+      $formula_subscripts =~ s/(\d+)/\<sub\>$1\<\/sub\>/g;
+      
+	push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $formula_subscripts, $r->molecular_weight(), $cur_char ];
     }
 
     $c->stash->{rest} = { data => \@data };
