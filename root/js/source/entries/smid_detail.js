@@ -87,14 +87,24 @@ function make_fields_editable(compound_id) {
 		event.preventDefault();
 		var yes = confirm("Are you sure you want to delete this entry? It will be permanently removed from the database.");
 		if (yes) {
-		    var compound_id = $('#compound_id').html();
-		    alert('Compound ID to delete: '+compound_id);
 
-		    $.ajax( {
-			url : '/rest/smid/'+compound_id+'/delete',
-			error: function(e) { alert('Error... '+e.responseText); },
-			success: function(r) { alert('The smid has been deleted. RIP.'); }
-		    });
+		    confirm("Please confirm that you want to delete this SMID.");
+		    if (yes) { 
+			var compound_id = $('#compound_id').html();
+			//alert('Compound ID to delete: '+compound_id);
+			
+			$.ajax( {
+			    url : '/rest/smid/'+compound_id+'/delete',
+			    error: function(e) { alert('Error... '+e.responseText); },
+			    success: function(r) {
+				if (r.error) { alert(r.error); }
+				else {
+				    alert('The smid has been deleted. RIP.');
+				    location.href="/smid/"+r.compound_id;
+				}
+			    }
+			});
+		    }
 		}
 
 	    });
@@ -326,7 +336,6 @@ function embed_compound_images(compound_id, image_size, div_name) {
 
 function store_hplc_ms_data() {
 
-
     var hplc_ms_retention_time = $('#hplc_ms_retention_time').val();
 
     if (isNaN(hplc_ms_retention_time)) {
@@ -365,6 +374,9 @@ function store_ms_spectrum_data() {
 
     if (isNaN(collision_energy)) {
 	alert("Collision energy must be numeric.");
+	return;
+    }
+
     let re = /^[0-9., ]*$/;
 
     var matches = collision_energy.match(re);
@@ -389,8 +401,8 @@ function store_ms_spectrum_data() {
 	    'ms_spectrum_link' : $('#ms_spectrum_link').val()
 	}
     });
-  }
 }
+
 
 
 function populate_smid_data(compound_id) {
@@ -398,7 +410,11 @@ function populate_smid_data(compound_id) {
 	url: '/rest/smid/'+compound_id+'/details',
 	error: function(r) { alert("An error occurred. "+r.responseText); },
 	success: function(r) {
-	    if (r.error) { error_message("No smid exists with id "+smid_id); }
+	    if (r.error) {
+		alert("No smid exists with id "+compound_id);
+		location.href='/browse/';
+		return;
+	    }
 	    else {
 		$('#smid_id').val(r.data.smid_id);
 		$('#smiles_string').val(r.data.smiles_string);
@@ -408,42 +424,44 @@ function populate_smid_data(compound_id) {
 		$('#organisms').val(r.data.organisms);
 		$('#organisms_input_div').css('visibility', 'hidden');
 
-
-    has_login().then( function(p){
-      if(p.user !== null && p.role == "curator"){
-        $('#curation_status_manipulate').prop('value', r.data.curation_status);
-      } else {$('#curation_status_manipulate').prop('style', "display: none;");}
-    })
-
-    var curation_status_html = "";
-    if(r.data.curation_status == "curated"){
-      curation_status_html = "Verified Entry";
-      $('#curation_status').prop('style',"color:green; font-size:1.5em");
-    }
-    if(r.data.curation_status == null || r.data.curation_status == "" || r.data.curation_status == "unverified"){
-      curation_status_html = "Unverified Entry";
-      $('#curation_status').prop('style',"color:red; font-size:1.5em");
-    }
-    if(r.data.curation_status == "review"){
-      curation_status_html = "Marked for Review";
-      $('#curation_status').prop('style',"color:blue; font-size:1.5em");
-    }
-
+		
+		has_login().then( function(p){
+		    if(p.user !== null && p.role == "curator"){
+			$('#curation_status_manipulate').prop('value', r.data.curation_status);
+		    } else {$('#curation_status_manipulate').prop('style', "display: none;");}
+		});
+		
+		var curation_status_html = "";
+		if(r.data.curation_status == "curated"){
+		    curation_status_html = "Verified Entry";
+		    $('#curation_status').prop('style',"color:green; font-size:1.5em");
+		}
+		if(r.data.curation_status == null || r.data.curation_status == "" || r.data.curation_status == "unverified"){
+		    curation_status_html = "Unverified Entry";
+		    $('#curation_status').prop('style',"color:red; font-size:1.5em");
+		}
+		if(r.data.curation_status == "review"){
+		    curation_status_html = "Marked for Review";
+		    $('#curation_status').prop('style',"color:blue; font-size:1.5em");
+		}
+		
 		$('#curation_status').html(curation_status_html);
-
+		
 		$('#doi').val(r.data.doi);
-
-    if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
-      $('#request_review_button').prop('style', "display:none");
-    } else {$('#request_review_button').prop('disabled', false);}
-
-
+		
+		if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
+		    $('#request_review_button').prop('style', "display:none");
+		} else {$('#request_review_button').prop('disabled', false);}
+		
+		
 		$('#formula_static_div').css('visibility', 'visible');
-		$('#formula_static_div').html(r.data.formula + '&nbsp;&nbsp;&nbsp;['+r.data.molecular_weight+' g/mol]');
-
+		var formula = r.data.formula;
+		var formula_subscripts = formula.replace(/(\d+)/g, '\<sub\>$1\<\/sub\>');
+		$('#formula_static_div').html(formula_subscripts + '&nbsp;&nbsp;&nbsp;['+r.data.molecular_weight+' g/mol]');
+		
 		$('#formula_input_div').hide();
 		$('#formula').val(r.data.formula);
-
+		
 		$('#iupac_name_static_div').show();
 		$('#iupac_name_static_div').html(r.data.iupac_name);
 		$('#iupac_name').val(r.data.iupac_name);

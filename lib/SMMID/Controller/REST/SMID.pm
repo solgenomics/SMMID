@@ -49,7 +49,10 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
       if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){$cur_char = "<p style=\"color:red\">Unverified</p>";}
       elsif($r->curation_status() eq "review"){$cur_char = "<p style=\"color:blue\">Marked for Review</p>";}
 
-	push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $cur_char ];
+      my $formula_subscripts = $r->formula();
+      $formula_subscripts =~ s/(\d+)/\<sub\>$1\<\/sub\>/g;
+      
+	push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $formula_subscripts, $r->molecular_weight(), $cur_char ];
     }
 
     $c->stash->{rest} = { data => \@data };
@@ -268,12 +271,12 @@ sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
     my $self = shift;
     my $c = shift;
 
-    print STDERR "DELETE SMID: ".$c->stash->{compound_id}." role = ".$c->user()->check_roles("curator")."\n";
-
     my $error = "";
 
-    if ( ($c->user()) && ($c->user()->check_roles("curator"))) {
+    if ($c->user()) { print STDERR "HELLO! ".join(", ", $c->user()->roles()); }
 
+    if ( ($c->user()) && ($c->user()->get_object()->user_type() eq "curator")) {
+	
 	print STDERR "Deleting compound with id $c->stash->{compound_id} and associated metadata...\n";
 
 	my $exp_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( { compound_id => $c->stash->{compound_id} });
@@ -308,7 +311,10 @@ sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
     }
 
     else {
-	$c->stash->{rest} = { success => 1 };
+	$c->stash->{rest} = {
+	    success => 1,
+	    compound_id => $c->stash->{compound_id}
+	};
     }
 
 
@@ -467,14 +473,14 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	return;
     }
 
-  #   my $user_id = $c->user()->get_object()->dbuser_id();
-  #   my $smid_owner_id = $smid_row->dbuser_id();
-  #
-  #
-  #   if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
-	# $c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
-	# return;
-  #   }
+     my $user_id = $c->user()->get_object()->dbuser_id();
+     my $smid_owner_id = $smid_row->dbuser_id();
+  
+  
+     if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
+	 $c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
+	 return;
+     }
 
     my $smid_id = $self->clean($c->req->param("smid_id"));
     my $smiles_string = $self->clean($c->req->param("smiles_string"));
@@ -558,6 +564,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     my $s = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $c->stash->{compound_id} }, { join => "dbuser" } );
 
     if (! $s) {
+	print STDERR "The specified SMID (id = ".$c->stash->{compound_id}.") does not exist!\n"; 
 	$c->stash->{rest} = { error => "Can't find smid with id ".$c->stash->{compound_id}."\n" };
 	return;
     }
@@ -693,9 +700,20 @@ sub compound_images :Chained('smid') PathPart('images') Args(1) {
 
 
 	my $file = "medium";
-	if ($size =~ m/thumbnail|small|medium|large/) { $file = $size.".png"; }
+	my $ext = $image->file_ext();
+	if ($size =~ m/thumbnail|small|medium|large/) { $file = $size.$ext; }
+
+	# for svg
+	my $width="";
+	if ($image->file_ext() =~ m/svg/i) {
+	    if ($size eq "thumbnail") { $width=' width="80px" '; }
+	    if ($size eq "small" ) { $width=' width="200px" '; }
+	    if ($size eq "medium") { $width=' width="400px" '; }
+	    if ($size eq "large") { $width=' width="600px" '; }
+	}
+	
 	my $image_full_url =  "/".$c->config->{image_url}."/".$image->image_subpath()."/".$file;
-	push @source_tags, "<img src=\"$image_full_url\" />$delete_link";
+	push @source_tags, "<img src=\"$image_full_url\"  $width />$delete_link";
     }
     print STDERR "returning images for compound ".$c->stash->{compound_id} ." with size $size.\n";
     $c->stash->{rest} = { html => \@source_tags };

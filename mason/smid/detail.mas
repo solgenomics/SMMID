@@ -387,8 +387,8 @@ $user_role => undef
 	    <select id="hplc_ms_ionization_mode">
 	      <option>positive</option>
 	      <option>negative</option>
-	      </select>
-
+	    </select>
+	    
 	    <!-- input type="input" class="form-control" id="hplc_ms_ionization_mode" placeholder="Ionization mode"> -->
 	  </div>
 	  <div class="form-group">
@@ -472,7 +472,7 @@ $user_role => undef
       <div class="modal-header">
         <h5 class="modal-title">MS/MS spectra format</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
+          <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
@@ -517,6 +517,14 @@ m/z        Intensity              Relative
 <div style="height:30px">
 </div>
 
+%  if ($action eq "edit") {
+<div class="alert alert-danger" >
+  <div><button class="btn btn-danger" id="delete_smid_button">Delete this SMID</button></div>
+  <span>
+    This will eliminate the SMID from the database, along with structural, HPLC and spectral data. Deletion is permanent and cannot be undone.  
+  </span>
+</div>
+%  }
 
 <!-- script -->
 

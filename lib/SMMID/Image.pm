@@ -98,6 +98,8 @@ has 'create_date' => (isa => 'Str', is => 'rw');
 
 has 'modified_date' => (isa => 'Str', is => 'rw');
 
+has 'type' => (isa => 'Str', is => 'rw');
+
 sub BUILD {
     my $self = shift;
     my $args = shift;
@@ -160,6 +162,7 @@ sub store {
 	copyright => $self->copyright(),
 	md5sum => $self->md5sum(),
 	dbuser_id => $self->dbuser_id(),
+	type => $self->type(),
     };
     
     if ($self->image_id()) {
@@ -240,7 +243,7 @@ sub process_image {
     my $type      = shift;
     my $type_id   = shift;
 
-    if ($file_name !~ m/jpeg$|jpg$|gif$|png$/i) {
+    if ($file_name !~ m/jpeg$|jpg$|gif$|png$|svg$/i) {
 	print STDERR "FILE $file_name cannot be converted because it is of an incorrect type.\n";
 	return undef;
     }
@@ -287,126 +290,129 @@ sub process_image {
       || die "Can't copy file $file_name to $dest_name";
     my $chmod = "chmod 664 '$dest_name'";
 
-    ### Multi Page Document Support
-    #    deanx - nov. 16 2007
-    #   PDF, PS, EPS documents are now supported by ImageMagick/Ghostscript
-    #   A primary impact is these types can multipage.  'mogrify' produces
-    #   one image per page, labelled filename-0.jpg, filename-1.jpg ...
-    #   This code detects multipage documents and copies the first page for
-    #   thumbnail processing
+    if ($file_ext =~ m/png/i) {
+	$self->type("png");
 
-    my @image_pages = `/usr/bin/identify "$dest_name"`;
-
-    if ( $#image_pages > 0 ) {    # multipage, pdf, ps or eps
-        # note mogrify used since 'convert' will not correctly
-        # reformat (convert makes blank images) Convert and mogrify
-        # both dislike the format of our filenames intensely if
-        # ghostscript is envoked ... change filename to something
-        # beign like temp.<ext>
-
-        my $newname;
-	if ( $file_ext ) {
-            # note; mogrify will create files named basename-0.jpg, basename-1.jpg
-            my $mogrified_first_image = $processing_dir . "/temp-0.png";
-            my $tempname = $processing_dir . "/temp" . $file_ext;
-            $newname = $basename . ".png";
-            my $new_dest = $processing_dir . "/" . $newname;
-
-            # use temp name for mogrify/ghostscript
-            File::Copy::copy( $dest_name, $tempname )
-              || die "Can't copy file $basename to $tempname";
-
-            if ( `mogrify -format png '$tempname'` ) {
-                die "Sorry, can't convert image $basename";
-            }
-
-            File::Copy::copy( $mogrified_first_image, $new_dest )
-              || die "Can't copy file $mogrified_first_image to $newname";
-
-        }
-        $basename = $newname;
-
-    }
-    else { # appears to be a regular simple image
-
-        my $newname = "";
-
-        if ( ! `mogrify -format png '$dest_name'` ) {
-            # has no jpg extension
-	    if ($file_ext !~ /png/i) {
-                $newname = $original_filename . ".png";    # convert it to extention .JPG
-            }
-            # has no extension at all
-	    elsif (!$file_ext) {
-                $newname = $original_filename . ".png";         # add an extension .JPG
-            }
-            else {
-                $newname = $original_filename.".png"; # add standard JPG file extension.
-            }
-
-            system( "convert", "$processing_dir/$basename$file_ext", "$processing_dir/$newname" );
-            $? and die "Sorry, can't convert image $basename$file_ext to $newname";
-
-            $original_filename = $newname;
-            $basename          = $newname;
-        }
+	my $newname = $self->process_png($processing_dir, $basename, $file_ext);
+	
     }
 
-    # create large image
-    $self->copy_image_resize(
-        "$processing_dir/$basename",
-        $self->processing_dir() . "/large.png",
-        $self->get_image_size("large")
-    );
+#    my $newname = "";
+    
+#    if ($file_ext =~ m/svg$/i) {
+#	$newname = $original_filename.".svg";
+#    }
 
-    # create midsize images
-    $self->copy_image_resize(
-        "$processing_dir/$basename",
-        $self->processing_dir() . "/medium.png",
-        $self->get_image_size("medium")
-    );
-
-    # create small image
-    $self->copy_image_resize(
-        "$processing_dir/$basename",
-        $self->processing_dir() . "/small.png",
-        $self->get_image_size("small")
-    );
-
-    # create thumbnail
-    $self->copy_image_resize(
-        "$processing_dir/$basename",
-        $self->processing_dir() . "/thumbnail.png",
-        $self->get_image_size("thumbnail")
-    );
-
-    # enter preliminary image data into database
-    my $ext = "";
-    if ( $original_filename =~ /(.*)(\.\S{1,4})$/ ) {
-        $original_filename = $1;
-        $ext               = $2;
-    }
-
+#    my $ext = "";
+#    if ( $original_filename =~ /(.*)(\.\S{1,4})$/ ) {#
+#	$original_filename = $1;
+#	$ext               = $2;
+ #   }
+    
     $self->original_filename($original_filename);
     $self->file_ext($file_ext); # this is the original file
-
+    
     # start transaction, store the image object, and associate it to
     # the given type and type_id.
-
+    
     # move the image into the md5sum subdirectory
     #
     my $original_file_path = $self->processing_dir()."/".$self->original_filename().$self->file_ext();
-
+    
     my $md5sum = $self->calculate_md5sum($original_file_path);
     $self->md5sum($md5sum);
-
+    
     $self->make_dirs();
-
+    
     $self->finalize_location($processing_dir);
 
+    if ($file_ext =~ m/svg/i) {
+	$self->type("svg");
+	
+	my $newname = $self->process_svg();
+    }
+    
+
+    
     my $image_id = $self->store();
 
     return $image_id;
+}
+
+
+sub process_png {
+    my $self = shift;
+    my $processing_dir = shift;
+    my $basename = shift;
+    my $file_ext = shift;
+    
+    my $dest_name = $processing_dir ."/".$basename.".".$file_ext;
+
+    
+    if ( ! `mogrify -format png '$dest_name'` ) {
+
+	my $newname;
+	if ($file_ext !~ /png/i) {
+	    $newname = $basename.".png";
+	}
+	# has no extension at all
+	elsif (!$file_ext) {
+	    $newname = $basename.".png";
+	}
+	else {
+	    $newname = $basename.".png";
+	}
+	    
+	system( "convert", "$processing_dir/$basename$file_ext", "$processing_dir/$newname" );
+	$? and die "Sorry, can't convert image $basename$file_ext to $newname";
+	
+	$basename = $newname;
+    }
+    
+    # create large image
+    $self->copy_image_resize(
+	"$processing_dir/$basename",
+	$self->processing_dir() . "/large.png",
+	$self->get_image_size("large")
+	);
+    
+    # create midsize images
+    $self->copy_image_resize(
+	"$processing_dir/$basename",
+	$self->processing_dir() . "/medium.png",
+	$self->get_image_size("medium")
+	);
+    
+    # create small image
+    $self->copy_image_resize(
+	"$processing_dir/$basename",
+	$self->processing_dir() . "/small.png",
+	$self->get_image_size("small")
+	);
+    
+    # create thumbnail
+    $self->copy_image_resize(
+	"$processing_dir/$basename",
+	$self->processing_dir() . "/thumbnail.png",
+	$self->get_image_size("thumbnail")
+	);
+}
+
+sub  process_svg {
+    my $self = shift;
+  
+    
+    #create soft links to different file name sizes...
+
+    my $dir = $self->image_dir()."/".$self->image_subpath();
+    my $original_filename = $dir."/".$self->original_filename().$self->file_ext();
+    
+    print STDERR "Generating symlinks for SVG file...\n";
+    symlink($original_filename, $dir."/large.svg") || die "Can't generate symlink for $original_filename\n";
+    symlink($original_filename, $dir."/medium.svg") || die "Can't generate symlink for $original_filename\n";
+    symlink($original_filename, $dir."/small.svg") || die "Can't generate symlink for $original_filename\n";
+    symlink($original_filename, $dir."/thumbnail.svg")|| die "Can't generate symlink for $original_filename\n";
+    
 
 }
 
@@ -616,22 +622,24 @@ sub get_filename {
             ? $self->image_subpath
             : File::Spec->catdir( $self->get_image_dir, $self->image_subpath );
 
+    my $file_ext = $self->file_ext();
+    
     if ($size eq "thumbnail") {
-	return File::Spec->catfile($image_dir, 'thumbnail.png');
+	return File::Spec->catfile($image_dir, 'thumbnail'.$file_ext);
     }
     if ($size eq "small") {
-	return File::Spec->catfile($image_dir, 'small.png');
+	return File::Spec->catfile($image_dir, 'small'.$file_ext);
     }
     if ($size eq "large") {
-	return File::Spec->catfile($image_dir, 'large.png');
+	return File::Spec->catfile($image_dir, 'large'.$file_ext);
     }
     if ($size eq "original") {
-	return File::Spec->catfile($image_dir, $self->get_original_filename().$self->get_file_ext());
+	return File::Spec->catfile($image_dir, $self->get_original_filename().$self->file_ext());
     }
     if ($size eq "original_converted") {
-	return File::Spec->catfile($image_dir, $self->get_original_filename().".png");
+	return File::Spec->catfile($image_dir, $self->get_original_filename().$self->file_ext());
     }
-    return File::Spec->catfile($image_dir, 'medium.png');
+    return File::Spec->catfile($image_dir, 'medium'.$file_ext);
 }
 
 

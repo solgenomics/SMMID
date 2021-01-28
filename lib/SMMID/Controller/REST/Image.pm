@@ -282,9 +282,9 @@ sub image_upload_POST {
 
     my $filename = $upload->tempname();
     print STDERR "Filename = $filename\n";
-    if ($upload->type() !~ m/jpg|jped|png|gif/) {
+    if ($upload->type() !~ m/jpg|jped|png|gif|svg/) {
 	print STDERR "Trying to upload wrong filetype. Sorry.\n";
-	$c->stash->{rest} = { error => 'The uploaded file must be of type jpg, gif or png.' };
+	$c->stash->{rest} = { error => 'The uploaded file must be of type png or svg.' };
 	return;
     }
 
