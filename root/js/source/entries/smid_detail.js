@@ -89,10 +89,10 @@ function make_fields_editable(compound_id) {
 		if (yes) {
 
 		    confirm("Please confirm that you want to delete this SMID.");
-		    if (yes) { 
+		    if (yes) {
 			var compound_id = $('#compound_id').html();
 			//alert('Compound ID to delete: '+compound_id);
-			
+
 			$.ajax( {
 			    url : '/rest/smid/'+compound_id+'/delete',
 			    error: function(e) { alert('Error... '+e.responseText); },
@@ -424,13 +424,22 @@ function populate_smid_data(compound_id) {
 		$('#organisms').val(r.data.organisms);
 		$('#organisms_input_div').css('visibility', 'hidden');
 
-		
+
 		has_login().then( function(p){
 		    if(p.user !== null && p.role == "curator"){
-			$('#curation_status_manipulate').prop('value', r.data.curation_status);
-		    } else {$('#curation_status_manipulate').prop('style', "display: none;");}
+			    $('#curation_status_manipulate').prop('value', r.data.curation_status);
+		    } else {
+          $('#change_curation_status').prop('style', "display: none;");
+          $('#curation_status_manipulate').prop('style', "display: none;");
+        }
+        if (p.user !== null && (p.user == r.data.dbuser_id || p.role == "curator")) {
+          $('#public_status_manipulate').prop('value', "public");
+        } else {
+          $('#change_public_status').prop('style', "display: none;");
+          $('#public_status_manipulate').prop('style', "display: none;");
+        }
 		});
-		
+
 		var curation_status_html = "";
 		if(r.data.curation_status == "curated"){
 		    curation_status_html = "Verified Entry";
@@ -444,24 +453,24 @@ function populate_smid_data(compound_id) {
 		    curation_status_html = "Marked for Review";
 		    $('#curation_status').prop('style',"color:blue; font-size:1.5em");
 		}
-		
+
 		$('#curation_status').html(curation_status_html);
-		
+
 		$('#doi').val(r.data.doi);
-		
+
 		if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
 		    $('#request_review_button').prop('style', "display:none");
 		} else {$('#request_review_button').prop('disabled', false);}
-		
-		
+
+
 		$('#formula_static_div').css('visibility', 'visible');
 		var formula = r.data.formula;
 		var formula_subscripts = formula.replace(/(\d+)/g, '\<sub\>$1\<\/sub\>');
 		$('#formula_static_div').html(formula_subscripts + '&nbsp;&nbsp;&nbsp;['+r.data.molecular_weight+' g/mol]');
-		
+
 		$('#formula_input_div').hide();
 		$('#formula').val(r.data.formula);
-		
+
 		$('#iupac_name_static_div').show();
 		$('#iupac_name_static_div').html(r.data.iupac_name);
 		$('#iupac_name').val(r.data.iupac_name);

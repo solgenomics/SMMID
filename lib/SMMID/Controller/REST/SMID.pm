@@ -45,14 +45,16 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
     my @data;
     while (my $r = $rs->next()) {
 
+      #next if ( ($r->public_status() eq "private" && $c->user()->get_object()->dbuser_id() != $r->dbuser_id() ) || ($r->public_status() eq "private" && $c->user()->get_object()->user_type() ne "curator" ) );
+
       my $cur_char = "<p style=\"color:green\"><b>\x{2713}</b></p>";
       if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){$cur_char = "<p style=\"color:red\">Unverified</p>";}
       elsif($r->curation_status() eq "review"){$cur_char = "<p style=\"color:blue\">Marked for Review</p>";}
 
       my $formula_subscripts = $r->formula();
       $formula_subscripts =~ s/(\d+)/\<sub\>$1\<\/sub\>/g;
-      
-	push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $formula_subscripts, $r->molecular_weight(), $cur_char ];
+
+	     push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $formula_subscripts, $r->molecular_weight(), $cur_char, "placeholder" ];
     }
 
     $c->stash->{rest} = { data => \@data };
@@ -74,7 +76,7 @@ return;
   my @data;
   while (my $r = $rs->next()) {
 
-    my $button = "<button id=\"unverify_".$r->compound_id()."\" onclick=\"mark_smid_for_review(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\">Mark for Review</button>";
+    my $cur_button = "<button id=\"unverify_".$r->compound_id()."\" onclick=\"mark_smid_for_review(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\">Mark for Review</button>";
     my $cur_status = "<p style=\"color:green\"><b>\x{2713}</b></p>";
     my $disabled = "";
     my $advice = "Approve and Curate";
@@ -97,14 +99,17 @@ return;
 
     if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){
       $cur_status = "<p style=\"color:red\">Unverified $missinglist </p>";
-      $button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
+      $cur_button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
     }
     elsif($r->curation_status() eq "review"){
       $cur_status = "<p style=\"color:blue\">Marked for Review $missinglist </p> ";
-      $button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
+      $cur_button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
     }
 
-push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->smiles(), $button, $cur_status];
+    #Needs another line that determines if the status should be public or private
+    my $pub_status_button = "<button onclick=\"change_public_status(".$r->compound_id().",public_status)\" type=\"button\" class=\"btn btn-primary\" disabled>placeholder</button>";
+
+    push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $pub_status_button, "public placeholder", $cur_button, $cur_status];
   }
 
   $c->stash->{rest} = { data => \@data };
@@ -276,7 +281,7 @@ sub delete_smid :Chained('smid') PathPart('delete') Args(0) {
     if ($c->user()) { print STDERR "HELLO! ".join(", ", $c->user()->roles()); }
 
     if ( ($c->user()) && ($c->user()->get_object()->user_type() eq "curator")) {
-	
+
 	print STDERR "Deleting compound with id $c->stash->{compound_id} and associated metadata...\n";
 
 	my $exp_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Experiment")->search( { compound_id => $c->stash->{compound_id} });
@@ -456,6 +461,51 @@ sub mark_unverified :Chained('smid') PathPart('mark_unverified') Args(0){
     return;
 }
 
+sub change_public_status :Chained('smid') PathPart('change_public_status') Args(0){
+  my $self = shift;
+  my $c = shift;
+
+  if (! $c->user() ) {
+      $c->stash->{rest} = { error => "Author or curator login required to change the visibility of this smid." };
+      return;
+  }
+
+  my $public_status = $self->clean($c->req->param("public_status"));
+  my $compound_id = $c->stash->{compound_id};
+
+  my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id} );
+
+  if (!$row){
+    $c->stash->{rest} = { error => "The SMID with id $compound_id does not exist." };
+    return;
+  }
+
+  #In future, this line should be modified to allow changes to be made by a team member. Collect the public_status from the row, then
+  #use that to determine if user_id or team_id should be checked.
+  if ($c->user()->get_object()->dbuser_id() != $row->dbuser_id() && $c->user()->get_object()->user_type() ne "curator"){
+    $c->stash->{rest} = { error => "Only author or curator may change the visibility of this smid." };
+    return;
+  }
+
+  my $smid_id = $row->smid_id();
+
+  my $data={
+    public_status => $public_status,
+    last_modified_date => 'now()',
+  };
+
+  eval {
+    $row->update($data);
+  };
+
+  $c->stash->{rest} ={
+    message => "Successfully updated the public status of smid $smid_id"
+  };
+
+  print STDERR "Updated public_status of $smid_id to $public_status\n";
+  return;
+}
+
 sub update :Chained('smid') PathPart('update') Args(0) {
     my $self = shift;
     my $c = shift;
@@ -475,8 +525,8 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 
      my $user_id = $c->user()->get_object()->dbuser_id();
      my $smid_owner_id = $smid_row->dbuser_id();
-  
-  
+
+
      if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
 	 $c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
 	 return;
@@ -564,7 +614,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     my $s = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $c->stash->{compound_id} }, { join => "dbuser" } );
 
     if (! $s) {
-	print STDERR "The specified SMID (id = ".$c->stash->{compound_id}.") does not exist!\n"; 
+	print STDERR "The specified SMID (id = ".$c->stash->{compound_id}.") does not exist!\n";
 	$c->stash->{rest} = { error => "Can't find smid with id ".$c->stash->{compound_id}."\n" };
 	return;
     }
@@ -585,6 +635,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     $data->{description} = $s->description();
     $data->{synonyms} = $s->synonyms();
     $data->{molecular_weight} = $s->molecular_weight();
+    $data->{dbuser_id} = $s->dbuser_id();
 
     if (! $s->dbuser()) {
 	$data->{author} = "unknown";
@@ -711,7 +762,7 @@ sub compound_images :Chained('smid') PathPart('images') Args(1) {
 	    if ($size eq "medium") { $width=' width="400px" '; }
 	    if ($size eq "large") { $width=' width="600px" '; }
 	}
-	
+
 	my $image_full_url =  "/".$c->config->{image_url}."/".$image->image_subpath()."/".$file;
 	push @source_tags, "<img src=\"$image_full_url\"  $width />$delete_link";
     }

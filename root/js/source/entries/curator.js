@@ -15,9 +15,10 @@ function curator_html() {
           {title: "Compound ID"},
           {title: "SMID ID"},
           {title: "Formula"},
-          {title: "SMILES"},
           {title: "Action"},
-          {title: "Status"}
+          {title: "Visibility"},
+          {title: "Action"},
+          {title: "Curation Status"}
         ]
       });
 
@@ -55,4 +56,19 @@ function curate_smid(compound_id){
       }
     }
     });
+  }
+
+  function change_public_status(compound_id, new_status){
+    $.ajax({
+      url: 'rest/smid/'+compound_id+'/change_public_status',
+      data: {
+        'public_status' : new_status
+      },
+      success: function(r){
+        if(r.error) {alert(r.error);}
+        else{
+          $('#browse_c_smid_data_div').DataTable().ajax.reload();
+        }
+      }
+    })
   }

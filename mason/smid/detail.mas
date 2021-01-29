@@ -29,7 +29,7 @@ $user_role => undef
 <!-- SMID input/output form -->
 
     <!-- form name="new_accessions_form" id="new_accessions_form" -->
-<table width="40%" id="detail_curation_table">
+<table width="60%" id="detail_curation_table">
   <tr>
    <td>
      <b><span id="curation_status" name="curation_status"></span></b>
@@ -39,11 +39,17 @@ $user_role => undef
      <button name="request_review_button" id="request_review_button"  class="btn btn-primary" disabled onclick="mark_smid_for_review(<% $compound_id %>)">Request a review of this SMID</button>
    </td>
 
-   <td>
-     <select id="curation_status_manipulate" name="curation_status_manipulate" onchange="change_curation_status(<% $compound_id %>, $('#curation_status_manipulate').val())">
+   <td id="change_curation_status">Change Curation Status:
+     <select id="curation_status_manipulate" name="curation_status_manipulate" onchange="change_curation_status(<% $compound_id %>, $('#curation_status_manipulate').val());">
        <option value="curated">Verified</option>
        <option value="review">Review</option>
        <option value="unverified">Unverified</option>
+     </select>
+   </td>
+   <td id="change_public_status">Change Visibility:
+     <select id="public_status_manipulate" name="public_status_manipulate" onchange="change_public_status(<% $compound_id %>, $('#public_status_manipulate').val());">
+       <option value="public">Public</option>
+       <option value="private">Private</option>
      </select>
    </td>
   </tr>
@@ -388,7 +394,7 @@ $user_role => undef
 	      <option>positive</option>
 	      <option>negative</option>
 	    </select>
-	    
+
 	    <!-- input type="input" class="form-control" id="hplc_ms_ionization_mode" placeholder="Ionization mode"> -->
 	  </div>
 	  <div class="form-group">
@@ -521,7 +527,7 @@ m/z        Intensity              Relative
 <div class="alert alert-danger" >
   <div><button class="btn btn-danger" id="delete_smid_button">Delete this SMID</button></div>
   <span>
-    This will eliminate the SMID from the database, along with structural, HPLC and spectral data. Deletion is permanent and cannot be undone.  
+    This will eliminate the SMID from the database, along with structural, HPLC and spectral data. Deletion is permanent and cannot be undone.
   </span>
 </div>
 %  }
