@@ -3,7 +3,10 @@ function populate_profile_data(user_id){
   $.ajax({
     url: '/rest/user/'+user_id+'/profile',
     success: function(r){
-      if(r.error){alert(r.error);}
+      if(r.error){
+        alert(r.error);
+        window.history.back();
+      }
       else{
         $('#user_name').html(r.data.full_name);
         $('#user_email').html(r.data.email_address);
@@ -146,7 +149,9 @@ function submit_new_user_data(){
       'user_type' : $('#edit_user_type').val(),
     },
     success: function(r){
-      if (r.error){alert(r.error);}
+      if (r.error){
+        alert(r.error);
+      }
       else{
         alert(r.success);
         location.reload();

@@ -6,10 +6,21 @@ $sp_person_id
 
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="/js/source/entries/user_profile.js" ></script>
+<script src="/js/source/entries/login.js"></script>
 
 <link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css" />
 
 % if($dbuser_id == 0){ #This is a new user. Security will be handled on the Perl side
+  <script>
+    $(document).ready(function(){
+      has_login().then(function(r){
+        if(r.user == null || r.role !== "curator"){
+          alert("You do not have a valid curator login.");
+          window.history.back();
+        }
+      });
+    });
+  </script>
 
 <h1> Enter New User Data </h1>
 
