@@ -411,7 +411,7 @@ function populate_smid_data(compound_id) {
 	error: function(r) { alert("An error occurred. "+r.responseText); },
 	success: function(r) {
 	    if (r.error) {
-		alert("No smid exists with id "+compound_id);
+		alert(r.error);
 		location.href='/browse/';
 		return;
 	    }
@@ -583,4 +583,22 @@ function display_msms_visual_smid(experiment_id){
   $('#msms_spectrum_visualizer').modal("show");
 
   display_msms_visual(experiment_id);
+}
+
+function change_public_status(compound_id, new_status){
+  $.ajax({
+    url: '/rest/smid/'+compound_id+'/change_public_status',
+    data: {
+      'public_status' : new_status
+    },
+    success: function(r){
+      if(r.error) {alert(r.error);}
+      else{
+        alert(r.message);
+      }
+    },
+    error: function(r){
+      alert("An error occurred."+r.responseText);
+    }
+  })
 }

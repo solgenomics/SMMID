@@ -107,7 +107,11 @@ return;
     }
 
     #Needs another line that determines if the status should be public or private
-    my $pub_status_button = "<button onclick=\"change_public_status(".$r->compound_id().",public_status)\" type=\"button\" class=\"btn btn-primary\" disabled>placeholder</button>";
+    #my $pub_status = $r->public_status();
+    my $pub_status_button = "<button onclick=\"change_public_status(".$r->compound_id().",public)\" type=\"button\" class=\"btn btn-primary\">Make Public</button>";
+    #if ($r->public_status() eq "public"){
+    #  $pub_status_button = "<button onclick=\"change_public_status(".$r->compound_id().",private)\" type=\"button\" class=\"btn btn-primary\">Make Private</button>";
+    #}
 
     push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $pub_status_button, "public placeholder", $cur_button, $cur_status];
   }
@@ -471,6 +475,12 @@ sub change_public_status :Chained('smid') PathPart('change_public_status') Args(
   }
 
   my $public_status = $self->clean($c->req->param("public_status"));
+
+  if($public_status ne "public" && $public_status ne "private"){
+    $c->stash->{rest} = { error => "Invalid. New status must be \"public\" or \"private\"." };
+    return;
+  }
+
   my $compound_id = $c->stash->{compound_id};
 
   my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id} );
@@ -498,8 +508,13 @@ sub change_public_status :Chained('smid') PathPart('change_public_status') Args(
     $row->update($data);
   };
 
+  if ($@) {
+    $c->stash->{rest} = { error => "Sorry, an error occurred. ($@)" };
+    return;
+  }
+
   $c->stash->{rest} ={
-    message => "Successfully updated the public status of smid $smid_id"
+    message => "Successfully updated the public status of smid $smid_id to $public_status"
   };
 
   print STDERR "Updated public_status of $smid_id to $public_status\n";
@@ -542,6 +557,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     my $description = $self->clean($c->req->param("description"));
     my $molecular_weight= Chemistry::MolecularMass::molecular_mass($formula);
     my $doi = $self->clean($c->req->param("doi"));
+    #my $public_status = $self->clean($c->req->param("public_status"));
 
     my $errors = "";
     if (!$compound_id) {  $errors .= "Need compound id. "; }
@@ -570,6 +586,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	description => $description,
 	synonyms => $synonyms,
 	molecular_weight => $molecular_weight,
+  #public_status => $public_status,
 	last_modified_date => 'now()',
     };
 
@@ -618,6 +635,11 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
 	$c->stash->{rest} = { error => "Can't find smid with id ".$c->stash->{compound_id}."\n" };
 	return;
     }
+
+    #if ( ( $s->public_status() eq "private" && $c->user()->get_object()->dbuser_id() != $s->dbuser_id() ) || ( $s->public_status() eq "private" && $c->user()->get_object()->user_type() ne "curator" )){
+    #$c->stash->{rest} = {error => "This smid is private, and you do not have permission to view it."};
+    #return;
+    #}
 
     my $data;
     $data->{smid_id} = $s->smid_id();

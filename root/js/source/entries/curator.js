@@ -60,7 +60,7 @@ function curate_smid(compound_id){
 
   function change_public_status(compound_id, new_status){
     $.ajax({
-      url: 'rest/smid/'+compound_id+'/change_public_status',
+      url: '/rest/smid/'+compound_id+'/change_public_status',
       data: {
         'public_status' : new_status
       },
