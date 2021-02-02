@@ -26,6 +26,7 @@ sub detail :Chained('smid') PathPart('') Args(0) {
     my $self = shift;
     my $c = shift;
 
+    if ($c->user()) { $c->stash->{login_user} = $c->user()->get_object->dbuser_id(); }
     $c->stash->{template} = '/smid/detail.mas';
 }
 
@@ -54,6 +55,7 @@ sub smid_old : Chained('/') PathPart('detail') Args(1) {
     }
     $c->stash->{compound_id} = $compound_id;
 
+    if ($c->user()) { $c->stash->{login_user} = $c->user()->get_object->dbuser_id(); }
     $c->stash->{template} = '/smid/detail.mas';
 }
 
@@ -63,6 +65,7 @@ sub add :Path('/smid') Args(0) {
 
     $c->stash->{action} = 'new';
     $c->stash->{compound_id} = 0;
+    if ($c->user()) { $c->stash->{login_user} = $c->user()->get_object->dbuser_id(); }
     $c->stash->{template} = '/smid/detail.mas';
 
 }
@@ -72,6 +75,7 @@ sub edit :Chained('smid') PathPart('edit') Args(0) {
     my $c = shift;
 
     $c->stash->{action} = "edit";
+    if ($c->user())  { $c->stash->{login_user} = $c->user()->get_object->dbuser_id(); }
     $c->stash->{template} = '/smid/detail.mas';
 }
 

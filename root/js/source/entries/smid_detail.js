@@ -17,7 +17,7 @@ function make_fields_editable(compound_id) {
 	    $('#iupac_name_static_div').hide();
 	    $('#iupac_name_input_div').show();
 	    $('#iupac_name').prop('disabled', false);
-	    $('#add_dbxref_button').prop('disabled', false);
+	    //$('#add_dbxref_button').prop('disabled', false);
 	    $('#description').prop('disabled', false);
 	    $('#description_input_div').show();
 	    $('#description_static_div').hide();
@@ -48,7 +48,7 @@ function make_fields_editable(compound_id) {
 		}, function(e) { alert('An error occurred. '+e.responseText) });
 	    });
 
-	    $('#add_hplc_ms_button').prop('disabled', false);
+	    //$('#add_hplc_ms_button').prop('disabled', false);
 
 	    $('#add_hplc_ms_button').click( function(event) {
 		event.preventDefault();
@@ -56,7 +56,7 @@ function make_fields_editable(compound_id) {
 		edit_hplc_ms_data();
 	    });
 
-	    $('#add_ms_spectrum_button').prop('disabled', false);
+	    // $('#add_ms_spectrum_button').prop('disabled', false);
 
 	    $('#add_ms_spectrum_button').click( function(event) {
 		event.preventDefault();
@@ -381,7 +381,7 @@ function store_ms_spectrum_data() {
 
     var matches = collision_energy.match(re);
 
-    alert(JSON.stringify(matches));
+    //alert(JSON.stringify(matches));
     if (matches === null) {
 	alert("Collision energies must be numeric, separated by commas.");
 	return;

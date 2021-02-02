@@ -3,6 +3,7 @@
 $compound_id => 0 # 0 means add new smid - show empty form
 $action => undef
 $user_role => undef
+$login_user => undef
 </%args>
 
 <script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
@@ -15,16 +16,20 @@ $user_role => undef
 <link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css" />
 
 % if ($compound_id) {
-%  if ($action eq "edit") {
+%  if ($login_user && ($action eq "edit") ) {
 <& /page/page_title.mas, title=>"Edit <span id=\"smid_title\">---</span> <font size=\"3\">[<a href=\"/smid/$compound_id\">Cancel</a>]</font>" &>
-% }
-% else {
+%  }
+%  elsif ($login_user) {
   <& /page/page_title.mas, title=>"Details for <span id=\"smid_title\">---</span> <font size=\"3\">[<a href=\"/smid/$compound_id/edit\">Edit</a>]</font>" &>
 
-% } }
+%  }
+%  else  {
+<& /page/page_title.mas, title=>"Details for <span id=\"smid_title\">---</span> <font size=\"3\">[Edit]</font>" &>  
+%  }
+% }
 % else {
   <& /page/page_title.mas, title=>"Enter new SMID" &>
-% }
+%}
 
 <!-- SMID input/output form -->
 
@@ -59,7 +64,7 @@ $user_role => undef
 	   <span id="smid_structure_images" size="50">[no structure available]</span>
        </td></tr>
 
-% if ($action eq "edit") {
+% if ($login_user && $action eq "edit") {
        <tr>
 	 <td>
 	    <label for="input_image_file_upload" class="col-sm-2 control-label">Upload image</label>
@@ -244,16 +249,23 @@ $user_role => undef
     <button id="add_new_smid_button" class="btn btn-primary" disabled="true" >Add new SMID</button>
 % }
 
-% if ($action eq "edit") {
-<button id="update_smid_button" class="btn btn-primary">Update SMID</button>
+% if ($action eq "edit") { 
+<button id="update_smid_button"  class="btn btn-primary">Update SMID</button>
 <button id="cancel_update_button" class="btn btn-normal" >Cancel</button>
 <script>
   $('#cancel_update_button').click(function(e) { e.preventDefault(); location.href="/smid/<% $compound_id %>"; });
-  </script>
+</script>
 % }
 
-
+% my $disabled = "";
 % if ($compound_id) {
+
+%   if (!$login_user) { $disabled="disabled"; }
+%   elsif ( $login_user && ($action ne "edit") ) { $disabled=""; }  # disable supplementary data addition during smid data edit
+%   else {
+%     $disabled = "disabled";
+%   }
+
 
 <h2>Other identifiers & supporting data</h2>
 
@@ -268,10 +280,9 @@ $user_role => undef
   </thead>
 </table>
 
-% if ($action eq "edit") {
 <br />
-<button id="add_dbxref_button" disabled="true" class="btn btn-primary">Add Dbxref</button>
-% }
+<button id="add_dbxref_button" <% $disabled %> class="btn btn-primary">Add Dbxref</button>
+
 
 <h2>HPLC-MS data</h2>
 
@@ -290,10 +301,8 @@ $user_role => undef
   </thead>
 </table>
 
-% if ($action eq "edit") {
 <br />
-<button id="add_hplc_ms_button" disabled="true" class="btn btn-primary">Add HPLC-MS data</button>
-% }
+<button id="add_hplc_ms_button" <% $disabled %> class="btn btn-primary">Add HPLC-MS data</button>
 
 <h2>MS/MS spectra</h2>
 
@@ -311,10 +320,9 @@ $user_role => undef
   </thead>
 </table>
 
-%  if ($action eq "edit") {
 <br />
-<button id="add_ms_spectrum_button" disabled="true" class="btn btn-primary">Add MS/MS Data</button>
-%  }
+<button id="add_ms_spectrum_button" <% $disabled %> class="btn btn-primary">Add MS/MS Data</button>
+
 
 
 % } # if (compound_id)...
@@ -517,9 +525,9 @@ m/z        Intensity              Relative
 <div style="height:30px">
 </div>
 
-%  if ($action eq "edit") {
+%  if ($login_user && ($action ne "edit") ) {
 <div class="alert alert-danger" >
-  <div><button class="btn btn-danger" id="delete_smid_button">Delete this SMID</button></div>
+  <div><button class="btn btn-danger" $disabled id="delete_smid_button">Delete this SMID</button></div>
   <span>
     This will eliminate the SMID from the database, along with structural, HPLC and spectral data. Deletion is permanent and cannot be undone.  
   </span>
