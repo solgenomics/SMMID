@@ -175,8 +175,6 @@ $sp_person_id
   $(document).ready(function(){
     var dbuser_id = <% $dbuser_id %>;
     populate_profile_data(dbuser_id);
-    populate_authored_smids(dbuser_id);
-    populate_authored_experiments(dbuser_id);
   });
 </script>
 

@@ -45,7 +45,7 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
     my @data;
     while (my $r = $rs->next()) {
 
-      #next if ( ($r->public_status() eq "private" && $c->user()->get_object()->dbuser_id() != $r->dbuser_id() ) || ($r->public_status() eq "private" && $c->user()->get_object()->user_type() ne "curator" ) );
+      next if (!$self->has_view_permission($c, $r));
 
       my $cur_char = "<p style=\"color:green\"><b>\x{2713}</b></p>";
       if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){$cur_char = "<p style=\"color:red\">Unverified</p>";}
@@ -54,7 +54,7 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
       my $formula_subscripts = $r->formula();
       $formula_subscripts =~ s/(\d+)/\<sub\>$1\<\/sub\>/g;
 
-	     push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $formula_subscripts, $r->molecular_weight(), $cur_char, "placeholder" ];
+	     push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $formula_subscripts, $r->molecular_weight(), $cur_char, $r->public_status() ];
     }
 
     $c->stash->{rest} = { data => \@data };
@@ -106,14 +106,12 @@ return;
       $cur_button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
     }
 
-    #Needs another line that determines if the status should be public or private
-    #my $pub_status = $r->public_status();
-    my $pub_status_button = "<button onclick=\"change_public_status(".$r->compound_id().",public)\" type=\"button\" class=\"btn btn-primary\">Make Public</button>";
-    #if ($r->public_status() eq "public"){
-    #  $pub_status_button = "<button onclick=\"change_public_status(".$r->compound_id().",private)\" type=\"button\" class=\"btn btn-primary\">Make Private</button>";
-    #}
+    my $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'public\' )\" type=\"button\" class=\"btn btn-primary\">Make Public</button>";
+    if ($r->public_status() eq "public"){
+     $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'private\' )\" type=\"button\" class=\"btn btn-primary\">Make Private</button>";
+    }
 
-    push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $pub_status_button, "public placeholder", $cur_button, $cur_status];
+    push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $pub_status_button, $r->public_status(), $cur_button, $cur_status];
   }
 
   $c->stash->{rest} = { data => \@data };
@@ -197,6 +195,20 @@ sub clean {
     return $str;
 }
 
+sub has_view_permission {
+  my $self = shift;
+  my $c = shift;
+  my $smid = shift;
+
+  if($smid->public_status() eq "public"){return 1;}
+
+  if(!$c->user() && $smid->public_status() eq "private"){return 0;}
+
+  if($smid->public_status() eq "private" && $c->user()->get_object()->dbuser_id() != $smid->dbuser_id() && $c->user()->get_object()->user_type() ne "curator"){return 0;}
+
+  return 1;
+}
+
 
 sub store :Chained('rest') PathPart('smid/store') Args(0) {
     my $self  = shift;
@@ -246,6 +258,7 @@ sub store :Chained('rest') PathPart('smid/store') Args(0) {
 	create_date => 'now()',
 	molecular_weight => $molecular_weight,
 	last_modified_date => 'now()',
+  public_status => 'private',
     };
 
     my $compound_id;
@@ -557,7 +570,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     my $description = $self->clean($c->req->param("description"));
     my $molecular_weight= Chemistry::MolecularMass::molecular_mass($formula);
     my $doi = $self->clean($c->req->param("doi"));
-    #my $public_status = $self->clean($c->req->param("public_status"));
+    my $public_status = $self->clean($c->req->param("public_status"));
 
     my $errors = "";
     if (!$compound_id) {  $errors .= "Need compound id. "; }
@@ -586,7 +599,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	description => $description,
 	synonyms => $synonyms,
 	molecular_weight => $molecular_weight,
-  #public_status => $public_status,
+  public_status => $public_status,
 	last_modified_date => 'now()',
     };
 
@@ -636,10 +649,10 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
 	return;
     }
 
-    #if ( ( $s->public_status() eq "private" && $c->user()->get_object()->dbuser_id() != $s->dbuser_id() ) || ( $s->public_status() eq "private" && $c->user()->get_object()->user_type() ne "curator" )){
-    #$c->stash->{rest} = {error => "This smid is private, and you do not have permission to view it."};
-    #return;
-    #}
+    if (!$self->has_view_permission($c, $s)){
+      $c->stash->{rest} = {error => "This smid is private, and you do not have permission to view it."};
+      return;
+    }
 
     my $data;
     $data->{smid_id} = $s->smid_id();
@@ -658,6 +671,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     $data->{synonyms} = $s->synonyms();
     $data->{molecular_weight} = $s->molecular_weight();
     $data->{dbuser_id} = $s->dbuser_id();
+    $data->{public_status} = $s->public_status();
 
     if (! $s->dbuser()) {
 	$data->{author} = "unknown";

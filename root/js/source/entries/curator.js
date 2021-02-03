@@ -52,23 +52,28 @@ function curate_smid(compound_id){
       success: function(r){
         if (r.error){alert(r.error);}
         else {
-        $('#browse_c_smid_data_div').DataTable().ajax.reload();
+          $('#browse_c_smid_data_div').DataTable().ajax.reload();
+        }
       }
-    }
     });
   }
 
   function change_public_status(compound_id, new_status){
     $.ajax({
-      url: '/rest/smid/'+compound_id+'/change_public_status',
+      url: 'rest/smid/'+compound_id+'/change_public_status',
       data: {
-        'public_status' : new_status
+        'public_status' : new_status,
+      },
+      error: function(r){
+        alert("Sorry, an error occurred. "+r.responseText);
       },
       success: function(r){
-        if(r.error) {alert(r.error);}
+        if(r.error) {
+          alert(r.error);
+        }
         else{
           $('#browse_c_smid_data_div').DataTable().ajax.reload();
         }
       }
-    })
+    });
   }

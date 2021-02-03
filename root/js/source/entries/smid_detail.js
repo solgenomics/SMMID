@@ -433,7 +433,7 @@ function populate_smid_data(compound_id) {
           $('#curation_status_manipulate').prop('style', "display: none;");
         }
         if (p.user !== null && (p.user == r.data.dbuser_id || p.role == "curator")) {
-          $('#public_status_manipulate').prop('value', "public");
+          $('#public_status_manipulate').prop('value', r.data.public_status);
         } else {
           $('#change_public_status').prop('style', "display: none;");
           $('#public_status_manipulate').prop('style', "display: none;");
