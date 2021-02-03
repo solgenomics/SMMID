@@ -689,7 +689,7 @@ sub authored_smids :Chained('user') :PathPart('authored_smids') Args(0){
 
     next if (!$self->has_view_permission($c, $r));
 
-    push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status()];
+    push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status(), $r->public_status() ];
   }
   $c->stash->{rest} = {data => \@data};
 }

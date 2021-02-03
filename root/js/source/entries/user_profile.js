@@ -41,7 +41,8 @@ function populate_authored_smids(user_id){
       {title: "SMID ID"},
       {title: "Formula"},
       {title: "Molecular Weight"},
-      {title: "Curation Status"}
+      {title: "Curation Status"},
+      {title: "Visibility"}
     ]
   });
 

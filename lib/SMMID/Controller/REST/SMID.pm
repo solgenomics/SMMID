@@ -384,8 +384,13 @@ sub curate_smid :Chained('smid') PathPart('curate_smid') Args(0){
         $row->update($data);
       };
 
+      if ($@) {
+  	     $c->stash->{rest} = { error => "Sorry, an error occurred. ($@)" };
+  	      return;
+      }
+
       $c->stash->{rest} ={
-  	message => "Successfully updated the curation status of smid $smid_id"
+  	message => "Successfully curated smid $smid_id."
       };
 
     print STDERR "Smid ".$smid_id." curation status updated to $curation_status\n";
@@ -424,8 +429,13 @@ sub mark_for_review : Chained('smid') PathPart('mark_for_review') Args(0) {
       $row->update($data);
     };
 
+    if ($@) {
+       $c->stash->{rest} = { error => "Sorry, an error occurred. ($@)" };
+        return;
+    }
+
     $c->stash->{rest} ={
-  message => "Successfully updated the curation status of smid $smid_id"
+      message => "Successfully marked smid $smid_id for review."
     };
 
   print STDERR "Smid ".$smid_id." curation status updated to $curation_status\n";
@@ -470,8 +480,13 @@ sub mark_unverified :Chained('smid') PathPart('mark_unverified') Args(0){
         $row->update($data);
       };
 
+      if ($@) {
+  	     $c->stash->{rest} = { error => "Sorry, an error occurred. ($@)" };
+  	      return;
+      }
+
       $c->stash->{rest} ={
-  	message => "Successfully updated the curation status of smid $smid_id"
+  	     message => "Successfully marked smid $smid_id as unverified."
       };
 
     print STDERR "Smid ".$smid_id." curation status updated to $curation_status\n";
@@ -755,7 +770,7 @@ sub results : Chained('smid') PathPart('results') Args(0) {
         var delay = 1000;
         \$(this).hover(function(){
           timer=setTimeout(function(){
-            display_msms_visual(".$row->experiment_id().")
+            display_msms_visual_smid(".$row->experiment_id().")
           }, delay);
         }, function(){
           clearTimeout(timer);

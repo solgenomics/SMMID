@@ -532,6 +532,7 @@ function mark_smid_for_review(compound_id){
     success: function(r){
       if (r.error){alert(r.error);}
       else {
+        alert(r.message);
         $('#curation_status').html("Marked for Review");
         $('#curation_status').prop('style',"color:blue; font-size:1.5em");
       }
@@ -548,6 +549,7 @@ function mark_smid_unverified(compound_id){
     success: function(r){
       if (r.error){alert(r.error);}
       else {
+        alert(r.message);
         $('#curation_status').html("Unverified Entry");
         $('#curation_status').prop('style',"color:red; font-size:1.5em");
       }
@@ -564,6 +566,7 @@ function curate_smid(compound_id){
     success: function(r){
       if (r.error){alert(r.error);}
       else {
+        alert(r.message);
         $('#curation_status').html("Verified Entry");
         $('#curation_status').prop('style',"color:green; font-size:1.5em");
       }
