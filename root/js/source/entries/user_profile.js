@@ -19,6 +19,9 @@ function populate_profile_data(user_id){
         $('#edit_email').val(r.data.email_address);
         $('#edit_organization').val(r.data.organization);
         $('#edit_username').val(r.data.username);
+
+        populate_authored_smids(user_id);
+        populate_authored_experiments(user_id);
       }
     },
     error: function(r){
@@ -38,7 +41,8 @@ function populate_authored_smids(user_id){
       {title: "SMID ID"},
       {title: "Formula"},
       {title: "Molecular Weight"},
-      {title: "Curation Status"}
+      {title: "Curation Status"},
+      {title: "Visibility"}
     ]
   });
 
