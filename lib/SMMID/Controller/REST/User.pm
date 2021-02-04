@@ -801,7 +801,7 @@ sub change_password :Chained('user') :PathPart('change_password') Args(0) {
   }
 
 
-  my $masked_new_password = $login->schema()->storage->dbh()->prepare("UPDATE dbuser SET password=crypt(?, password) WHERE dbuser_id=?");
+  my $masked_new_password = $login->schema()->storage->dbh()->prepare("UPDATE dbuser SET password=crypt(?, gen_salt('bf')) WHERE dbuser_id=?");
   $masked_new_password->execute($new_password, $dbuser_id);
 
   if ($@) {
