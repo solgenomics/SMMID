@@ -50,6 +50,7 @@ CREATE TABLE public.compound (
     last_modified_date timestamp without time zone,
     iupac_name text NOT NULL,
     synonyms text,
+    doi text,
     description text,
     smiles text,
     formula text,
