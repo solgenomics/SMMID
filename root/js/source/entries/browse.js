@@ -22,7 +22,8 @@ function browse_html() {
         {title: "SMID ID"},
         {title: "Formula"},
         {title: "Molecular Weight"},
-        {title: "Curation Status"}
+        {title: "Curation Status"},
+        {title: "Visibility"}
       ]
     });
 	    }

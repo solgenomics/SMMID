@@ -100,7 +100,7 @@ __PACKAGE__->table("compound");
   is_nullable: 1
 
 =head2 molecular_weight
-   
+
    data_type: 'real'
    is_nullable: 0
 
@@ -108,6 +108,11 @@ __PACKAGE__->table("compound");
 
     data_type: varchar(255);
     is_nullable 1
+
+=head2 public_status
+
+    data_type: varchar(100);
+    is_nullable 0
 
 =cut
 
@@ -149,6 +154,7 @@ __PACKAGE__->add_columns(
     { data_type => "real", is_nullable => 0 },
     "doi",
     { data_type => "varchar", is_nullable => 1, size => 255 },
+  "public_status", {data_type => "varchar", is_nullable => 0, size => 100 },
 );
 
 =head1 PRIMARY KEY

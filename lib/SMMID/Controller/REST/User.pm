@@ -686,7 +686,10 @@ sub authored_smids :Chained('user') :PathPart('authored_smids') Args(0){
   my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search( {dbuser_id => $c->stash->{dbuser_id}} );
   my @data;
   while (my $r = $rs->next()){
-    push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status()];
+
+    next if (!$self->has_view_permission($c, $r));
+
+    push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status(), $r->public_status() ];
   }
   $c->stash->{rest} = {data => \@data};
 }
@@ -704,12 +707,16 @@ sub authored_experiments :Chained('user') :PathPart('authored_experiments') Args
   my @data;
 
   while (my $r = $rs->next()){
+
+    next if (!$self->has_view_permission($c, $r->compound()));
+
     my $experiment_type;
     if ($r->experiment_type() eq "hplc_ms"){
       $experiment_type = "HPLC-MS";
     } else {
       $experiment_type = "MS/MS";
     }
+
     push @data, [$experiment_type, "<a href=\"/smid/".$r->compound_id()."\">".$r->compound()->smid_id()."</a>"];
   }
   $c->stash->{rest} = {data => \@data};
@@ -801,7 +808,7 @@ sub change_password :Chained('user') :PathPart('change_password') Args(0) {
   }
 
 
-  my $masked_new_password = $login->schema()->storage->dbh()->prepare("UPDATE dbuser SET password=crypt(?, password) WHERE dbuser_id=?");
+  my $masked_new_password = $login->schema()->storage->dbh()->prepare("UPDATE dbuser SET password=crypt(?, gen_salt('bf')) WHERE dbuser_id=?");
   $masked_new_password->execute($new_password, $dbuser_id);
 
   if ($@) {
@@ -809,6 +816,20 @@ sub change_password :Chained('user') :PathPart('change_password') Args(0) {
   } else {
       $c->stash->{rest} = {success => 1};
   }
+}
+
+sub has_view_permission {
+  my $self = shift;
+  my $c = shift;
+  my $smid = shift;
+
+  if($smid->public_status() eq "public"){return 1;}
+
+  if(!$c->user() && $smid->public_status() eq "private"){return 0;}
+
+  if($smid->public_status() eq "private" && $c->user()->get_object()->dbuser_id() != $smid->dbuser_id() && $c->user()->get_object()->user_type() ne "curator"){return 0;}
+
+  return 1;
 }
 
 1;
