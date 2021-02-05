@@ -33,10 +33,14 @@ $login_user => undef
 
 <!-- SMID input/output form -->
 
-    <!-- form name="new_accessions_form" id="new_accessions_form" -->
-<table width="40%" id="detail_curation_table">
+ <center>
+     <table width="90%">
+
   <tr>
-   <td>
+    <td colspan="2">
+
+      <table width="40%" id="detail_curation_table" >
+	<tr><td>
      <b><span id="curation_status" name="curation_status"></span></b>
    </td>
 
@@ -51,13 +55,11 @@ $login_user => undef
        <option value="unverified">Unverified</option>
      </select>
    </td>
+   <td><button id="(the edit smid button)" class="btn btn-primary" >Edit</button></td>
   </tr>
-</table>
-
-<br></br>
-
-      <center>
-     <table width="90%">
+      </table>
+      </td></tr>
+     
        <tr><td width="200">
 	   <label for="smid_structure_images">Structure</label>
 	 </td><td>
