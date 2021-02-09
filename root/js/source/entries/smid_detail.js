@@ -5,8 +5,8 @@ function make_fields_editable(compound_id) {
 	if (r.user !==null) {
 	    $('#smid_id').prop('disabled', false);
 	    $('#smiles_string').prop('disabled', false);
-      $('#curation_status').prop("value", "review");
-      $('#request_review_button').prop('visible', false);
+	    $('#curation_status').prop("value", "review");
+	    $('#request_review_button').prop('visible', false);
 	    $('#formula_input_div').show();
 	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
@@ -17,19 +17,12 @@ function make_fields_editable(compound_id) {
 	    $('#iupac_name_static_div').hide();
 	    $('#iupac_name_input_div').show();
 	    $('#iupac_name').prop('disabled', false);
-	    $('#add_dbxref_button').prop('disabled', false);
+	    //$('#add_dbxref_button').prop('disabled', false);
 	    $('#description').prop('disabled', false);
 	    $('#description_input_div').show();
 	    $('#description_static_div').hide();
 	    $('#synonyms').prop('disabled', false);
-	    $('#add_dbxref_button').click(
-		function(event) {
-		    event.preventDefault();
-		    event.stopImmediatePropagation();
-		    edit_dbxref_info();
-
-		});
-
+	  
 	    if (compound_id) { embed_compound_images(compound_id, 'medium', 'smid_structure_images'); }
 
 	    $('#add_new_smid_button').prop('disabled', false);
@@ -48,21 +41,8 @@ function make_fields_editable(compound_id) {
 		}, function(e) { alert('An error occurred. '+e.responseText) });
 	    });
 
-	    $('#add_hplc_ms_button').prop('disabled', false);
+	    //$('#add_hplc_ms_button').prop('disabled', false);
 
-	    $('#add_hplc_ms_button').click( function(event) {
-		event.preventDefault();
-		event.stopImmediatePropagation();
-		edit_hplc_ms_data();
-	    });
-
-	    $('#add_ms_spectrum_button').prop('disabled', false);
-
-	    $('#add_ms_spectrum_button').click( function(event) {
-		event.preventDefault();
-		event.stopImmediatePropagation();
-		edit_ms_spectrum();
-	    });
 
 	    $('#update_smid_button').click( function(event) {
 		event.preventDefault();
@@ -108,7 +88,6 @@ function make_fields_editable(compound_id) {
 		}
 
 	    });
-
 	}
 	else {
 	    login_dialog();
@@ -381,7 +360,7 @@ function store_ms_spectrum_data() {
 
     var matches = collision_energy.match(re);
 
-    alert(JSON.stringify(matches));
+    //alert(JSON.stringify(matches));
     if (matches === null) {
 	alert("Collision energies must be numeric, separated by commas.");
 	return;
@@ -427,19 +406,74 @@ function populate_smid_data(compound_id) {
 
 		has_login().then( function(p){
 		    if(p.user !== null && p.role == "curator"){
-			    $('#curation_status_manipulate').prop('value', r.data.curation_status);
+			$('#curation_status_manipulate').prop('value', r.data.curation_status);
 		    } else {
-          $('#change_curation_status').prop('style', "display: none;");
-          $('#curation_status_manipulate').prop('style', "display: none;");
-        }
-        if (p.user !== null && (p.user == r.data.dbuser_id || p.role == "curator")) {
-          $('#public_status_manipulate').prop('value', r.data.public_status);
-        } else {
-          $('#change_public_status').prop('style', "display: none;");
-          $('#public_status_manipulate').prop('style', "display: none;");
-        }
+			$('#curation_status_manipulate').prop('style', "display: none;");
+		    }
+		    
+		    
+		    if (p.user !== null && (p.user == r.data.dbuser_id || p.role == "curator")) {
+			$('#public_status_manipulate').prop('value', r.data.public_status);
+		    } else {
+			$('#change_public_status').prop('style', "display: none;");
+			$('#public_status_manipulate').prop('style', "display: none;");
+		    }
+		    
+		    $('#add_hplc_ms_button').click( function(event) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			edit_hplc_ms_data();
+		    });
+		    
+		    // $('#add_ms_spectrum_button').prop('disabled', false);
+		    
+		    $('#add_ms_spectrum_button').click( function(event) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			edit_ms_spectrum();
+		    });
+		    
+		    $('#delete_smid_button').click( function(event) {
+			event.preventDefault();
+			var yes = confirm("Are you sure you want to delete this entry? It will be permanently removed from the database.");
+			if (yes) {
+			    
+			    confirm("Please confirm that you want to delete this SMID.");
+			    if (yes) { 
+				var compound_id = $('#compound_id').html();
+				//alert('Compound ID to delete: '+compound_id);
+				
+				$.ajax( {
+				    url : '/rest/smid/'+compound_id+'/delete',
+				    error: function(e) { alert('Error... '+e.responseText); },
+				    success: function(r) {
+					if (r.error) { alert(r.error); }
+					else {
+					    alert('The smid has been deleted. RIP.');
+					    location.href="/smid/"+r.compound_id;
+					}
+				    }
+				});
+			    }
+			}
+			
+		    });
+		    
+		    $('#add_dbxref_button').click(
+			function(event) {
+			    event.preventDefault();
+			    event.stopImmediatePropagation();
+			    edit_dbxref_info();
+			    
+			});
+
+		   
+		    
+		    
 		});
 
+		
+	   
 		var curation_status_html = "";
 		if(r.data.curation_status == "curated"){
 		    curation_status_html = "Verified Entry";
@@ -453,7 +487,7 @@ function populate_smid_data(compound_id) {
 		    curation_status_html = "Marked for Review";
 		    $('#curation_status').prop('style',"color:blue; font-size:1.5em");
 		}
-
+		
 		$('#curation_status').html(curation_status_html);
 
 		$('#doi').val(r.data.doi);
@@ -461,7 +495,6 @@ function populate_smid_data(compound_id) {
 		if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
 		    $('#request_review_button').prop('style', "display:none");
 		} else {$('#request_review_button').prop('disabled', false);}
-
 
 		$('#formula_static_div').css('visibility', 'visible');
 		var formula = r.data.formula;
@@ -486,10 +519,7 @@ function populate_smid_data(compound_id) {
 		$('#synonyms').val(r.data.synonyms);
 		$('#modification_history').html('<font size="2">Created: '+r.data.create_date+' Last modified: '+r.data.last_modified_date+'</font>');
 		$('#author').html(r.data.author);
-
-
 	    }
-
 	}
     });
 
@@ -520,6 +550,23 @@ function populate_smid_data(compound_id) {
 	    url: '/rest/smid/'+compound_id+'/results?experiment_type=ms_spectrum'
 	}
     });
+
+     $('#edit_smid_button').click(
+	 function(event) {
+	     event.preventDefault();
+	     event.stopImmediatePropagation();
+	     
+	     window.location.href = "/smid/"+compound_id+"/edit";
+	     
+	 });
+    $('#cancel_edit').click(
+	function(event) {
+	     event.preventDefault();
+	     event.stopImmediatePropagation();
+	     
+	     window.location.href = "/smid/"+compound_id;
+	});
+    
 }
 
 

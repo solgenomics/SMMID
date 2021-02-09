@@ -16,7 +16,7 @@
 	      	<a class="nav-link header_link" style="color:lightblue; margin-left:40px; " href="/">Home</a>
 	    	</li>
 	    	<li class="nav-item dropdown">
-	      	<a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	      	<a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink_1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		About
 	      	</a>
 	      	<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -29,7 +29,7 @@
 	    
 	    
 		<li class="nav-item dropdown">
-	      	    <a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	      	    <a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink_2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		Search
 	      	     </a>
 	      	     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">

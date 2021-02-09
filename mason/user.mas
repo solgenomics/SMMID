@@ -69,6 +69,8 @@ $sp_person_id
 
 <h1> User Profile </h1>
 
+<center>
+  
 <table width="50%" id="user_profile_table">
   <tr>
     <td width="20%" style="border-bottom: 1px solid lightblue">
@@ -112,8 +114,12 @@ $sp_person_id
   </tr>
 </table>
 
+</center>
+
 % if($sp_person_id == $dbuser_id){
 
+<center>
+  <br />
 <button id="change_user_data_button" class="btn btn-primary" type="button" onclick="edit_profile(<% $dbuser_id %>)">Edit Your Profile</button>
 &nbsp; &nbsp;
 <button id="change_password_button" class="btn btn-primary" type="button" onclick="change_password(<% $dbuser_id %>)">Change Password</button>
@@ -155,6 +161,8 @@ $sp_person_id
     <td><input id="new_password_confirm" rows="1" cols="60" style="display:none" type="password"></input></td>
   </tr>
 </table></p>
+
+</center>
 
 % }
 
