@@ -54,6 +54,7 @@ CREATE TABLE public.compound (
     description text,
     smiles text,
     formula text,
+    public_status varchar(100),
     molecular_weight real
 );
 
