@@ -52,11 +52,34 @@ $submit_smid->click();
 $t->accept_alert_ok();
 
 $t->get_ok('/browse');
-sleep(4);
+sleep(1);
 
 $t->body_text_contains('yeast#0001');
 
+$t->body_text_lacks('earth#0002');
+
 $t->logout();
+sleep(1);
+
+$t->get_ok('/');
+sleep(1);
+
+$t->login_curator();
+sleep(1);
+
+$t->get_ok('/browse');
+sleep(1);
+
+$t->body_text_contains('yeast#0001');
+
+$t->body_text_contains('earth#0002');
+sleep(1);
+
+$t->logout();
+
+
+
+
 
 
 

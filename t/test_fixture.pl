@@ -20,11 +20,7 @@ use Cwd qw(abs_path);
 use Catalyst::ScriptRunner;
 use Test::Selenium::Remote::Driver;
 
-
 use SMIDDB;
-
-use lib 'lib';
-#use SGN::Devel::MyDevLibs;
 
 my $verbose = 0;
 my $nocleanup;
@@ -145,11 +141,9 @@ print STDERR "# Creating smmid_fixture.conf file... ";
 $test_dsn =~ s/dbname=(.*)$/dbname=$dbname/;
 $config->{'Model::SMIDDB'}->{connect_info}->{dsn} = $test_dsn;
 
-print STDERR Dumper($config);
+#print STDERR Dumper($config);
 
 my $new_conf = YAML::Dump($config);
-
-
 
 open(my $NEWCONF, ">", "smmid_fixture.yml") || die "Can't open smmid_fixture.conf for writing";
 print $NEWCONF $new_conf;
@@ -183,8 +177,45 @@ $row = $schema->resultset("SMIDDB::Result::Dbuser")->create(
 	user_type => "curator"
     });
 
+$row = $schema->resultset("SMIDDB::Result::Dbuser")->create(
+    {
+	first_name => "Another",
+	last_name => "User",
+	password => \"crypt('secretpw', gen_salt('bf'))",
+	username => "another_user",
+	user_type => "user"
+    });
+
+
 $row->insert();
 
+print STDERR "Adding a test smid (H2O)...\n";
+
+$row = $schema->resultset("SMIDDB::Result::Compound")->create(
+    {
+	smid_id => "earth#0001",
+	formula => "H2O",
+	iupac_name => "water",
+	smiles => "H2O",
+	description => "One of the most abundant molecules on earth",
+	public_status => "public",
+    });
+
+$row->insert();
+
+$row = $schema->resultset("SMIDDB::Result::Compound")->create(
+    {
+	smid_id => "earth#0002",
+	formula => "SiO2",
+	iupac_name => "sand",
+	smiles => "SiO2",
+	description => "One of the most abundant molecules on earth",
+	public_status => "private",
+    });
+
+
+
+$row->insert();
     
 
 
