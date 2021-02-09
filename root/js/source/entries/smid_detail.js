@@ -5,8 +5,8 @@ function make_fields_editable(compound_id) {
 	if (r.user !==null) {
 	    $('#smid_id').prop('disabled', false);
 	    $('#smiles_string').prop('disabled', false);
-      $('#curation_status').prop("value", "review");
-      $('#request_review_button').prop('visible', false);
+	    $('#curation_status').prop("value", "review");
+	    $('#request_review_button').prop('visible', false);
 	    $('#formula_input_div').show();
 	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
@@ -406,13 +406,12 @@ function populate_smid_data(compound_id) {
 
 		has_login().then( function(p){
 		    if(p.user !== null && p.role == "curator"){
-// <<<<<<< HEAD
 			$('#curation_status_manipulate').prop('value', r.data.curation_status);
 		    } else {
 			$('#curation_status_manipulate').prop('style', "display: none;");
 		    }
-
-
+		    
+		    
 		    if (p.user !== null && (p.user == r.data.dbuser_id || p.role == "curator")) {
 			$('#public_status_manipulate').prop('value', r.data.public_status);
 		    } else {
@@ -467,25 +466,28 @@ function populate_smid_data(compound_id) {
 			    edit_dbxref_info();
 			    
 			});
-		 
+
+		   
+		    
+		    
 		});
-	    }
-	
-	    ///>>>>>>> master
-	    var curation_status_html = "";
-	    if(r.data.curation_status == "curated"){
-		curation_status_html = "Verified Entry";
-		$('#curation_status').prop('style',"color:green; font-size:1.5em");
-	    }
-	    if(r.data.curation_status == null || r.data.curation_status == "" || r.data.curation_status == "unverified"){
-		curation_status_html = "Unverified Entry";
-		$('#curation_status').prop('style',"color:red; font-size:1.5em");
-	    }
-	    if(r.data.curation_status == "review"){
-		curation_status_html = "Marked for Review";
+
+		
+	   
+		var curation_status_html = "";
+		if(r.data.curation_status == "curated"){
+		    curation_status_html = "Verified Entry";
+		    $('#curation_status').prop('style',"color:green; font-size:1.5em");
+		}
+		if(r.data.curation_status == null || r.data.curation_status == "" || r.data.curation_status == "unverified"){
+		    curation_status_html = "Unverified Entry";
+		    $('#curation_status').prop('style',"color:red; font-size:1.5em");
+		}
+		if(r.data.curation_status == "review"){
+		    curation_status_html = "Marked for Review";
 		    $('#curation_status').prop('style',"color:blue; font-size:1.5em");
 		}
-
+		
 		$('#curation_status').html(curation_status_html);
 
 		$('#doi').val(r.data.doi);
@@ -493,7 +495,6 @@ function populate_smid_data(compound_id) {
 		if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
 		    $('#request_review_button').prop('style', "display:none");
 		} else {$('#request_review_button').prop('disabled', false);}
-
 
 		$('#formula_static_div').css('visibility', 'visible');
 		var formula = r.data.formula;
@@ -518,10 +519,7 @@ function populate_smid_data(compound_id) {
 		$('#synonyms').val(r.data.synonyms);
 		$('#modification_history').html('<font size="2">Created: '+r.data.create_date+' Last modified: '+r.data.last_modified_date+'</font>');
 		$('#author').html(r.data.author);
-
-
 	    }
-
 	}
     });
 
@@ -552,6 +550,23 @@ function populate_smid_data(compound_id) {
 	    url: '/rest/smid/'+compound_id+'/results?experiment_type=ms_spectrum'
 	}
     });
+
+     $('#edit_smid_button').click(
+	 function(event) {
+	     event.preventDefault();
+	     event.stopImmediatePropagation();
+	     
+	     window.location.href = "/smid/"+compound_id+"/edit";
+	     
+	 });
+    $('#cancel_edit').click(
+	function(event) {
+	     event.preventDefault();
+	     event.stopImmediatePropagation();
+	     
+	     window.location.href = "/smid/"+compound_id;
+	});
+    
 }
 
 
