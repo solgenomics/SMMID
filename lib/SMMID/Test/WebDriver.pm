@@ -47,7 +47,7 @@ sub login {
 
     
     $self->get_ok('/');
-    sleep(1);
+    sleep(2);
     
     my $site_login_button = $self->find_element('site_login_button', 'id');
     $site_login_button->click();
@@ -73,18 +73,40 @@ sub login_user {
     $self->login('john_doe', 'secretpw');
 }
 
+sub login_another_user {
+    my $self = shift;
+
+    $self->login('another_user', 'secretpw');
+}
+
 sub login_curator {
     my $self = shift;
 
-    $self->login('jane_doe', 'secretpw');   
+    $self->login('jane_doe', 'secretpw');
 }
 
 sub logout {
     my $self = shift;
 
-    $self->get_ok('/rest/user/logout');
+    $self->get_ok('/');
+    sleep(2);
+    
+    my $login_menu = $self->find_element('navbarDropdownMenuLink_3', 'id');
+    $login_menu->click();
+    sleep(3);
+
+    my $logout_button = $self->find_element('navbar_logout', 'id');
+    $logout_button->click();
+    sleep(1);
+    
+    $self->accept_alert_ok();
+    
+    #$self->get_ok('/rest/user/logout');
+    #sleep(1);
+    $self->get_ok('/');
     sleep(1);
 
+    print STDERR "Logged out.\n";
 }
 
 1;
