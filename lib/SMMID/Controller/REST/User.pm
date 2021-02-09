@@ -507,7 +507,7 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink_3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             $welcome_sign
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
