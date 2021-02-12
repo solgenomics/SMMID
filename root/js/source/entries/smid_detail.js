@@ -22,7 +22,7 @@ function make_fields_editable(compound_id) {
 	    $('#description_input_div').show();
 	    $('#description_static_div').hide();
 	    $('#synonyms').prop('disabled', false);
-	  
+
 	    if (compound_id) { embed_compound_images(compound_id, 'medium', 'smid_structure_images'); }
 
 	    $('#add_new_smid_button').prop('disabled', false);
@@ -409,40 +409,41 @@ function populate_smid_data(compound_id) {
 			$('#curation_status_manipulate').prop('value', r.data.curation_status);
 		    } else {
 			$('#curation_status_manipulate').prop('style', "display: none;");
+      $('#change_curation_status').prop('style', "display: none;");
 		    }
-		    
-		    
+
+
 		    if (p.user !== null && (p.user == r.data.dbuser_id || p.role == "curator")) {
 			$('#public_status_manipulate').prop('value', r.data.public_status);
 		    } else {
 			$('#change_public_status').prop('style', "display: none;");
 			$('#public_status_manipulate').prop('style', "display: none;");
 		    }
-		    
+
 		    $('#add_hplc_ms_button').click( function(event) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			edit_hplc_ms_data();
 		    });
-		    
+
 		    // $('#add_ms_spectrum_button').prop('disabled', false);
-		    
+
 		    $('#add_ms_spectrum_button').click( function(event) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			edit_ms_spectrum();
 		    });
-		    
+
 		    $('#delete_smid_button').click( function(event) {
 			event.preventDefault();
 			var yes = confirm("Are you sure you want to delete this entry? It will be permanently removed from the database.");
 			if (yes) {
-			    
+
 			    confirm("Please confirm that you want to delete this SMID.");
-			    if (yes) { 
+			    if (yes) {
 				var compound_id = $('#compound_id').html();
 				//alert('Compound ID to delete: '+compound_id);
-				
+
 				$.ajax( {
 				    url : '/rest/smid/'+compound_id+'/delete',
 				    error: function(e) { alert('Error... '+e.responseText); },
@@ -456,24 +457,24 @@ function populate_smid_data(compound_id) {
 				});
 			    }
 			}
-			
+
 		    });
-		    
+
 		    $('#add_dbxref_button').click(
 			function(event) {
 			    event.preventDefault();
 			    event.stopImmediatePropagation();
 			    edit_dbxref_info();
-			    
+
 			});
 
-		   
-		    
-		    
+
+
+
 		});
 
-		
-	   
+
+
 		var curation_status_html = "";
 		if(r.data.curation_status == "curated"){
 		    curation_status_html = "Verified Entry";
@@ -487,7 +488,7 @@ function populate_smid_data(compound_id) {
 		    curation_status_html = "Marked for Review";
 		    $('#curation_status').prop('style',"color:blue; font-size:1.5em");
 		}
-		
+
 		$('#curation_status').html(curation_status_html);
 
 		$('#doi').val(r.data.doi);
@@ -555,18 +556,18 @@ function populate_smid_data(compound_id) {
 	 function(event) {
 	     event.preventDefault();
 	     event.stopImmediatePropagation();
-	     
+
 	     window.location.href = "/smid/"+compound_id+"/edit";
-	     
+
 	 });
     $('#cancel_edit').click(
 	function(event) {
 	     event.preventDefault();
 	     event.stopImmediatePropagation();
-	     
+
 	     window.location.href = "/smid/"+compound_id;
 	});
-    
+
 }
 
 
