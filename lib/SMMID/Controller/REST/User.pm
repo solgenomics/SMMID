@@ -511,7 +511,7 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
             $welcome_sign
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="/user/$sp_person_id/profile">Your Profile</a>
+            <a class="dropdown-item" id="access_your_profile_button" href="/user/$sp_person_id/profile">Your Profile</a>
             <a class="dropdown-item"><button id="navbar_logout" class="btn btn-primary" type="button" onclick="logout();" title="Logout">Logout</button></a>
 
           </div>

@@ -6,6 +6,7 @@ use SMMID::Test::WebDriver;
 my $t = SMMID::Test::WebDriver->new();
 
 #First, start with a clean slate: no logged in user.
+$t->get_ok('/');
 $t->get_ok('/rest/user/logout');
 
 #Next, attempt to access curator-only pages without correct privileges
@@ -51,9 +52,10 @@ $t->body_text_contains('yeast#0001');
 $t->body_text_contains('public');
 $t->body_text_contains('earth#0001');
 $t->body_text_contains('private');
+$t->body_text_contains('Unverified');
 
 #visit add new user page from curator page
-$t->mouse_move_to_location( { element => 'add_new_smid_button' } );
+$t->mouse_move_to_location( { element => 'new_account_button' } );
 
 my $new_user = $t->find_element('new_account_button', 'id');
 $new_user->click();
@@ -62,6 +64,10 @@ sleep(1);
 
 $t->body_text_contains("Enter New User Data");
 
-#Return to curator page and make yeast private and earth public
+#Return to curator page
 $t->get_ok('/curator');
 sleep(1);
+
+#Finished testing
+$t->logout();
+done_testing();
