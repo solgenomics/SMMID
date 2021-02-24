@@ -7,7 +7,7 @@ my $t = SMMID::Test::WebDriver->new();
 
 #First, start with a clean slate: no logged in user.
 $t->get_ok('/');
-$t->get_ok('/rest/user/logout');
+$t->logout();
 
 #Next, attempt to access curator-only pages without correct privileges
 $t->get_ok('/curator');
@@ -29,29 +29,29 @@ sleep(1);
 $t->accept_alert_ok();
 
 #Try to view smids
-
-#Public smid
+print STDERR "Trying to view smids...\n";
+#Private smid
 $t->get_ok('/smid/2');
-sleep(1);
-
-#private smid
-$t->get_ok('/smid/1');
 sleep(1);
 $t->accept_alert_ok();
 
-### By now, it should have been shown that a user who is not logged in cannot view anything.
-
-#Return to curator page and login
-$t->get_ok('/curator');
+#Public smid
+$t->get_ok('/smid/1');
 sleep(1);
+
+### By now, it should have been shown that a user who is not logged in cannot view anything.
+print STDERR "Viewing curator page...\n";
+#Return to curator page and login
 $t->login_curator();
+sleep(1);
+$t->get_ok('/curator');
 sleep(1);
 
 #Curator should see all smids, public and private
-$t->body_text_contains('yeast#0001');
-$t->body_text_contains('public');
+$t->body_text_contains('earth#0002');
 $t->body_text_contains('earth#0001');
 $t->body_text_contains('private');
+$t->body_text_contains('public');
 $t->body_text_contains('Unverified');
 
 #visit add new user page from curator page
@@ -67,6 +67,41 @@ $t->body_text_contains("Enter New User Data");
 #Return to curator page
 $t->get_ok('/curator');
 sleep(1);
+
+print STDERR "Changing public and private statuses...\n";
+#Make private smid public and public smid private, try visiting them
+$t->mouse_move_to_location( { element => 'change_public_status_1' } );
+my $public_smid = $t->find_element('change_public_status_1', 'id');
+$public_smid->click();
+sleep(1);
+$t->mouse_move_to_location( { element => 'change_public_status_2' } );
+my $private_smid = $t->find_element('change_public_status_2', 'id');
+$private_smid->click();
+
+#Logout and view from browse page
+$t->get_ok('/');
+sleep(1);
+$t->logout();
+$t->get_ok('/browse');
+sleep(1);
+$t->body_text_contains('earth#0002');
+$t->body_text_lacks('earth#0001');
+
+#login as curator, return to curator page, and change smid curation status from detail page
+print STDERR "Verifying test smid...\n";
+$t->login_curator();
+$t->get_ok('/smid/1');
+$t->mouse_move_to_location( { element => 'curation_status_manipulate' } );
+my $curation_status = $t->find_element('curation_status_manipulate', 'id');
+$curation_status->click();
+$t->mouse_move_to_location( { element => 'change_curation_verified' } );
+my $verified = $t->find_element('change_curation_verified', 'id');
+$verified->click();
+$t->accept_alert_ok();
+
+$t->get_ok('/curator');
+sleep(1);
+$t->body_text_contains("\x{2713}");
 
 #Finished testing
 $t->logout();

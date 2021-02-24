@@ -35,7 +35,7 @@ $login_user => undef
     <center>
     <table width="90%">
       <tr><td colspan="2">
-	  
+
 % if ($compound_id != 0) {
 
 
@@ -51,12 +51,12 @@ $login_user => undef
 
    <td id="change_curation_status">Change Curation Status:
      <select id="curation_status_manipulate" name="curation_status_manipulate" onchange="change_curation_status(<% $compound_id %>, $('#curation_status_manipulate').val());">
-       <option value="curated">Verified</option>
-       <option value="review">Review</option>
-       <option value="unverified">Unverified</option>
+       <option id="change_curation_verified" value="curated">Verified</option>
+       <option id="change_curation_review" value="review">Review</option>
+       <option id="change_curation_unverified" value="unverified">Unverified</option>
      </select>
    </td>
-   
+
 
 
    <td id="change_public_status">Change Visibility:
@@ -67,7 +67,7 @@ $login_user => undef
    </td>
 % if ($action eq "edit") {
           <td><button id="cancel_edit" class="btn btn-primary">Cancel Edit</button>
-% } elsif ($login_user) { 
+% } elsif ($login_user) {
 	  <td><button id="edit_smid_button" class="btn btn-primary" >Edit</button></td>
 % } else {
 	  <td><button id="edit_smid_button" class="btn btn-primary" disabled>Edit</button>
@@ -273,7 +273,7 @@ $login_user => undef
     <button id="add_new_smid_button" class="btn btn-primary" disabled="true" >Add new SMID</button> &nbsp; &nbsp;<a href="/browse/">Back to browse</a>
 % }
 
-% if ($action eq "edit") { 
+% if ($action eq "edit") {
 <button id="update_smid_button"  class="btn btn-primary">Update SMID</button>
 <button id="cancel_update_button" class="btn btn-normal" >Cancel</button>
 <script>
