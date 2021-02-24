@@ -7,7 +7,6 @@ my $t = SMMID::Test::WebDriver->new();
 
 #First, start with a clean slate: no logged in user.
 $t->get_ok('/');
-$t->logout();
 
 #Next, attempt to access curator-only pages without correct privileges
 $t->get_ok('/curator');
