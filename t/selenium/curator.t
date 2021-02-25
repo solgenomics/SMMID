@@ -14,24 +14,25 @@ sleep(1);
 #login dialog should show up, as well as a message that says "you must be logged in as a curator"
 ok($t->body_text_contains('Forgot password?'), 'displays login screen');
 $t->body_text_contains('You must be logged in as a curator');
+sleep(1);
 
 #Attempt to access user accounts
 
 #First, new user page
 $t->get_ok('/user/0/profile');
-sleep(1);
+sleep(2);
 $t->accept_alert_ok();
 
 #Then, existing user profile page
 $t->get_ok('/user/1/profile');
-sleep(1);
+sleep(2);
 $t->accept_alert_ok();
 
 #Try to view smids
 print STDERR "Trying to view smids...\n";
 #Private smid
 $t->get_ok('/smid/2');
-sleep(1);
+sleep(2);
 $t->accept_alert_ok();
 
 #Public smid
@@ -76,13 +77,14 @@ sleep(1);
 $t->mouse_move_to_location( { element => 'change_public_status_2' } );
 my $private_smid = $t->find_element('change_public_status_2', 'id');
 $private_smid->click();
+sleep(1);
 
 #Logout and view from browse page
 $t->get_ok('/');
 sleep(1);
 $t->logout();
 $t->get_ok('/browse');
-sleep(1);
+sleep(2);
 $t->body_text_contains('earth#0002');
 $t->body_text_lacks('earth#0001');
 
@@ -99,7 +101,7 @@ $verified->click();
 $t->accept_alert_ok();
 
 $t->get_ok('/curator');
-sleep(1);
+sleep(2);
 $t->body_text_contains("\x{2713}");
 
 #Finished testing
