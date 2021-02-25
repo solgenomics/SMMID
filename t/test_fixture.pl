@@ -217,6 +217,15 @@ $row = $schema->resultset("SMIDDB::Result::Compound")->create(
 
 $row->insert();
     
+# insert a db for adding dbxrefs
+#
+$row = $schema->resultset("SMIDDB::Result::Db")->create(
+    {
+	name => 'CAS',
+	description => 'Chemical Abstracts Online',
+	urlprefix => 'https://cas.org/',
+	url => 'not sure',
+    });
 
 
 #run fixture and db patches.
