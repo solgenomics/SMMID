@@ -108,6 +108,13 @@ sleep(2);
 $t->accept_alert_ok();
 sleep(2);
 
+$t->get_ok('/');
+$t->logout();
+sleep(1);
+
+$t->login_yet_another_user_2();
+sleep(1);
+
 #Finished testing
 $t->get_ok('/');
 $t->logout();

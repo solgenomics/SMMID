@@ -86,6 +86,12 @@ sub login_yet_another_user {
   $self->login('usertest', 'lettucesalad');
 }
 
+sub login_yet_another_user_2 {
+  my $self = shift;
+
+  $self->login('usertest', 'eggsalad');
+}
+
 sub login_curator {
     my $self = shift;
 
