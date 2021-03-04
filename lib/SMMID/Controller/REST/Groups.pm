@@ -26,9 +26,11 @@ sub clean {
    return $str;
 }
 
-sub groups :Chained('/') :PathPart('rest/groups'){
+sub groups :Chained('/') PathPart('rest/groups') {
   my $self = shift;
   my $c = shift;
+
+  print STDERR "Found Groups...\n";
 
   my $error = "";
 
@@ -38,16 +40,32 @@ sub groups :Chained('/') :PathPart('rest/groups'){
     return;
   }
 
-  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Groups")->search({}, {order_by => {-asc => 'group_name'}});
+  $c->stash->{rest} = {success => "Has valid login. "};
+}
+
+sub list_groups :Chained('/') :PathPart('rest/groups/list_groups') {
+  my $self = shift;
+  my $c = shift;
+
+  print STDERR "Found groups list...\n";
+
+  my $error = "";
+
+  #my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Groups")->search({}, {order_by => {-asc => 'group_name'}});
   my @data;
 
+  push @data, ["Schroeder Lab", "X"];
+  push @data, ["Jander Lab", "X"];
+
+  $c->stash->{rest} = {data => \@data};
+
   # while (my $r = $rs->next()){
-  #   push @data
+  #   push @data, $r->group_name();
   # }
 
 }
 
-sub group_list :Chained('groups') :PathPart('') CaptureArgs(1){
+sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') CaptureArgs(1){
   my $self = shift;
   my $c = shift;
 
@@ -64,14 +82,31 @@ sub group_list :Chained('groups') :PathPart('') CaptureArgs(1){
   }
 
   while (my $user = $r->user_list()->next()){
-    push @data ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization()];
+    push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization()];
   }
 
   $c->stash->{rest} = {data => \@data};
 
 }
 
-sub add_group :Chained('groups') :PathPart('add_group') Args(0){
+sub list_users :Chained('/') :PathPart('rest/groups/list_users') {
+  my $self = shift;
+  my $c = shift;
+  my $error = "";
+
+  print STDERR "Found user list...\n";
+
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->search( {} );
+  my @data;
+
+  while (my $user = $rs->next()){
+    push @data, ["".$user->first_name()." ".$user->last_name(), $user->email(), $user->organization(), "<button id=\"select_user_".$user->dbuser_id()."\" type=\"button\" class=\"btn btn-primary\" disabled>\x{2191}</button>"];
+  }
+
+  $c->stash->{rest} = {data => \@data};
+}
+
+sub add_group :Chained('groups') :PathPart('add_group') {
 
 }
 

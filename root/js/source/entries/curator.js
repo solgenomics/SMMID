@@ -3,6 +3,7 @@
 function curator_html() {
 
       $('#new_account_button').attr('style', 'display');
+      $('#go_to_group_management').attr('style', 'display');
 
       $('#browse_c_smid_data_div').DataTable({
         'ajax': 'rest/curator/datatable',

@@ -12,7 +12,8 @@
 
 <p id="no_login_text">You must be logged in as a curator to view this page. Please login.</p>
 <p>
-  <button id="new_account_button" type="button" class="btn btn-primary" onclick="location.href='/user/0/profile';" style="display:none"> Create a new user account </button>
+  <button id="new_account_button" type="button" class="btn btn-primary" onclick="location.href='/user/0/profile';" style="display:none"> Create a new user account </button> &nbsp;
+  <button id="go_to_group_management" type="button" class="btn btn-primary" onclick="location.href='/groups';" style="display:none"> Go to Group Management </button>
   <p>&nbsp;</p>
   <p>&nbsp;</p>
   <table id="browse_c_smid_data_div" style="width:100%" class="display"></table>
