@@ -57,7 +57,11 @@ sub list_groups :Chained('/') :PathPart('rest/groups/list_groups') {
   push @data, ["Schroeder Lab", "X"];
   push @data, ["Jander Lab", "X"];
 
-  $c->stash->{rest} = {data => \@data};
+  my $html ="<option value=0 selected=\"selected\"><i>Select Group to Display</i></option>
+            <option value=1>Schroeder Lab</option>
+            <option value=2>Jander Lab</option>";
+
+  $c->stash->{rest} = {data => \@data, html => $html};
 
   # while (my $r = $rs->next()){
   #   push @data, $r->group_name();
@@ -65,24 +69,38 @@ sub list_groups :Chained('/') :PathPart('rest/groups/list_groups') {
 
 }
 
-sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') CaptureArgs(1){
+sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') Args(1){
   my $self = shift;
   my $c = shift;
 
   my $group_id = shift;
 
+  print STDERR "Listing users in the selected group...\n";
+
   #query db for users in this group
 
-  my $r = $c->model("SMIDDB")->resultset("SMIDDB")->find({group_id => $group_id});
+  # my $r = $c->model("SMIDDB")->resultset("SMIDDB")->find({group_id => $group_id});
+  # my @data;
+  #
+  # if (!$r){
+  #   $c->stash->{rest} = {error => "Sorry, this team does not exist."};
+  #   return;
+  # }
+  #
+  # while (my $user = $r->user_list()->next()){
+  #   push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization()];
+  # }
+
+  #$c->stash->{rest} = {data => \@data};
+
   my @data;
-
-  if (!$r){
-    $c->stash->{rest} = {error => "Sorry, this team does not exist."};
-    return;
+  if ($group_id == 1){
+    push @data, ["Tyler", "email\@cornell.edu", "BTI", "X"];
+    push @data, ["Frank", "email\@cornell.edu", "BTI", "X"];
   }
-
-  while (my $user = $r->user_list()->next()){
-    push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization()];
+  if ($group_id == 2) {
+    push @data, ["Marty", "email\@cornell.edu", "BTI", "X"];
+    push @data, ["Leila", "email\@cornell.edu", "BTI", "X"];
   }
 
   $c->stash->{rest} = {data => \@data};
@@ -100,7 +118,8 @@ sub list_users :Chained('/') :PathPart('rest/groups/list_users') {
   my @data;
 
   while (my $user = $rs->next()){
-    push @data, ["".$user->first_name()." ".$user->last_name(), $user->email(), $user->organization(), "<button id=\"select_user_".$user->dbuser_id()."\" type=\"button\" class=\"btn btn-primary\" disabled>\x{2191}</button>"];
+    my $dbuser_id = $user->dbuser_id;
+    push @data, ["".$user->first_name()." ".$user->last_name(), $user->email(), $user->organization(), "<button id=\"select_user_$dbuser_id\" onclick=\"push_array_entry($dbuser_id , \'up\' )  \" type=\"button\" class=\"btn btn-primary\"> \x{2191} </button>", $dbuser_id];
   }
 
   $c->stash->{rest} = {data => \@data};
