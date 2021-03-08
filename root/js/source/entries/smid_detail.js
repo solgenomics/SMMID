@@ -6,7 +6,7 @@ function make_fields_editable(compound_id) {
 	    $('#smid_id').prop('disabled', false);
 	    $('#smiles_string').prop('disabled', false);
 	    $('#curation_status').prop("value", "review");
-	    $('#request_review_button').prop('visible', false);
+	    $('#request_review').prop('visibility', 'visible');
 	    $('#formula_input_div').show();
 	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
@@ -408,16 +408,21 @@ function populate_smid_data(compound_id) {
 		    if(p.user !== null && p.role == "curator"){
 			$('#curation_status_manipulate').prop('value', r.data.curation_status);
 		    } else {
-			$('#curation_status_manipulate').prop('style', "display: none;");
+			//$('#curation_status_manipulate').prop('style', "display: none;");
       $('#change_curation_status').prop('style', "display: none;")
 		    }
 
+        if(p.user !== null && r.data.curation_status == "curated"){
+          $('#request_review_button').prop('disabled', false);
+        } else {
+          $('#request_review_button').prop('disabled', true);
+        }
 
 		    if (p.user !== null && (p.user == r.data.dbuser_id || p.role == "curator")) {
 			$('#public_status_manipulate').prop('value', r.data.public_status);
 		    } else {
 			$('#change_public_status').prop('style', "display: none;");
-			$('#public_status_manipulate').prop('style', "display: none;");
+			//$('#public_status_manipulate').prop('style', "display: none;");
 		    }
 
 		    $('#add_hplc_ms_button').click( function(event) {
@@ -492,10 +497,6 @@ function populate_smid_data(compound_id) {
 		$('#curation_status').html(curation_status_html);
 
 		$('#doi').val(r.data.doi);
-
-		if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
-		    $('#request_review_button').prop('style', "display:none");
-		} else {$('#request_review_button').prop('disabled', false);}
 
 		$('#formula_static_div').css('visibility', 'visible');
 		var formula = r.data.formula;

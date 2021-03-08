@@ -35,7 +35,7 @@ $login_user => undef
     <center>
     <table width="90%">
       <tr><td colspan="2">
-	  
+
 % if ($compound_id != 0) {
 
 
@@ -46,28 +46,34 @@ $login_user => undef
    </td>
 
    <td>
-     <button name="request_review_button" id="request_review_button"  class="btn btn-primary" disabled onclick="mark_smid_for_review(<% $compound_id %>)">Request a review of this SMID</button>
+      <button name="request_review_button" id="request_review_button" disabled class="btn btn-primary" onclick="mark_smid_for_review(<% $compound_id %>)">Request a review of this SMID</button>
    </td>
 
-   <td id="change_curation_status">Change Curation Status:
-     <select id="curation_status_manipulate" name="curation_status_manipulate" onchange="change_curation_status(<% $compound_id %>, $('#curation_status_manipulate').val());">
-       <option value="curated">Verified</option>
-       <option value="review">Review</option>
-       <option value="unverified">Unverified</option>
-     </select>
+   <td>
+     <div id="change_curation_status">
+       <label for="curation_status_manipulate">Change Curation Status:</label>
+       <select id="curation_status_manipulate" name="curation_status_manipulate" onchange="change_curation_status(<% $compound_id %>, $('#curation_status_manipulate').val());">
+         <option value="curated">Verified</option>
+         <option value="review">Review</option>
+         <option value="unverified">Unverified</option>
+       </select>
+     </div>
    </td>
-   
 
 
-   <td id="change_public_status">Change Visibility:
-     <select id="public_status_manipulate" name="public_status_manipulate" onchange="change_public_status(<% $compound_id %>, $('#public_status_manipulate').val());">
-       <option value="public">Public</option>
-       <option value="private">Private</option>
-     </select>
+
+   <td>
+     <div id="change_public_status">
+       <label for="public_status_manipulate">Change Visibility:</label>
+       <select id="public_status_manipulate" name="public_status_manipulate" onchange="change_public_status(<% $compound_id %>, $('#public_status_manipulate').val());">
+         <option value="public">Public</option>
+         <option value="private">Private</option>
+       </select>
+     </div>
    </td>
 % if ($action eq "edit") {
           <td><button id="cancel_edit" class="btn btn-primary">Cancel Edit</button>
-% } elsif ($login_user) { 
+% } elsif ($login_user) {
 	  <td><button id="edit_smid_button" class="btn btn-primary" >Edit</button></td>
 % } else {
 	  <td><button id="edit_smid_button" class="btn btn-primary" disabled>Edit</button>
@@ -273,7 +279,7 @@ $login_user => undef
     <button id="add_new_smid_button" class="btn btn-primary" disabled="true" >Add new SMID</button> &nbsp; &nbsp;<a href="/browse/">Back to browse</a>
 % }
 
-% if ($action eq "edit") { 
+% if ($action eq "edit") {
 <button id="update_smid_button"  class="btn btn-primary">Update SMID</button>
 <button id="cancel_update_button" class="btn btn-normal" >Cancel</button>
 <script>
