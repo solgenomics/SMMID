@@ -4,11 +4,11 @@ use Moose;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-sub group :Chained('/') :PathPart('groups'){
+sub groups_manage :Chained('/') :PathPart('groups/manage'){
   my $self = shift;
   my $c = shift;
 
-  $c->stash->{template} = '/groups.mas';
+  $c->stash->{template} = '/groups_manage.mas';
 }
 
 # sub add :Chained('groups') :PathPart('new'){

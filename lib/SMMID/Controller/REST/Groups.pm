@@ -51,6 +51,12 @@ sub list_groups :Chained('/') :PathPart('rest/groups/list_groups') {
 
   my $error = "";
 
+  if (!$c->user() || $c->user()->get_object()->user_type() ne "curator"){
+    $error .= "You must be logged in as a curator to manage work groups.";
+    $c->stash->{rest} = {error => $error};
+    return;
+  }
+
   #my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Groups")->search({}, {order_by => {-asc => 'group_name'}});
   my @data;
 
@@ -74,6 +80,14 @@ sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') Arg
   my $c = shift;
 
   my $group_id = shift;
+
+  my $error = "";
+
+  if (!$c->user() || $c->user()->get_object()->user_type() ne "curator"){
+    $error .= "You must be logged in as a curator to manage work groups.";
+    $c->stash->{rest} = {error => $error};
+    return;
+  }
 
   print STDERR "Listing users in the selected group...\n";
 
@@ -107,19 +121,38 @@ sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') Arg
 
 }
 
-sub list_users :Chained('/') :PathPart('rest/groups/list_users') {
+sub list_users :Chained('/') :PathPart('rest/groups/list_users') Args(1){
   my $self = shift;
   my $c = shift;
   my $error = "";
+
+  my $tables = shift;
+
+  if (!$c->user() || $c->user()->get_object()->user_type() ne "curator"){
+    $error .= "You must be logged in as a curator to manage work groups.";
+    $c->stash->{rest} = {error => $error};
+    return;
+  }
 
   print STDERR "Found user list...\n";
 
   my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->search( {} );
   my @data;
 
+  my $button;
+
   while (my $user = $rs->next()){
+
     my $dbuser_id = $user->dbuser_id;
-    push @data, ["".$user->first_name()." ".$user->last_name(), $user->email(), $user->organization(), "<button id=\"select_user_$dbuser_id\" onclick=\"push_array_entry($dbuser_id , \'up\' )  \" type=\"button\" class=\"btn btn-primary\"> \x{2191} </button>", $dbuser_id];
+
+    if ($tables eq "new"){
+      $button = "<button id=\"select_user_$dbuser_id\" onclick=\"push_array_entry($dbuser_id , \'up\' , \'users_to_add_to_new_group\' , \'select_users_for_new_group\' )  \" type=\"button\" class=\"btn btn-primary\"> \x{2191} </button>";
+    }
+    if ($tables eq "existing"){
+      $button = "<button id=\"select_user_$dbuser_id\" onclick=\"push_array_entry($dbuser_id , \'up\' , \'users_to_add_to_existing_group\' , \'select_users_for_existing_group\' )  \" type=\"button\" class=\"btn btn-primary\"> \x{2191} </button>";
+    }
+
+    push @data, ["".$user->first_name()." ".$user->last_name(), $user->email(), $user->organization(), $button, $dbuser_id];
   }
 
   $c->stash->{rest} = {data => \@data};
