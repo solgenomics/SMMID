@@ -13,12 +13,12 @@ function curator_html() {
         'info': true,
         //data: r.data,
         columns: [
-          {title: "Compound ID"},
-          {title: "SMID ID"},
-          {title: "Formula"},
-          {title: "Action", width: "10%"},
-          {title: "Visibility"},
-          {title: "Action", width: "10%"},
+          {title: "Compound ID", width: "14%"},
+          {title: "SMID ID", width: "14%"},
+          {title: "Formula", width: "14%"},
+          {title: "Action", width: "14%"},
+          {title: "Visibility", width: "14%"},
+          {title: "Action", width: "14%"},
           {title: "Curation Status"}
         ]
       });
