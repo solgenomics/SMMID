@@ -16,9 +16,9 @@ function curator_html() {
           {title: "Compound ID"},
           {title: "SMID ID"},
           {title: "Formula"},
-          {title: "Action"},
+          {title: "Action", width: "10%"},
           {title: "Visibility"},
-          {title: "Action"},
+          {title: "Action", width: "10%"},
           {title: "Curation Status"}
         ]
       });
