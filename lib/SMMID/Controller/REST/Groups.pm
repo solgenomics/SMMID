@@ -26,7 +26,7 @@ sub clean {
    return $str;
 }
 
-sub groups :Chained('/') PathPart('rest/groups') {
+sub groups :Chained('/') PathPart('rest/groups') CaptureArgs(1){
   my $self = shift;
   my $c = shift;
 
@@ -34,7 +34,7 @@ sub groups :Chained('/') PathPart('rest/groups') {
 
   my $error = "";
 
-  if (!$c->user() || $c->user()->get_object()->user_type() ne "curator"){
+  if (!$c->user() || $c->user()->get_object()->user_type() ne "curator"){ #Change this line to check view permission rather than curator status
     $error .= "You must be logged in as a curator to manage work groups.";
     $c->stash->{rest} = {error => $error};
     return;
@@ -60,8 +60,8 @@ sub list_groups :Chained('/') :PathPart('rest/groups/list_groups') {
   #my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Groups")->search({}, {order_by => {-asc => 'group_name'}});
   my @data;
 
-  push @data, ["Schroeder Lab", "X"];
-  push @data, ["Jander Lab", "X"];
+  push @data, ["Schroeder Lab", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Delete this Group</button>"];
+  push @data, ["Jander Lab", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Delete this Group</button>"];
 
   my $html ="<option value=0 selected=\"selected\"><i>Select Group to Display</i></option>
             <option value=1>Schroeder Lab</option>
@@ -109,12 +109,12 @@ sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') Arg
 
   my @data;
   if ($group_id == 1){
-    push @data, ["Tyler", "email\@cornell.edu", "BTI", "X"];
-    push @data, ["Frank", "email\@cornell.edu", "BTI", "X"];
+    push @data, ["Tyler", "email\@cornell.edu", "BTI", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Remove this User</button>"];
+    push @data, ["Frank", "email\@cornell.edu", "BTI", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Remove this User</button>"];
   }
   if ($group_id == 2) {
-    push @data, ["Marty", "email\@cornell.edu", "BTI", "X"];
-    push @data, ["Leila", "email\@cornell.edu", "BTI", "X"];
+    push @data, ["Marty", "email\@cornell.edu", "BTI", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Remove this User</button>"];
+    push @data, ["Leila", "email\@cornell.edu", "BTI", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Remove this User</button>"];
   }
 
   $c->stash->{rest} = {data => \@data};
@@ -158,14 +158,46 @@ sub list_users :Chained('/') :PathPart('rest/groups/list_users') Args(1){
   $c->stash->{rest} = {data => \@data};
 }
 
-sub add_group :Chained('groups') :PathPart('add_group') {
+sub add_group :Chained('groups') :PathPart('add_group') Args(0){
+  my $self = shift;
+  my $c = shift;
+
+  my $error = "";
+
+  my $group_id = $c->stash->{group_id};
+
+  if (!$c->user() || $c->user()->get_object()->user_type() ne "curator"){
+    $error .= "You must be logged in as a curator to create new work groups.";
+    $c->stash->{rest} = {error => $error};
+    return;
+  }
+
+  my @user_list = $self->clean($c->req->param("user_list"));
+  my $group_name = $self->clean($c->req->param("group_name"));
+  my $row = {
+    users => @user_list,
+    group_name => $group_name
+  };
+
+  my $new_group;
+
+  eval {
+    my $new = $c->model("SMIDDB")->resultset("SMIDDB::Result::Group")->new($row);
+    $new->insert();
+    $new_group = $new->group_id();
+  };
+
+  if ($@) {
+    $c->stash->{rest} = { error => "Sorry, an error occurred storing the group ($@)" };
+  } else {
+    $c->stash->{rest} = {success => "Successfully stored the new work group with id=$new_group"};
+  }
+}
+
+sub update :Chained('groups') :PathPart('update') Args(0){
 
 }
 
-sub update :Chained('groups') :PathPart('update') CaptureArgs(1){
-
-}
-
-sub delete :Chained('groups') :PathPart('delete') CaptureArgs(1){
+sub delete :Chained('groups') :PathPart('delete') Args(0){
 
 }

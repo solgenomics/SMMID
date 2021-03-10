@@ -211,3 +211,11 @@ function enable_add_users(valid_team){
     $('#add_users_to_group_button').prop("disabled", false);
   } else {$('#add_users_to_group_button').prop("disabled", true);}
 }
+
+function submit_new_group(){
+
+}
+
+function submit_add_users(){
+  
+}

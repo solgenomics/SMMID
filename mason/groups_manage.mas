@@ -1,0 +1,133 @@
+<%args>
+</%args>
+
+<script src="/js/node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="/js/source/entries/manage_groups.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/js/node_modules/datatables/media/css/jquery.dataTables.css" />
+
+<!-- Main page elements -->
+
+<h1>Manage Groups</h1>
+<p>&nbsp;</p>
+<table width="100%">
+  <tr>
+    <td width="50%">
+      <center>
+      <h2>All Groups</h2>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <table id="groups_list" style="width:90%%" class="display"></table>
+      </center>
+      <p>&nbsp;</p>
+      <center>
+      <button id="add_group_button" type="button" class="btn btn-primary" onclick="$('#add_new_group_modal').modal('show');">Add New Group</button>
+      </center>
+    </td>
+    <td width="50%">
+      <center>
+      <table>
+        <tr>
+          <select id="select_group_users" onchange="$('#display_group_users_table').DataTable().destroy(); display_group_users($('#select_group_users').val()); enable_add_users($('#select_group_users').val());" class="display">
+          </select>
+          &nbsp;
+          <button id="add_users_to_group_button" type="button" class="btn btn-primary" onclick="$('#add_users_to_group_modal').modal('show');" disabled>Add Users to Selected Group</button>
+          <p>&nbsp;</p>
+        </tr>
+        <tr>
+          <table id="display_group_users_table" class="display" style="width:90%"></table>
+        </tr>
+      </table>
+      </center>
+    </td>
+  </tr>
+</table>
+
+
+
+<!-- Add New Group Modal -->
+<div id="add_new_group_modal" class="modal">
+  <div class="modal-body-msms">
+    <div class="modal-content-msms">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Group</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="add_new_group_modal_body" name="add_new_group_modal_body">
+          <table>
+            <tr>
+              <td>
+                New Group Name:
+              </td>
+              <td>
+                <input id="new_group_name" rows="1" cols="60" style="display"></input>
+              </td>
+              <td>
+                &nbsp; &nbsp; &nbsp; <button id="submit_new_group" type="button" class="btn btn-primary" disabled>Submit New Group Data</button>
+              </td>
+            </tr>
+          </table>
+          <p>&nbsp;</p>
+          <table id="users_to_add_to_new_group" class="display" style="width:90%"><center><h5>Users to Add</h5></center></table>
+          <p>&nbsp;</p>
+          <table id="select_users_for_new_group" class="display" style="width:90%"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Add users to group modal -->
+<div id="add_users_to_group_modal" class="modal">
+  <div class="modal-body-msms">
+    <div class="modal-content-msms">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Users to Selected Group</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="add_users_to_group_modal_body" name="add_users_to_group_modal_body">
+          <table>
+            <tr>
+              <button id="submit_group_member_additions" disabled type="button" class="btn btn-primary">Submit Additions</button>
+            </tr>
+            <p>&nbsp;</p>
+            <tr>
+              <table id="users_to_add_to_existing_group" class="display" style="width:90%"><center><h5>Users to Add</h5></center>
+              </table>
+            </tr>
+            <p>&nbsp;</p>
+            <tr>
+              <table id="select_users_for_existing_group" class="display" style="width:90%">
+              </table>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<script>
+  $(document).ready( function(){
+
+    display_groups();
+    initialize_group_users();
+    initialize_new_group_modal();
+    initialize_add_users_to_group_modal();
+    $('#add_users_to_group_button').prop("disabled", true);
+
+  });
+</script>
