@@ -30,6 +30,8 @@ sub groups :Chained('/') PathPart('rest/groups') CaptureArgs(1){
   my $self = shift;
   my $c = shift;
 
+  my $group_id = shift;
+
   print STDERR "Found Groups...\n";
 
   my $error = "";

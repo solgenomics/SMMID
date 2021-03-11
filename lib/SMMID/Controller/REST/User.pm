@@ -8,6 +8,7 @@ use IO::File;
 use Data::Dumper;
 use HTML::Entities;
 use SMMID::Login;
+use SMMID::Authentication::ViewPermission;
 #use JSON::XS;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
@@ -687,7 +688,7 @@ sub authored_smids :Chained('user') :PathPart('authored_smids') Args(0){
   my @data;
   while (my $r = $rs->next()){
 
-    next if (!$self->has_view_permission($c, $r));
+    next if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $r));
 
     push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status(), $r->public_status() ];
   }
@@ -708,7 +709,7 @@ sub authored_experiments :Chained('user') :PathPart('authored_experiments') Args
 
   while (my $r = $rs->next()){
 
-    next if (!$self->has_view_permission($c, $r->compound()));
+    next if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $r->compound()));
 
     my $experiment_type;
     if ($r->experiment_type() eq "hplc_ms"){
@@ -818,18 +819,5 @@ sub change_password :Chained('user') :PathPart('change_password') Args(0) {
   }
 }
 
-sub has_view_permission {
-  my $self = shift;
-  my $c = shift;
-  my $smid = shift;
-
-  if($smid->public_status() eq "public"){return 1;}
-
-  if(!$c->user() && $smid->public_status() eq "private"){return 0;}
-
-  if($smid->public_status() eq "private" && $c->user()->get_object()->dbuser_id() != $smid->dbuser_id() && $c->user()->get_object()->user_type() ne "curator"){return 0;}
-
-  return 1;
-}
 
 1;
