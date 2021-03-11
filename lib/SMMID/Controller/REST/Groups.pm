@@ -5,6 +5,7 @@ use utf8;
 use Unicode::Normalize;
 use HTML::Entities;
 use SMMID::Login;
+use SMMID::Authentication::ViewPermission;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -34,15 +35,16 @@ sub groups :Chained('/') PathPart('rest/groups') CaptureArgs(1){
 
   print STDERR "Found Groups...\n";
 
-  my $error = "";
+  $c->stash->{group_id} = $group_id;
+}
 
-  if (!$c->user() || $c->user()->get_object()->user_type() ne "curator"){ #Change this line to check view permission rather than curator status
-    $error .= "You must be logged in as a curator to manage work groups.";
-    $c->stash->{rest} = {error => $error};
-    return;
-  }
+sub group_data :Chained('groups') :PathPart('group_data'){
+  my $self = shift;
+  my $c = shift;
 
-  $c->stash->{rest} = {success => "Has valid login. "};
+  my $group_id = $c->stash->{group_id};
+
+  #...
 }
 
 sub list_groups :Chained('/') :PathPart('rest/groups/list_groups') {
@@ -176,6 +178,14 @@ sub add_group :Chained('groups') :PathPart('add_group') Args(0){
 
   my @user_list = $self->clean($c->req->param("user_list"));
   my $group_name = $self->clean($c->req->param("group_name"));
+
+  if (!$group_name || $group_name eq ""){
+    $error .= "Must have a group name. ";
+  }
+  if (!@user_list || length(@user_list) == 0){
+    $error .= "Must have at least one user in new group. ";
+  }
+
   my $row = {
     users => @user_list,
     group_name => $group_name
@@ -197,9 +207,21 @@ sub add_group :Chained('groups') :PathPart('add_group') Args(0){
 }
 
 sub update :Chained('groups') :PathPart('update') Args(0){
+  my $self = shift;
+  my $c = shift;
 
+  my $group_id = $c->stash->{group_id};
+
+  #Add user ids to group table
+  #Add group id to users that are now in the group
 }
 
 sub delete :Chained('groups') :PathPart('delete') Args(0){
+  my $self = shift;
+  my $c = shift;
 
+  my $group_id = $c->stash->{group_id};
+
+  #remove group id from smids and users with that group id listed
+  #remove group
 }

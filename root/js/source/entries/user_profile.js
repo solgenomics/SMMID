@@ -28,6 +28,8 @@ function populate_profile_data(user_id){
       alert("Sorry, an error occurred."+r.responseText);
     },
   });
+
+  load_groups_data(user_id);
 }
 
 function populate_authored_smids(user_id){
@@ -166,4 +168,18 @@ function submit_new_user_data(){
       location.reload();
     }
   })
+}
+
+function load_groups_data(dbuser_id){
+  $('#user_profile_groups').DataTable({
+    'ajax': '/rest/user/'+dbuser_id+'/group_data',
+    'paging': false,
+    'searching': false,
+    'info': false,
+    columns: [
+      {title: "Group Name"},
+      {title: "Members"},
+      {title: "SMIDs"}
+    ],
+  });
 }

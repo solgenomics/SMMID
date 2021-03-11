@@ -819,5 +819,18 @@ sub change_password :Chained('user') :PathPart('change_password') Args(0) {
   }
 }
 
+sub group_data :Chained('user') :PathPart('group_data'){
+  my $self = shift;
+  my $c = shift;
+
+  my $dbuser_id = $c->stash->{dbuser_id};
+
+  #Query database for the groups that this user has, then put them here. List the name of the group, list of members, and list of smids
+
+  my @data = ["SMID-DB Development", "Lukas and Ryan", "earth#1"];
+
+  $c->stash->{rest} = {data => \@data};
+}
+
 
 1;

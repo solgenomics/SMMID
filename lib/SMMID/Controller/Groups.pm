@@ -8,7 +8,7 @@ sub groups_manage :Chained('/') :PathPart('groups/manage'){
   my $self = shift;
   my $c = shift;
 
-  $c->stash->{template} = '/groups_manage.mas';
+  $c->stash->{template} = 'groups/groups_manage.mas';
 }
 
 # sub add :Chained('groups') :PathPart('new'){

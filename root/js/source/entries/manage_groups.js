@@ -213,9 +213,53 @@ function enable_add_users(valid_team){
 }
 
 function submit_new_group(){
+  $.ajax({
+    'url': '/rest/groups/add_group',
+    data: {
+      'group_name' : $('#new_group_name').val(),
+      'user_list' : $('#users_to_add_to_new_group').DataTable().toArray(),
+    },
+    success: function(r){
+      if (r.error){alert (r.error);}
+      else {
+        alert ("Successfully submitted new group: " + $('#new_group_name').val());
+        $('#users_to_add_to_new_group').DataTable().destroy();
+        $('#select_users_for_new_group').DataTable().destroy();
+        $('#new_group_name').prop('value', null);
+        initialize_new_group_modal();
+      }
+    },
+    error: function(r){
+      alert("Sorry, an error occurred. "+r.responseText);
+    }
+  });
+}
+
+function submit_add_users(group_id){
+  $.ajax({
+    'url': '/rest/groups/update/'+group_id+'',
+    data: {
+      'user_list' : $('#users_to_add_to_existing_group').DataTable().toArray(),
+    },
+    success: function(r){
+      if (r.error){alert (r.error);}
+      else {
+        alert ("Successfully group changes.");
+        $('#users_to_add_to_existing_group').DataTable().destroy();
+        $('#select_users_for_existing_group').DataTable().destroy();
+        initialize_add_users_to_group_modal();
+      }
+    },
+    error: function(r){
+      alert("Sorry, an error occurred. "+r.responseText);
+    }
+  });
+}
+
+function remove_user_from_group(group_id){
 
 }
 
-function submit_add_users(){
+function delete_group(group_id){
   
 }

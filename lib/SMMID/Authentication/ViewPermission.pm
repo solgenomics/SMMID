@@ -18,4 +18,17 @@ sub can_view_smid {
   return 1;
 }
 
+#First parameter should be $c, second parameter should be the dbuser id of the group to be viewed
+sub can_view_group_data {
+
+  my $c = shift;
+  my $dbuser_id = shift;
+
+  if (!$c->user()) {return 0;}
+
+  if ($c->user()->dbuser_id() != $dbuser_id && $c->user()->get_object()->user_type() ne "curator") {return 0;}
+
+  return 1;
+}
+
 1;
