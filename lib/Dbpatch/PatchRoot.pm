@@ -176,6 +176,26 @@ sub run {
     my $dbpatch_schema = Dbpatch->connect( sub { return $dbh; } );
     $self->schema($dbpatch_schema);
 
+
+    
+    my $rs;
+    eval { 
+	$rs = $dbpatch_schema->resultset('Dbpatch')->search( { name => $self->name() });
+	if ($rs->count > 0) {
+	    die "Dbpatch has already been run in ".$rs->next()->run_timestamp()."\n";
+	}
+    };
+
+    
+    
+    if (defined($@) && $@ =~ m/does not exist/) {
+	print STDERR "$@ ... Inserting dbpatch table...\n";
+	$dbh->do("CREATE TABLE dbpatch (dbpatch_id serial primary key, dbuser_id bigint references dbuser, name varchar(100), description text, prereqs text, run_timestamp timestamp without time zone not null default now() )");
+    }
+    elsif ($@) {
+	die "Can't continue: $@\n";
+    }
+
     print STDERR "LIST : ".$self->list()."\n";
     if ($self->list()) {
 	print STDERR "LIST HERE...\n";
@@ -197,26 +217,6 @@ sub run {
     }
 
 
-    
-    my $rs;
-    eval { 
-	$rs = $dbpatch_schema->resultset('Dbpatch')->search( { name => $self->name() });
-	if ($rs->count > 0) {
-	    die "Dbpatch has already been run in ".$rs->next()->run_timestamp()."\n";
-	}
-    };
-
-    
-    
-    if ($@ =~ m/does not exist/) {
-	print STDERR "$@ ... Inserting dbpatch table...\n";
-	$dbh->do("CREATE TABLE dbpatch (dbpatch_id serial primary key, dbuser_id bigint references dbuser, name varchar(100), description text, prereqs text, run_timestamp timestamp without time zone not null default now() )");
-	###$dbh->do("GRANT USAGE ON TABLE dbpatch");
-    }
-    else {
-	die "Can't continue: $@\n";
-    }
-
 
     
     
@@ -224,6 +224,7 @@ sub run {
 
     ## patch method defined in subclass :-)
     #
+    print STDERR "RUNNING PATCH FOR ".__PACKAGE__."\n";
     my $error = $self->patch;
     if ($error ne '1') {
         print "Failed! Rolling back! \n $error \n ";
@@ -231,6 +232,7 @@ sub run {
     } elsif ( $self->trial_mode) {
         print "Trial mode! Not storing new metadata and dbversion rows\n";
     } else {
+	print STDERR "Adding patch info to dbpatch table...\n";
 	$dbpatch_schema->resultset("Dbpatch::Result::Dbpatch")->create(
 	    {
 		name => $self->name(),
@@ -288,8 +290,8 @@ sub run_all_patches {
 
     # determine the uninstalled files
     #
-    my %not_installed_files;
-    my %not_installed_paths;
+    my %installed_patches;
+    my %installed_patches_paths;
     my @available_dbpatch_files  = $self->get_dbpatch_files(1);
     foreach my $dbp (@available_dbpatch_files ) {
 	print STDERR "PATH = $dbp\n";
@@ -298,30 +300,34 @@ sub run_all_patches {
 	print STDERR "FILE = $dbp\n";
 	my $file = $dbp;
 
-	$not_installed_files{$file} = $path;
+	$installed_patches{$file} = $path;
     }
 
     my $rs = $self->schema()->resultset('Dbpatch')->search( { });
     my @lines;
     while (my $row = $rs->next()) {
-	if ($not_installed_files{$row->name()}) {
-	    delete($not_installed_files{$row->name()});
+	if ($installed_patches{$row->name()}) {
+	    $installed_patches{$row->name()}=undef;
 	}
     }
 
-    foreach my $k (%not_installed_files) {
-	require($not_installed_files{$k});
-	print STDERR "Running $k...\n";
-	my $patch = $k->new();
-	$patch->dbname($self->dbname());
-	$patch->dbhost($self->dbhost());
-	$patch->dbpass($self->dbpass());
-	$patch->dbuser($self->dbuser());
+    foreach my $k (%installed_patches) {
+	print STDERR "Running $k (path = $installed_patches{$k})...\n";
 
-	print STDERR "Running $k as ".$patch->dbuser()."\n";
-	$patch->dbh($self->dbh());
-	$patch->schema($self->schema());
-	$patch->patch();
+	if (defined($installed_patches{$k})) { 
+	    require($installed_patches{$k});
+	    
+	    my $patch = $k->new();
+	    $patch->dbname($self->dbname());
+	    $patch->dbhost($self->dbhost());
+	    $patch->dbpass($self->dbpass());
+	    $patch->dbuser($self->dbuser());
+	    
+	    print STDERR "Running $k as ".$patch->dbuser()."\n";
+	    $patch->dbh($self->dbh());
+	    $patch->schema($self->schema());
+	    $patch->run;
+	}
     }
 } 
 
