@@ -766,12 +766,13 @@ sub results : Chained('smid') PathPart('results') Args(0) {
 	    my $json = $row->data();
 	    my $hash = JSON::XS->new()->decode($json);
       my $mouseover= "
-        var timer;
-        var delay = 1000;
+        var timer = setTimeout(function(){
+          display_msms_visual_smid(".$row->experiment_id().")
+        }, 1000);
         \$(this).hover(function(){
           timer=setTimeout(function(){
             display_msms_visual_smid(".$row->experiment_id().")
-          }, delay);
+          }, 1000);
         }, function(){
           clearTimeout(timer);
         });";

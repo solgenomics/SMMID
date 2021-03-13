@@ -67,6 +67,7 @@ function display_msms_visual(experiment_id){
       //Format data to ensure that there are no gaps between peaks
       var xdata = [];
       var ydata = [];
+      var tooltipData = [];
       var i;
       var prev = +rawdata[0][0];
       for(i = 0; i < rawdata.length; i++){
@@ -78,8 +79,11 @@ function display_msms_visual(experiment_id){
         }
         xdata.push(+rawdata[i][0]);
         ydata.push(+rawdata[i][1]);
+        tooltipData.push({ x: +rawdata[i][0], y:+rawdata[i][1]});
         prev = +rawdata[i][0];
       }
+
+      console.log(tooltipData);
 
       //Set up drawing area
       var margin = {top: 100, bottom: 100, left: 100, right: 100};
@@ -103,7 +107,7 @@ function display_msms_visual(experiment_id){
 
       ////
       var yscale = d3.scaleLinear()
-      .domain([0, d3.max(ydata) + 1000])
+      .domain([0, d3.max(ydata) + 0.1*(d3.max(ydata) - d3.min(ydata))])
       .range([height-margin.bottom, margin.top]);
       var yaxis = d3.axisLeft().scale(yscale);
       svg.append("g").attr("class", "axis").attr("transform", "translate("+(margin.left - 2)+","+(0)+")").call(yaxis.ticks(10)).attr("stroke-width","2");
@@ -131,11 +135,57 @@ function display_msms_visual(experiment_id){
       var mouse_x = 0;
       var mouse_y = 0;
       var box = document.getElementById("svg").getBoundingClientRect();
+      var tooltipIndex = 0;
 
       window.addEventListener('mousemove', function(e){
         mouse_x = e.x;
         mouse_y = e.y;
+        tooltipIndex = find_closest(mouse_x - box.x, mouse_y - box.y);
       });
+
+      //Find the index of the closest data value to the mouse
+      function find_closest(x, y){
+        var ref = 0;
+        var val = 100000;
+        var placeholder = 0;
+
+        for (var i = 0; i != tooltipData.length; i++){
+          placeholder = Math.abs(revxscale(x) - tooltipData[i].x);
+          if (placeholder < val){
+            ref = i;
+            val = placeholder;
+          }
+        }
+        var h = ref;
+        for (var j = h-3; j<h+3; j++){
+          if (j > 0 && j < tooltipData.length && tooltipData[j].y > tooltipData[ref].y){
+            ref = j;
+          }
+        }
+        var increasingLeft = false;
+        var increasingRight = false;
+        var h = ref;
+
+        if (ref > 0 && ref < tooltipData.length - 1){
+          if (tooltipData[ref-1].y > tooltipData[ref].y){
+            while(ref > 0){
+              if (tooltipData[ref-1].y < tooltipData[ref].y){
+                return ref;
+              } else {ref--;}
+            }
+          }
+          else if (tooltipData[ref+1].y > tooltipData[ref].y){
+            while(ref < tooltipData.length- 1){
+              if (tooltipData[ref+1].y > tooltipData[ref].y){
+                return ref;
+              } else {ref++;}
+            }
+          }
+          else return ref;
+        }
+
+        return ref;
+      }
 
       function findOffset(){
         box = document.getElementById("svg").getBoundingClientRect();
@@ -147,14 +197,15 @@ function display_msms_visual(experiment_id){
       var g2 = svg.append("g").attr("id", "g2");
       var tooltip = g2.append("rect").attr("class", "tooltip").attr("transform", "translate(100, 0)");
       var tooltip_text = g2.append("text").attr("transform", "translate(100, 20)").style("opacity", 0);
+
       var crosshair_x = svg.append("path").style("opacity", 0).attr("stroke-dasharray", "10,10").attr("stroke", "red").attr("stroke-width", "1");
       var crosshair_y = svg.append("path").style("opacity", 0).attr("stroke-dasharray", "10,10").attr("stroke", "red").attr("stroke-width", "1");
+
       svg.on('mouseover', function(){
         tooltip.style("opacity", 0.2);
         tooltip_text.style("opacity", 1);
         crosshair_x.style("opacity", 1);
         crosshair_y.style("opacity", 1);
-        console.log("Why is this not working??");
       })
       .on('mouseout', function(){
         tooltip.style("opacity", 0);
@@ -163,9 +214,9 @@ function display_msms_visual(experiment_id){
         crosshair_y.style("opacity", 0);
       })
       .on('mousemove', function(){
-        tooltip_text.text("m/z: " +revxscale(mouse_x - box.x).toFixed(4) + ", " + "Intensity: " + revyscale(mouse_y - box.y).toFixed(0));
-        crosshair_x.attr("d", "M"+margin.left+","+(mouse_y - box.y)+" L"+xscale(width-margin.right)+","+(mouse_y - box.y));
-        crosshair_y.attr("d", "M"+(mouse_x - box.x)+","+(height-margin.bottom)+"L"+(mouse_x-box.x)+","+(margin.top));
+        tooltip_text.text("m/z: " +xscale(tooltipData[tooltipIndex].x).toFixed(4) + ", " + "Intensity: " + (tooltipData[tooltipIndex].y.toFixed(0)));
+        crosshair_x.attr("d", "M"+margin.left+","+(yscale(tooltipData[tooltipIndex].y))+" L"+xscale(width-margin.right)+","+(yscale(tooltipData[tooltipIndex].y)));
+        crosshair_y.attr("d", "M"+(xscale(tooltipData[tooltipIndex].x))+","+(height-margin.bottom)+"L"+(xscale(tooltipData[tooltipIndex].x))+","+(margin.top));
       });
 
     }
