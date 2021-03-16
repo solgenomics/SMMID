@@ -214,7 +214,7 @@ function display_msms_visual(experiment_id){
         crosshair_y.style("opacity", 0);
       })
       .on('mousemove', function(){
-        tooltip_text.text("m/z: " +xscale(tooltipData[tooltipIndex].x).toFixed(4) + ", " + "Intensity: " + (tooltipData[tooltipIndex].y.toFixed(0)));
+        tooltip_text.text("m/z: " +tooltipData[tooltipIndex].x.toFixed(4) + ", " + "Intensity: " + (tooltipData[tooltipIndex].y.toFixed(0)));
         crosshair_x.attr("d", "M"+margin.left+","+(yscale(tooltipData[tooltipIndex].y))+" L"+xscale(width-margin.right)+","+(yscale(tooltipData[tooltipIndex].y)));
         crosshair_y.attr("d", "M"+(xscale(tooltipData[tooltipIndex].x))+","+(height-margin.bottom)+"L"+(xscale(tooltipData[tooltipIndex].x))+","+(margin.top));
       });
