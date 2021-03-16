@@ -223,5 +223,6 @@ sub delete :Chained('groups') :PathPart('delete') Args(0){
   my $group_id = $c->stash->{group_id};
 
   #remove group id from smids and users with that group id listed
+  #if any of those smids were protected, mark them as private
   #remove group
 }

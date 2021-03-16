@@ -505,10 +505,8 @@ sub change_public_status :Chained('smid') PathPart('change_public_status') Args(
     return;
   }
 
-  #In future, this line should be modified to allow changes to be made by a team member. Collect the public_status from the row, then
-  #use that to determine if user_id or team_id should be checked.
-  if ($c->user()->get_object()->dbuser_id() != $row->dbuser_id() && $c->user()->get_object()->user_type() ne "curator"){
-    $c->stash->{rest} = { error => "Only author or curator may change the visibility of this smid." };
+  if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $row)){
+    $c->stash->{rest} = { error => "You do not have permission to alter the visibility of this smid." };
     return;
   }
 
@@ -557,8 +555,8 @@ sub update :Chained('smid') PathPart('update') Args(0) {
      my $smid_owner_id = $smid_row->dbuser_id();
 
 
-     if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
-	 $c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
+     if ( !SMMID::Authentication::ViewPermission::can_edit_smid($c, $smid_row) )  {
+	 $c->stash->{rest} = { error => "You do not have permission to modify the SMID with id $compound_id." };
 	 return;
      }
 
