@@ -23,6 +23,7 @@ around 'BUILDARGS' => sub {
 	$args->{port} = 4444;
 	$args->{platform} = "LINUX";
 	$args->{browser_name} = "firefox";
+  $args->{version} = "78.7.0";
 	$args->{base_url} = 'http://localhost:3010';
     }
 
@@ -45,20 +46,20 @@ sub login {
     my $password = shift;
 
 
-    
+
     $self->get_ok('/');
     sleep(2);
-    
+
     my $site_login_button = $self->find_element('site_login_button', 'id');
     $site_login_button->click();
     sleep(1);
-    
+
     my $username_field = $self->find_element('username', 'id');
-    
+
     $username_field->send_keys($username);
 
     my $password_field = $self->find_element('password', 'id');
-    
+
     $password_field->send_keys($password);
 
     my $login_button = $self->find_element('submit_password', 'id');
@@ -79,6 +80,18 @@ sub login_another_user {
     $self->login('another_user', 'secretpw');
 }
 
+sub login_yet_another_user {
+  my $self = shift;
+
+  $self->login('usertest', 'lettucesalad');
+}
+
+sub login_yet_another_user_2 {
+  my $self = shift;
+
+  $self->login('usertest', 'eggsalad');
+}
+
 sub login_curator {
     my $self = shift;
 
@@ -90,7 +103,7 @@ sub logout {
 
     $self->get_ok('/');
     sleep(2);
-    
+
     my $login_menu = $self->find_element('navbarDropdownMenuLink_3', 'id');
     $login_menu->click();
     sleep(3);
@@ -98,9 +111,9 @@ sub logout {
     my $logout_button = $self->find_element('navbar_logout', 'id');
     $logout_button->click();
     sleep(1);
-    
+
     $self->accept_alert_ok();
-    
+
     #$self->get_ok('/rest/user/logout');
     #sleep(1);
     $self->get_ok('/');

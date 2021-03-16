@@ -159,7 +159,7 @@ sub new_account :Path('/rest/user/new') Args(0) {
       organization => $organization,
       username => $username,
       user_type => $user_type,
-      password => "crypt($password, gen_salt('bf'))",
+      password => \"crypt('$password', gen_salt('bf'))",
       creation_date => 'now()',
       last_modified_date => 'now()',
     };
@@ -505,14 +505,14 @@ sub get_login_button_html :Path('/rest/user/login_button_html') Args(0) {
 
   <nav class="navbar navbar-expand-lg navbar-light bg-white">
 
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <div class="collapse navbar-collapse" id="navbarNavDropdown_login">
       <ul class="navbar-nav">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle header_link" style="color:lightblue;" href="/browse" id="navbarDropdownMenuLink_3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             $welcome_sign
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="/user/$sp_person_id/profile">Your Profile</a>
+            <a class="dropdown-item" id="access_your_profile_button" href="/user/$sp_person_id/profile">Your Profile</a>
             <a class="dropdown-item"><button id="navbar_logout" class="btn btn-primary" type="button" onclick="logout();" title="Logout">Logout</button></a>
 
           </div>
@@ -748,7 +748,7 @@ sub change_profile :Chained('user') :PathPart('change_profile') Args(0) {
   if (length($first_name) == 0){$error .= "First name may not be blank. ";}
   if (length($last_name) == 0){$error .= "Last name may not be blank. ";}
   if (length($email_address) == 0){$error .= "Email may not be blank. ";}
-  if (length($organization) == 0){$error .= "Organization may not be blank. ";}
+  #if (length($organization) == 0){$error .= "Organization may not be blank. ";}
   if (length($username) == 0){$error .= "Username may not be blank. ";}
 
   if ($error) {

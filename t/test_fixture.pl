@@ -72,7 +72,7 @@ my $cfg = Config::Any->load_files({files=> [$conf_file_base], use_ext=>1 });
 my $config = $cfg->[0]->{$conf_file_base};
 #my $template = $cfg->[1]->{$template_file};
 
-if ($list_config) { 
+if ($list_config) {
     print STDERR Dumper($cfg)."\n";
 }
 
@@ -84,7 +84,8 @@ if ($list_config) {
 my $dsn = $config->{'Model::SMIDDB'}->{connect_info}->{dsn};
 my $dbuser = $config->{'Model::SMIDDB'}->{connect_info}->{user};
 my $db_user_password = $config->{'Model::SMIDDB'}->{connect_info}->{password};
-my $db_postgres_password = 'postgres'; #$config->{'Model::SMIDDB'}->{connect_info}->{password};
+#This line needs to be changed for local machine
+my $db_postgres_password = 'DebianBox**'; #$config->{'Model::SMIDDB'}->{connect_info}->{password};
 my $dbhost;
 if ($dsn =~ m/host=(.*?)\;/) {
     $dbhost = $1;
@@ -216,7 +217,7 @@ $row = $schema->resultset("SMIDDB::Result::Compound")->create(
 
 
 $row->insert();
-    
+
 
 
 #run fixture and db patches.
@@ -263,7 +264,7 @@ else {
 
 	if (!$nocleanup) {
 	    print STDERR "# Removing test database ($dbname)... ";
-	    
+
 	    if ($noserver) {
 		print STDERR "# [ --noserver option: No logfile to remove]\n";
 	    }
@@ -315,7 +316,7 @@ unless( $prove_pid ) {
     my $app = App::Prove->new;
 
     my $v = $verbose ? 'v' : '';
-    
+
     $app->process_args(
         '-lr'.$v,
         ( map { -I => $_ } @INC ),
