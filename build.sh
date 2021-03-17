@@ -24,5 +24,5 @@ cpanm -L /home/production/local-lib Chemistry::File::SMILES
 cpanm -L /home/production/local-lib Image::Size
 cpanm -L /home/production/local-lib YAML
 cpanm -L /home/production/local-lib Test::Selenium::Remote::Driver
-
+cpanm -L /home/production/local-lib MooseX::Runnable
 

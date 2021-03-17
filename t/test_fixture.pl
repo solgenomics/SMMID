@@ -85,7 +85,7 @@ my $dsn = $config->{'Model::SMIDDB'}->{connect_info}->{dsn};
 my $dbuser = $config->{'Model::SMIDDB'}->{connect_info}->{user};
 my $db_user_password = $config->{'Model::SMIDDB'}->{connect_info}->{password};
 #This line needs to be changed for local machine
-my $db_postgres_password = 'DebianBox**'; #$config->{'Model::SMIDDB'}->{connect_info}->{password};
+my $db_postgres_password = $config->{'Model::SMIDDB'}->{connect_info}->{password};
 my $dbhost;
 if ($dsn =~ m/host=(.*?)\;/) {
     $dbhost = $1;
@@ -150,6 +150,8 @@ open(my $NEWCONF, ">", "smmid_fixture.yml") || die "Can't open smmid_fixture.con
 print $NEWCONF $new_conf;
 close($NEWCONF);
 
+print STDERR "Running dbpatches...\n";
+system("script/dbpatch.pl -H $dbhost -D $dbname -p $db_postgres_password --update");
 my $schema = SMIDDB->connect($test_dsn.";user=postgres;password=$db_postgres_password");
 
 # add basic users

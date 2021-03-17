@@ -37,9 +37,7 @@ COPY smmid_local.conf.docker /home/production/SMMID/smmid_local.conf
 
 WORKDIR /home/production/SMMID
 
-RUN git checkout relational_smid
-
-ENV PERL5LIB=/home/production/SMMID/lib:/home/production/local-lib/lib/perl5
+ENV PERL5LIB=/home/production/SMMID/lib:/home/production/local-lib/lib/perl5:.
 ENV CATALYST_HOME=/home/production/SMMID
 
 ENTRYPOINT bash /entrypoint.sh
