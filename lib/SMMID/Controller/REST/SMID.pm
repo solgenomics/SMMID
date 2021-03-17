@@ -107,7 +107,10 @@ return;
       $cur_button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
     }
 
-    my $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'public\' )\" type=\"button\" class=\"btn btn-primary\">Make Public</button>";
+    my $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'public\' )\" type=\"button\" class=\"btn btn-primary\">Make Public</button>"; #Change to make protected
+    # if ($r->public_status() eq "protected"){
+    #   $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'public\' )\" type=\"button\" class=\"btn btn-primary\">Make Public</button>";
+    # }
     if ($r->public_status() eq "public"){
      $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'private\' )\" type=\"button\" class=\"btn btn-primary\">Make Private</button>";
     }
@@ -480,9 +483,11 @@ sub mark_unverified :Chained('smid') PathPart('mark_unverified') Args(0){
     return;
 }
 
+#NOTE Change to accomodate private status. Check for a group id parameter as well so that protected status can be handled
 sub change_public_status :Chained('smid') PathPart('change_public_status') Args(0){
   my $self = shift;
   my $c = shift;
+  #my $group_id = shift;
 
   if (! $c->user() ) {
       $c->stash->{rest} = { error => "Author or curator login required to change the visibility of this smid." };
@@ -495,6 +500,10 @@ sub change_public_status :Chained('smid') PathPart('change_public_status') Args(
     $c->stash->{rest} = { error => "Invalid. New status must be \"public\" or \"private\"." };
     return;
   }
+  # if($public_status ne "public" && $public_status ne "private" && $public_status ne "protected"){
+  #   $c->stash->{rest} = { error => "Invalid. New status must be \"public,\" \"private,\" or \"protected.\"" };
+  #   return;
+  # }
 
   my $compound_id = $c->stash->{compound_id};
 
@@ -505,7 +514,7 @@ sub change_public_status :Chained('smid') PathPart('change_public_status') Args(
     return;
   }
 
-  if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $row)){
+  if (!SMMID::Authentication::ViewPermission::can_edit_smid($c, $row)){
     $c->stash->{rest} = { error => "You do not have permission to alter the visibility of this smid." };
     return;
   }

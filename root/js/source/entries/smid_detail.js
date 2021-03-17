@@ -641,6 +641,11 @@ function display_msms_visual_smid(experiment_id){
 }
 
 function change_public_status(compound_id, new_status){
+
+  // if (new_status == 'protected'){
+  //   select_group_for_smid(compound_id).then();
+  // }
+
   $.ajax({
     url: '/rest/smid/'+compound_id+'/change_public_status',
     data: {
@@ -657,4 +662,16 @@ function change_public_status(compound_id, new_status){
       alert("An error occurred."+r.responseText);
     }
   })
+}
+
+function select_group_for_smid(compound_id){
+  //open group select modal
+  //populate it with data (do this only when it is opened so that backend checks if it is permissible)
+  //Gather group id data - let user choose which group the smid will apply to given list of their groups
+  //return as a promise
+}
+
+function populate_group_select_modal(){
+  //do an ajax call for the groups of the current user and then use them to populate the group select modal
+  //This function should not run if the user is not logged in or does not have permission 
 }
