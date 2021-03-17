@@ -97,7 +97,7 @@ sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') Arg
 
   #query db for users in this group
 
-  # my $r = $c->model("SMIDDB")->resultset("SMIDDB")->find({group_id => $group_id});
+  # my $r = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbgroup")->find({group_id => $group_id});
   # my @data;
   #
   # if (!$r){
