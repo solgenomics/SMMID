@@ -44,7 +44,7 @@ __PACKAGE__->table("dbgroup");
 =cut
 
 __PACKAGE__->add_columns(
-  "group_id",
+  "dbgroup_id",
   {
     data_type         => "integer",
     is_auto_increment => 1,
@@ -67,7 +67,7 @@ __PACKAGE__->add_columns(
 
 =cut
 
-__PACKAGE__->set_primary_key("group_id");
+__PACKAGE__->set_primary_key("dbgroup_id");
 
 =head1 RELATIONS
 

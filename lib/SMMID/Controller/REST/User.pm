@@ -688,7 +688,7 @@ sub authored_smids :Chained('user') :PathPart('authored_smids') Args(0){
   my @data;
   while (my $r = $rs->next()){
 
-    next if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $r));
+    next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $r));
 
     push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status(), $r->public_status() ];
   }
@@ -709,7 +709,7 @@ sub authored_experiments :Chained('user') :PathPart('authored_experiments') Args
 
   while (my $r = $rs->next()){
 
-    next if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $r->compound()));
+    next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $r->compound()));
 
     my $experiment_type;
     if ($r->experiment_type() eq "hplc_ms"){
@@ -819,7 +819,7 @@ sub change_password :Chained('user') :PathPart('change_password') Args(0) {
   }
 }
 
-sub group_data :Chained('user') :PathPart('group_data'){
+sub group_data :Chained('user') :PathPart('group_data') Args(0){
   my $self = shift;
   my $c = shift;
 
@@ -827,7 +827,33 @@ sub group_data :Chained('user') :PathPart('group_data'){
 
   #Query database for the groups that this user has, then put them here. List the name of the group, list of members, and list of smids
 
-  my @data = ["SMID-DB Development", "Lukas and Ryan", "earth#1"];
+  print STDERR "Accessing user's groups...\n";
+
+  my @data;
+
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbuser_id => $dbuser_id});
+ #rs contains a list of all the groups that this user is in.
+  while (my $row = $rs->next()){
+    my $group = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbgroup")->find({dbgroup_id => $row->dbgroup_id()});
+    my $members = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $row->dbgroup_id()});
+    my $smids = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search({dbgroup_id => $row->dbgroup_id()});
+
+    my @member_list;
+    while (my $ur = $members->next()){
+      my $member = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find({dbuser_id => $ur->dbuser_id()});
+      push @member_list, "<a href=\"/user/".$member->dbuser_id()."/profile\">".$member->first_name()." ".$member->last_name()."</a>";
+    }
+    my $member_string = join(", ", @member_list);
+
+    my @smid_list;
+    while(my $smid = $smids->next()){
+      next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $smid));
+      push @smid_list, "<a href=\"/smid/".$smid->compound_id()."\" >".$smid->smid_id()."</a>";
+    }
+    my $smid_string = join(", ", @smid_list);
+
+    push @data, [$group->name(), $group->description(), $member_string, $smid_string];
+  }
 
   $c->stash->{rest} = {data => \@data};
 }

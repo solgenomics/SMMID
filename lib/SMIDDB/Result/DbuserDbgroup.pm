@@ -52,9 +52,9 @@ __PACKAGE__->add_columns(
     is_nullable       => 0,
     sequence          => "dbuser_dbgroup_dbuser_dbgroup_id_seq",
   },
-  "dbuser",
+  "dbuser_id",
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 0 },
-  "dbgroup",
+  "dbgroup_id",
   { data_type => "bigint", is_foreign_key => 1, is_nullable => 0 },
 );
 
@@ -83,7 +83,7 @@ Related object: L<SMIDDB::Result::Dbgroup>
 __PACKAGE__->belongs_to(
   "dbgroup",
   "SMIDDB::Result::Dbgroup",
-  { group_id => "dbgroup" },
+  { group_id => "dbgroup_id" },
   { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
 );
 
@@ -98,7 +98,7 @@ Related object: L<SMIDDB::Result::Dbuser>
 __PACKAGE__->belongs_to(
   "dbuser",
   "SMIDDB::Result::Dbuser",
-  { dbuser_id => "dbuser" },
+  { dbuser_id => "dbuser_id" },
   { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
 );
 

@@ -6,6 +6,8 @@ use Unicode::Normalize;
 use HTML::Entities;
 use SMMID::Login;
 use SMMID::Authentication::ViewPermission;
+use JSON::XS;
+use Data::Dumper;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -61,21 +63,31 @@ sub list_groups :Chained('/') :PathPart('rest/groups/list_groups') {
     return;
   }
 
-  #my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Groups")->search({}, {order_by => {-asc => 'group_name'}});
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbgroup")->search({});
   my @data;
+  my $html = "<option value=0 selected=\"selected\"><i>Select Group to Display</i></option>";
 
-  push @data, ["Schroeder Lab", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Delete this Group</button>"];
-  push @data, ["Jander Lab", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Delete this Group</button>"];
+  if (!$rs){
+    @data = [];
+    $c->stash->{rest} = {data => \@data, html => $html};
+    return;
+  }
 
-  my $html ="<option value=0 selected=\"selected\"><i>Select Group to Display</i></option>
-            <option value=1>Schroeder Lab</option>
-            <option value=2>Jander Lab</option>";
+  while(my $r = $rs->next()){
+    my $group_id = $r->dbgroup_id();
+    my $group_name = $r->name();
+    push @data, [$group_name, $r->description(), "<button id=\"delete_group_$group_id\" type=\"button\" class=\"btn btn-danger\" onclick=\"delete_group($group_id)\">Delete this Group</button>"];
+    $html .= "<option value=$group_id>$group_name</option>";
+  }
+
+  # push @data, ["Schroeder Lab", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Delete this Group</button>"];
+  # push @data, ["Jander Lab", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Delete this Group</button>"];
+  #
+  # my $html ="<option value=0 selected=\"selected\"><i>Select Group to Display</i></option>
+  #           <option value=1>Schroeder Lab</option>
+  #           <option value=2>Jander Lab</option>";
 
   $c->stash->{rest} = {data => \@data, html => $html};
-
-  # while (my $r = $rs->next()){
-  #   push @data, $r->group_name();
-  # }
 
 }
 
@@ -97,28 +109,17 @@ sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') Arg
 
   #query db for users in this group
 
-  # my $r = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbgroup")->find({group_id => $group_id});
-  # my @data;
-  #
-  # if (!$r){
-  #   $c->stash->{rest} = {error => "Sorry, this team does not exist."};
-  #   return;
-  # }
-  #
-  # while (my $user = $r->user_list()->next()){
-  #   push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization()];
-  # }
-
-  #$c->stash->{rest} = {data => \@data};
-
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $group_id});
   my @data;
-  if ($group_id == 1){
-    push @data, ["Tyler", "email\@cornell.edu", "BTI", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Remove this User</button>"];
-    push @data, ["Frank", "email\@cornell.edu", "BTI", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Remove this User</button>"];
+
+  if (!$rs){
+    $c->stash->{rest} = {error => "Sorry, this team does not exist."};
+    return;
   }
-  if ($group_id == 2) {
-    push @data, ["Marty", "email\@cornell.edu", "BTI", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Remove this User</button>"];
-    push @data, ["Leila", "email\@cornell.edu", "BTI", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Remove this User</button>"];
+
+  while (my $row = $rs->next()){
+    my $user = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find({dbuser_id => $row->dbuser_id()});
+    push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization(), "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Remove this User</button>"];
   }
 
   $c->stash->{rest} = {data => \@data};
@@ -162,7 +163,7 @@ sub list_users :Chained('/') :PathPart('rest/groups/list_users') Args(1){
   $c->stash->{rest} = {data => \@data};
 }
 
-sub add_group :Chained('groups') :PathPart('add_group') Args(0){
+sub add_group :Chained('/') :PathPart('rest/groups/add_group') Args(0){
   my $self = shift;
   my $c = shift;
 
@@ -176,34 +177,73 @@ sub add_group :Chained('groups') :PathPart('add_group') Args(0){
     return;
   }
 
-  my @user_list = $self->clean($c->req->param("user_list"));
+  # my @user_table = JSON::XS->new()->decode($c->req->param("user_list"));
+  # print STDERR "Printing users to be added...".$c->req->param("user_list")."\n";
+  # print STDERR Dumper(\@user_table);
+  # my @user_list;
+
+  # my $i = 0;
+  # while ($i < length(@user_table)){
+  #   push @user_list, $user_table[$i][4];
+  #   $i = $i + 1;
+  # }
+
+  my $user_ids = $c->req->param('user_list');
+
+  my @user_list = split("\t", $user_ids);
+
   my $group_name = $self->clean($c->req->param("group_name"));
+  my $group_description = $self->clean($c->req->param("description"));
 
   if (!$group_name || $group_name eq ""){
     $error .= "Must have a group name. ";
   }
-  if (!@user_list || length(@user_list) == 0){
+  if (!@user_list || scalar(@user_list) == 0 || !$user_list[0]){
     $error .= "Must have at least one user in new group. ";
   }
 
+  if ($error){
+    $c->stash->{rest} = { error => $error };
+    return;
+  }
+
   my $row = {
-    users => @user_list,
-    group_name => $group_name
+    name => $group_name,
+    description => $group_description
   };
 
   my $new_group;
 
   eval {
-    my $new = $c->model("SMIDDB")->resultset("SMIDDB::Result::Group")->new($row);
+    my $new = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbgroup")->new($row);
     $new->insert();
-    $new_group = $new->group_id();
+    $new_group = $new->dbgroup_id();
   };
 
   if ($@) {
     $c->stash->{rest} = { error => "Sorry, an error occurred storing the group ($@)" };
+    return;
+  }
+
+  #Now add user <=> group relationship
+
+  my $i = 0;
+  while($i < scalar(@user_list)){
+    $row = {
+      dbuser_id => $user_list[$i],
+      dbgroup_id => $new_group
+    };
+    my $new_dbuser_dbgroup = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->new($row);
+    $new_dbuser_dbgroup->insert();
+    $i = $i + 1;
+  }
+
+  if ($@){
+    $c->stash->{rest} = { error => "Sorry, an error occurred storing the group ($@)" };
   } else {
     $c->stash->{rest} = {success => "Successfully stored the new work group with id=$new_group"};
   }
+
 }
 
 sub update :Chained('groups') :PathPart('update') Args(0){
@@ -222,7 +262,30 @@ sub delete :Chained('groups') :PathPart('delete') Args(0){
 
   my $group_id = $c->stash->{group_id};
 
-  #remove group id from smids and users with that group id listed
-  #if any of those smids were protected, mark them as private
-  #remove group
+  print STDERR "Deleting group...\n";
+
+  my $user_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $group_id});
+  while (my $r = $user_rs->next()){
+    $r->delete();
+  }
+
+  my $group_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbgroup")->find({dbgroup_id => $group_id});
+  $group_rs->delete();
+
+  my $smid_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search({dbgroup_id => $group_id});
+  while (my $smid = $smid_rs->next()){
+    my $data = {
+      public_status => 'private',
+      last_modified_date => 'now()',
+    };
+
+    eval {
+      $smid->update($data);
+    };
+
+    if ($@) {
+	      $c->stash->{rest} = { error => "Sorry, an error occurred deleting the group." };
+	       return;
+    }
+  }
 }

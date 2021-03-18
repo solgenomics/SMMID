@@ -46,7 +46,7 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
     my @data;
     while (my $r = $rs->next()) {
 
-      next if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $r));
+      next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $r));
 
       my $cur_char = "<p style=\"color:green\"><b>\x{2713}</b></p>";
       if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){$cur_char = "<p style=\"color:red\">Unverified</p>";}
@@ -514,7 +514,7 @@ sub change_public_status :Chained('smid') PathPart('change_public_status') Args(
     return;
   }
 
-  if (!SMMID::Authentication::ViewPermission::can_edit_smid($c, $row)){
+  if (!SMMID::Authentication::ViewPermission::can_edit_smid($c->user(), $row)){
     $c->stash->{rest} = { error => "You do not have permission to alter the visibility of this smid." };
     return;
   }
@@ -564,7 +564,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
      my $smid_owner_id = $smid_row->dbuser_id();
 
 
-     if ( !SMMID::Authentication::ViewPermission::can_edit_smid($c, $smid_row) )  {
+     if ( !SMMID::Authentication::ViewPermission::can_edit_smid($c->user(), $smid_row) )  {
 	 $c->stash->{rest} = { error => "You do not have permission to modify the SMID with id $compound_id." };
 	 return;
      }
@@ -658,7 +658,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
 	return;
     }
 
-    if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $s)){
+    if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $s)){
       $c->stash->{rest} = {error => "This smid is private, and you do not have permission to view it."};
       return;
     }

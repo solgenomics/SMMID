@@ -178,6 +178,7 @@ function load_groups_data(dbuser_id){
     'info': false,
     columns: [
       {title: "Group Name"},
+      {title: "Description"},
       {title: "Members"},
       {title: "SMIDs"}
     ],

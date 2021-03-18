@@ -17,6 +17,7 @@ function display_groups(){
         'info': false,
         columns: [
           {title: "Group Name"},
+          {title: "Description"},
           {title: "Remove Group", width:"20%"}
         ],
         data: r.data
@@ -214,23 +215,29 @@ function enable_add_users(valid_team){
 
 function submit_new_group(){
   $.ajax({
-    'url': '/rest/groups/add_group',
+    url: '/rest/groups/add_group',
     data: {
       'group_name' : $('#new_group_name').val(),
-      'user_list' : $('#users_to_add_to_new_group').DataTable().toArray(),
+      'description' : $('#new_group_description').val(),
+      'user_list' : parse_user_ids($('#users_to_add_to_new_group').DataTable().data().toArray()),
     },
     success: function(r){
-      if (r.error){alert (r.error);}
+      if (r.error){
+        alert (r.error);
+      }
       else {
         alert ("Successfully submitted new group: " + $('#new_group_name').val());
         $('#users_to_add_to_new_group').DataTable().destroy();
         $('#select_users_for_new_group').DataTable().destroy();
         $('#new_group_name').prop('value', null);
+        $('#new_group_description').prop('value', null);
         initialize_new_group_modal();
+        location.reload();
       }
     },
     error: function(r){
       alert("Sorry, an error occurred. "+r.responseText);
+      location.reload();
     }
   });
 }
@@ -239,12 +246,12 @@ function submit_add_users(group_id){
   $.ajax({
     'url': '/rest/groups/update/'+group_id+'',
     data: {
-      'user_list' : $('#users_to_add_to_existing_group').DataTable().toArray(),
+      'user_list' : $('#users_to_add_to_existing_group').DataTable().data().toArray(),
     },
     success: function(r){
       if (r.error){alert (r.error);}
       else {
-        alert ("Successfully group changes.");
+        alert ("Successfully made group changes.");
         $('#users_to_add_to_existing_group').DataTable().destroy();
         $('#select_users_for_existing_group').DataTable().destroy();
         initialize_add_users_to_group_modal();
@@ -261,5 +268,35 @@ function remove_user_from_group(group_id){
 }
 
 function delete_group(group_id){
-  
+  var yes = confirm("Are you sure you want to delete this group?");
+
+  if (yes){
+    $.ajax({
+      'url': '/rest/groups/'+group_id+'/delete',
+      data: [],
+      success: function(r){
+        if (r.error){
+          alert(r.error);
+          location.reload();
+        }
+        else{
+          alert("Group has been deleted.");
+          location.reload();
+        }
+      },
+      error: function(r){
+        alert("Sorry, an error occurred."+r.responseText);
+        location.reload();
+      }
+    });
+  }
+
+}
+
+function parse_user_ids(user_table){
+  var id_string = "";
+  for (var i = 0; i < user_table.length; i++){
+    id_string += user_table[i][4] + "\t";
+  }
+  return id_string;
 }
