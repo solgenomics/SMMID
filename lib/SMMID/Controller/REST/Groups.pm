@@ -119,7 +119,7 @@ sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') Arg
 
   while (my $row = $rs->next()){
     my $user = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find({dbuser_id => $row->dbuser_id()});
-    push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization(), "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Remove this User</button>"];
+    push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization(), "<button type=\"button\"class=\"btn btn-danger\" onclick=\"remove_user_from_group($group_id,".$user->dbuser_id().")\">Remove this User</button>"];
   }
 
   $c->stash->{rest} = {data => \@data};
@@ -177,18 +177,7 @@ sub add_group :Chained('/') :PathPart('rest/groups/add_group') Args(0){
     return;
   }
 
-  # my @user_table = JSON::XS->new()->decode($c->req->param("user_list"));
-  # print STDERR "Printing users to be added...".$c->req->param("user_list")."\n";
-  # print STDERR Dumper(\@user_table);
-  # my @user_list;
-
-  # my $i = 0;
-  # while ($i < length(@user_table)){
-  #   push @user_list, $user_table[$i][4];
-  #   $i = $i + 1;
-  # }
-
-  my $user_ids = $c->req->param('user_list');
+  my $user_ids = $self->clean($c->req->param('user_list'));
 
   my @user_list = split("\t", $user_ids);
 
@@ -252,8 +241,56 @@ sub update :Chained('groups') :PathPart('update') Args(0){
 
   my $group_id = $c->stash->{group_id};
 
-  #Add user ids to group table
-  #Add group id to users that are now in the group
+  print STDERR "Attempting to update a group...\n";
+
+  #Add user ids to user_group table
+  #make sure to check if that user is already in the group
+
+  my $user_ids = $self->clean($c->req->param('user_list'));
+
+  my @user_list = split("\t", $user_ids);
+
+  foreach my $user_id (@user_list){
+    my $exists = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->find({dbuser_id => $user_id, dbgroup_id => $group_id});
+    next if($exists);
+
+    my $row = {
+      dbuser_id => $user_id,
+      dbgroup_id => $group_id
+    };
+
+    my $new = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->new($row);
+    $new->insert();
+  }
+
+  if ($@){
+    $c->stash->{rest} = { error => "Sorry, an error occurred adding users to the group ($@)" };
+  } else {
+    $c->stash->{rest} = {success => "Successfully added users to the group."};
+  }
+}
+
+sub remove_user :Chained('groups') :PathPart('remove_user') Args(1){
+  my $self = shift;
+  my $c = shift;
+  my $user_id = shift;
+
+  my $group_id = $c->stash->{group_id};
+
+  my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->find({dbuser_id => $user_id, dbgroup_id => $group_id});
+
+  if (!$row){
+    $c->stash->{rest} = {error=> "This user is not in this group!"};
+    return;
+  }
+
+  $row->delete();
+
+  if ($@){
+    $c->stash->{rest} = {error => "Sorry, an error occurred removing the user. ($@)"};
+  } else {
+    $c->stash->{rest} = {success => 1};
+  }
 }
 
 sub delete :Chained('groups') :PathPart('delete') Args(0){
@@ -284,8 +321,14 @@ sub delete :Chained('groups') :PathPart('delete') Args(0){
     };
 
     if ($@) {
-	      $c->stash->{rest} = { error => "Sorry, an error occurred deleting the group." };
+	      $c->stash->{rest} = { error => "Sorry, an error occurred deleting the group. ($@)" };
 	       return;
     }
+  }
+
+  if ($@){
+    $c->stash->{rest} = {error => "Sorry, an error occurred deleting the group. ($@)"};
+  } else {
+    $c->stash->{rest} = {success => 1};
   }
 }

@@ -244,9 +244,9 @@ function submit_new_group(){
 
 function submit_add_users(group_id){
   $.ajax({
-    'url': '/rest/groups/update/'+group_id+'',
+    'url': '/rest/groups/'+group_id+'/update',
     data: {
-      'user_list' : $('#users_to_add_to_existing_group').DataTable().data().toArray(),
+      'user_list' : parse_user_ids($('#users_to_add_to_existing_group').DataTable().data().toArray()),
     },
     success: function(r){
       if (r.error){alert (r.error);}
@@ -255,6 +255,7 @@ function submit_add_users(group_id){
         $('#users_to_add_to_existing_group').DataTable().destroy();
         $('#select_users_for_existing_group').DataTable().destroy();
         initialize_add_users_to_group_modal();
+        location.reload();
       }
     },
     error: function(r){
@@ -263,7 +264,24 @@ function submit_add_users(group_id){
   });
 }
 
-function remove_user_from_group(group_id){
+function remove_user_from_group(group_id, user_id){
+  var yes = confirm("Are you sure you want to remove this user from the group?");
+  if (yes){
+    $.ajax({
+      url: '/rest/groups/'+group_id+'/remove_user/'+user_id,
+      success: function(r){
+        if (r.error){
+          alert(r.error);
+        }else{
+          alert("Removed user.");
+          location.reload();
+        }
+      },
+      error: function(r){
+        alert("Sorry, an error occurred. "+r.responseText);
+      }
+    });
+  }
 
 }
 

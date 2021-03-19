@@ -104,7 +104,7 @@
         <div id="add_users_to_group_modal_body" name="add_users_to_group_modal_body">
           <table>
             <tr>
-              <button id="submit_group_member_additions" disabled type="button" class="btn btn-primary">Submit Additions</button>
+              <button id="submit_group_member_additions" type="button" class="btn btn-primary" onclick="submit_add_users($('#select_group_users').val())">Submit Additions</button>
             </tr>
             <p>&nbsp;</p>
             <tr>
