@@ -80,13 +80,6 @@ sub list_groups :Chained('/') :PathPart('rest/groups/list_groups') {
     $html .= "<option value=$group_id>$group_name</option>";
   }
 
-  # push @data, ["Schroeder Lab", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Delete this Group</button>"];
-  # push @data, ["Jander Lab", "<button type=\"button\"class=\"btn btn-danger\" disabled onclick=\"\">Delete this Group</button>"];
-  #
-  # my $html ="<option value=0 selected=\"selected\"><i>Select Group to Display</i></option>
-  #           <option value=1>Schroeder Lab</option>
-  #           <option value=2>Jander Lab</option>";
-
   $c->stash->{rest} = {data => \@data, html => $html};
 
 }
@@ -301,6 +294,23 @@ sub delete :Chained('groups') :PathPart('delete') Args(0){
 
   print STDERR "Deleting group...\n";
 
+  my $smid_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search({dbgroup_id => $group_id});
+  while (my $smid = $smid_rs->next()){
+    my $data = {
+      public_status => 'private',
+      last_modified_date => 'now()',
+      dbgroup_id => undef
+    };
+    eval {
+      $smid->update($data);
+    };
+
+    if ($@) {
+        $c->stash->{rest} = { error => "Sorry, an error occurred deleting the group. ($@)" };
+         return;
+    }
+  }
+
   my $user_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $group_id});
   while (my $r = $user_rs->next()){
     $r->delete();
@@ -308,23 +318,6 @@ sub delete :Chained('groups') :PathPart('delete') Args(0){
 
   my $group_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbgroup")->find({dbgroup_id => $group_id});
   $group_rs->delete();
-
-  my $smid_rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->search({dbgroup_id => $group_id});
-  while (my $smid = $smid_rs->next()){
-    my $data = {
-      public_status => 'private',
-      last_modified_date => 'now()',
-    };
-
-    eval {
-      $smid->update($data);
-    };
-
-    if ($@) {
-	      $c->stash->{rest} = { error => "Sorry, an error occurred deleting the group. ($@)" };
-	       return;
-    }
-  }
 
   if ($@){
     $c->stash->{rest} = {error => "Sorry, an error occurred deleting the group. ($@)"};

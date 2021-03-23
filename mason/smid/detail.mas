@@ -67,6 +67,7 @@ $login_user => undef
        <label for="public_status_manipulate">Change Visibility:</label>
        <select id="public_status_manipulate" name="public_status_manipulate" onchange="change_public_status(<% $compound_id %>, $('#public_status_manipulate').val());">
          <option value="public">Public</option>
+         <option value="protected">Protected</option>
          <option value="private">Private</option>
        </select>
      </div>
@@ -551,6 +552,27 @@ m/z        Intensity              Relative
   </div>
 </div>
 
+<!-- Select Group for protected status modal -->
+<div id="select_group_for_protected_status_modal" class="modal">
+  <div class="modal-body">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Select Group</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span>When a smid is marked as <i>protected</i>, it is only accessible to curators and group members. Please select a group for this SMID to belong to.</span>
+        <p></p>
+        <select id="select_group" class="display">
+        </select>
+        <p></p>
+        <button id="submit_protected" type="button" class="btn btn-primary" onclick="submit_protected(<% $compound_id %>, $('#select_group').val())">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div style="height:30px">
 </div>

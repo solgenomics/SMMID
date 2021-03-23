@@ -6,8 +6,10 @@ use Moose;
 #first parameter should be $c->user(), second parameter should be an object encapsulating the smid
 sub can_view_smid {
 
-  my $user = shift;
+  my $c = shift;
   my $smid = shift;
+
+  my $user = $c->user();
 
   if($smid->public_status() eq "public"){return 1;}
 
@@ -22,12 +24,13 @@ sub can_view_smid {
     if ($user->dbuser_id() == $smid->dbuser_id()){
       return 1;
     }
-    my @group_ids = $user->get_object()->group_ids();
-    while (my $group_id = @group_ids->next()){
-      if ($group_id == $smid->group_id()){
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $smid->dbgroup_id()});
+    while(my $r = $rs->next()){
+      if($user->dbuser_id() == $r->dbuser_id()){
         return 1;
       }
     }
+    return 0;
   }
 
   if(!$user && $smid->public_status() eq "private"){return 0;}
@@ -52,8 +55,14 @@ sub can_view_smid {
 
 #First parameter should be $c->user(), second parameter should be the smid
 sub can_edit_smid {
-  my $user = shift;
+  my $c = shift;
   my $smid = shift;
+
+  my $user = $c->user();
+
+  if(!$smid->public_status()){
+    return 0;
+  }
 
   if($smid->public_status() eq "private"){
     if (!$user || ( $user->dbuser_id() != $smid->dbuser_id() && $user->get_object()->user_type() ne "curator") ) {
@@ -74,9 +83,10 @@ sub can_edit_smid {
       return 1;
     }
     #They have permission if they are part of the group managing this smid
-    my @group_ids = $user->get_object()->group_ids();
-    while (my $group_id = @group_ids->next()){
-      if ($group_id == $smid->group_id()){
+    #Add search to see if the user is in the group that manages this smid
+    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $smid->dbgroup_id()});
+    while(my $r = $rs->next()){
+      if($user->dbuser_id() == $r->dbuser_id()){
         return 1;
       }
     }

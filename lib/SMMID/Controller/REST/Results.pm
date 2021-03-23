@@ -98,7 +98,7 @@ sub experiment :Chained('/') :PathPart('rest/experiment') CaptureArgs(1) {
     my $experiment = $c->model('SMIDDB')->resultset("SMIDDB::Result::Experiment")->find( { experiment_id => $experiment_id } );
     my $smid = $c->model("SMIDDB")->resultset('SMIDDB::Result::Compound')->find({compound_id => $experiment->compound_id()});
 
-    if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $smid)) {
+    if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $smid)) {
       $c->stash->{rest} = {error => "You do not have permission to view this experiment!"};
       return;
     }

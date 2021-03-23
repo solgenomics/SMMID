@@ -191,6 +191,7 @@ function update_smid() {
 	    'organisms': $('#organisms').val(),
 	    'description': $('#description').val(),
 	    'synonyms': $('#synonyms').val(),
+      'public_status': 'private'
 	    //'input_image_file_upload' : $('input_image_file_upload').val(),
 
 	}
@@ -642,36 +643,70 @@ function display_msms_visual_smid(experiment_id){
 
 function change_public_status(compound_id, new_status){
 
-  // if (new_status == 'protected'){
-  //   select_group_for_smid(compound_id).then();
-  // }
+  if (new_status == 'protected'){
+    populate_group_select_modal(compound_id);
+  } else {
+    $.ajax({
+      url: '/rest/smid/'+compound_id+'/change_public_status',
+      data: {
+        'public_status' : new_status
+      },
+      success: function(r){
+        if(r.error) {alert(r.error);}
+        else{
+          alert(r.message);
+          location.reload();
+        }
+      },
+      error: function(r){
+        alert("An error occurred."+r.responseText);
+      }
+    });
+  }
+}
+
+
+function populate_group_select_modal(compound_id){
+  $.ajax({
+    url: '/rest/smid/'+compound_id+'/list_groups',
+    success: function(r){
+      if (r.error){
+        alert(r.error);
+      } else {
+        $('#select_group').html(r.html);
+        $('#select_group_for_protected_status_modal').modal("show");
+      }
+    },
+    error: function(r){
+      alert("Sorry, an error occurred: "+r.responseText);
+      location.reload();
+    }
+  });
+}
+
+function submit_protected(compound_id, group_id){
+
+  if (group_id == 0){
+    return;
+  }
 
   $.ajax({
-    url: '/rest/smid/'+compound_id+'/change_public_status',
+    url:'/rest/smid/'+compound_id+'/change_public_status',
     data: {
-      'public_status' : new_status
+      public_status : 'protected',
+      dbgroup_id : group_id
     },
     success: function(r){
-      if(r.error) {alert(r.error);}
-      else{
-        alert(r.message);
+      if (r.error){
+        alert(r.error);
+      } else {
+        alert("Successfully update the visibility of this smid and assigned a managment group.");
         location.reload();
       }
     },
     error: function(r){
-      alert("An error occurred."+r.responseText);
+      alert("Sorry, an error occurred: "+r.responseText);
+      location.reload();
     }
-  })
-}
-
-function select_group_for_smid(compound_id){
-  //open group select modal
-  //populate it with data (do this only when it is opened so that backend checks if it is permissible)
-  //Gather group id data - let user choose which group the smid will apply to given list of their groups
-  //return as a promise
-}
-
-function populate_group_select_modal(){
-  //do an ajax call for the groups of the current user and then use them to populate the group select modal
-  //This function should not run if the user is not logged in or does not have permission 
+  });
 }
