@@ -4,6 +4,7 @@ package SMMID::Controller::Search;
 use Moose;
 use Data::Dumper;
 use JSON::XS;
+use SMMID::Authentication::ViewPermission;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -17,7 +18,7 @@ sub search : Path('/search') Args(0) {
 sub search_results :Path('/search/results') Args(0) {
     my $self = shift;
     my $c = shift;
-	
+
     my $search_term = $c->req->param("term");
     my $smid_id = $c->req->param("smid_id");
     my $formula = $c->req->param("formula");
@@ -31,7 +32,7 @@ sub search_results :Path('/search/results') Args(0) {
     if ($search_term) { # simple search
 	print STDERR "Searching simple search with search term '$search_term'\n";
 	$rs = $c->model('SMIDDB')->resultset("SMIDDB::Result::Compound")->search( { -or => [ smid_id => { ilike => '%'.$search_term.'%' }, formula => { ilike => '%'.$search_term.'%'}, smiles => { ilike => '%'.$search_term.'%' } ] } );
-	
+
     }
     else {
 	print STDERR "Complex search...\n";
@@ -39,10 +40,10 @@ sub search_results :Path('/search/results') Args(0) {
 
 	print STDERR "Currently matched ".$rs->count()." smids...\n";
 
-	if ($smid_id) { 
+	if ($smid_id) {
 	    $rs = $rs->search( { smid_id => { ilike => '%'.$smid_id.'%' }} );
 	    print STDERR "With parameter smid_id = $smid_id matched ".$rs->count()." smids...\n";
-	    
+
 	}
 	if ($formula) {
 	    $rs = $rs->search( { formula => { ilike => '%'.$formula.'%'} });
@@ -59,17 +60,18 @@ sub search_results :Path('/search/results') Args(0) {
 	    $rs = $rs->search(
 		{ -and => [ molecular_weight => { '>' =>  ($molecular_weight - $molecular_weight_range) },
 			    molecular_weight => { '<' => ($molecular_weight + $molecular_weight_range) } ] }  );
-	    print STDERR "after MW currently matched ".$rs->count()." smids...\n";    
+	    print STDERR "after MW currently matched ".$rs->count()." smids...\n";
 	}
-	
+
 	if ($retention_time) {
 
 
 	}
     }
-	
+
     my @results;
     while (my $row = $rs->next()) {
+      next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $row, $c->model("SMIDDB")));
 	my $compound_id = $row->compound_id();
 	my $smid_id = $row->smid_id();
 	my $formula = $row->formula();
@@ -79,14 +81,14 @@ sub search_results :Path('/search/results') Args(0) {
 	push @results, [ $smid_link, $formula, $smiles ];
 
     }
-    
+
 
     #print STDERR Dumper(\@results);
-  
+
     $c->stash->{data} = encode_json(\@results);
 
     #print STDERR "JSON: ".$c->stash->{data}."\n";
-    
+
     $c->stash->{template} = '/search/results.mas';
 
 }
