@@ -77,7 +77,7 @@ Many pheromones in <i>C. elegans</i> belong to a class of glycosides known as <b
 	     <div id="image_example1"></div>
 	   </center>
 	   
-	   <& /image/embed_image.mas, image_id => 8, size => "small", div => 'image_example1' &>
+	   <& /image/embed_image.mas, image_id => 317, size => "small", div => 'image_example1' &>
   
   <li><a href="/detail/ascr%234/"<b>ascr#4</b></a>:"nematone-1" or "5R-(3'-O-beta-D-glucosyl-tetrahydro-3'R,5'R-dihydroxy-6'Smethyl-2H-pyran-2'R-yloxy)-2-hexanone" </li>
 	 
@@ -87,7 +87,7 @@ Many pheromones in <i>C. elegans</i> belong to a class of glycosides known as <b
 	   <div id="image_example2"></div>
 	   </center>
 	   
-	   <& /image/embed_image.mas, image_id => 50, size => "small", div=>"image_example2"  &>
+	   <& /image/embed_image.mas, image_id => 318, size => "small", div=>"image_example2"  &>
   
 </ul>
 
