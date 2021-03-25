@@ -404,6 +404,12 @@ function populate_smid_data(compound_id) {
 		$('#organisms').val(r.data.organisms);
 		$('#organisms_input_div').css('visibility', 'hidden');
 
+    if (r.data.edit_permission == 1){
+      $('#public_status_manipulate').prop('value', r.data.public_status);
+    } else {
+      $('#change_public_status').prop('style', "display: none;");
+    }
+
 
 		has_login().then( function(p){
 		    if(p.user !== null && p.role == "curator"){
@@ -419,12 +425,6 @@ function populate_smid_data(compound_id) {
           $('#request_review_button').prop('disabled', true);
         }
 
-		    if (p.user !== null && (p.user == r.data.dbuser_id || p.role == "curator")) {
-			$('#public_status_manipulate').prop('value', r.data.public_status);
-		    } else {
-			$('#change_public_status').prop('style', "display: none;");
-			//$('#public_status_manipulate').prop('style', "display: none;");
-		    }
 
 		    $('#add_hplc_ms_button').click( function(event) {
 			event.preventDefault();

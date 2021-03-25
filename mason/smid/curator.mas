@@ -19,6 +19,29 @@
   <table id="browse_c_smid_data_div" style="width:100%" class="display"></table>
 </p>
 
+<!-- Select Group for protected status modal -->
+<div id="select_group_for_protected_status_modal" class="modal">
+  <div class="modal-body">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Select Group</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span>When a smid is marked as <i>protected</i>, it is only accessible to curators and group members. Please select a group for this SMID to belong to.</span>
+        <p></p>
+        <select id="select_group" class="display">
+        </select>
+        <p></p>
+        <div id="submit_protected"></div>
+        <!-- <button id="submit_protected_button" type="button" class="btn btn-primary">Submit</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   $(document).ready( function() {
 

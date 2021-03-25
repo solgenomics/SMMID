@@ -6,10 +6,11 @@ use Moose;
 #first parameter should be $c->user(), second parameter should be an object encapsulating the smid
 sub can_view_smid {
 
-  my $c = shift;
+  my $user = shift;
   my $smid = shift;
+  my $schema = shift;
 
-  my $user = $c->user();
+  #my $user = $c->user();
 
   if($smid->public_status() eq "public"){return 1;}
 
@@ -24,7 +25,7 @@ sub can_view_smid {
     if ($user->dbuser_id() == $smid->dbuser_id()){
       return 1;
     }
-    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $smid->dbgroup_id()});
+    my $rs = $schema->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $smid->dbgroup_id()});
     while(my $r = $rs->next()){
       if($user->dbuser_id() == $r->dbuser_id()){
         return 1;
@@ -55,10 +56,11 @@ sub can_view_smid {
 
 #First parameter should be $c->user(), second parameter should be the smid
 sub can_edit_smid {
-  my $c = shift;
+  my $user = shift;
   my $smid = shift;
+  my $schema = shift;
 
-  my $user = $c->user();
+  #my $user = $c->user();
 
   if(!$smid->public_status()){
     return 0;
@@ -84,7 +86,7 @@ sub can_edit_smid {
     }
     #They have permission if they are part of the group managing this smid
     #Add search to see if the user is in the group that manages this smid
-    my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $smid->dbgroup_id()});
+    my $rs = $schema->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $smid->dbgroup_id()});
     while(my $r = $rs->next()){
       if($user->dbuser_id() == $r->dbuser_id()){
         return 1;

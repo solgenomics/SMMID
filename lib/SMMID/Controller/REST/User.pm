@@ -688,7 +688,7 @@ sub authored_smids :Chained('user') :PathPart('authored_smids') Args(0){
   my @data;
   while (my $r = $rs->next()){
 
-    next if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $r));
+    next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $r, $c->model("SMIDDB")));
 
     push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status(), $r->public_status() ];
   }
@@ -709,7 +709,7 @@ sub authored_experiments :Chained('user') :PathPart('authored_experiments') Args
 
   while (my $r = $rs->next()){
 
-    next if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $r->compound()));
+    next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $r->compound(), $c->model("SMIDDB")));
 
     my $experiment_type;
     if ($r->experiment_type() eq "hplc_ms"){
@@ -847,7 +847,7 @@ sub group_data :Chained('user') :PathPart('group_data') Args(0){
 
     my @smid_list;
     while(my $smid = $smids->next()){
-      next if (!SMMID::Authentication::ViewPermission::can_view_smid($c, $smid));
+      next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $smid, $c->model("SMIDDB")));
       push @smid_list, "<a href=\"/smid/".$smid->compound_id()."\" >".$smid->smid_id()."</a>";
     }
     my $smid_string = join(", ", @smid_list);
