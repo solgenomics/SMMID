@@ -46,24 +46,31 @@ $login_user => undef
    </td>
 
    <td>
-     <button name="request_review_button" id="request_review_button"  class="btn btn-primary" disabled onclick="mark_smid_for_review(<% $compound_id %>)">Request a review of this SMID</button>
+      <button name="request_review_button" id="request_review_button" disabled class="btn btn-primary" onclick="mark_smid_for_review(<% $compound_id %>)">Request a review of this SMID</button>
    </td>
 
-   <td id="change_curation_status">Change Curation Status:
-     <select id="curation_status_manipulate" name="curation_status_manipulate" onchange="change_curation_status(<% $compound_id %>, $('#curation_status_manipulate').val());">
-       <option id="change_curation_verified" value="curated">Verified</option>
-       <option id="change_curation_review" value="review">Review</option>
-       <option id="change_curation_unverified" value="unverified">Unverified</option>
-     </select>
+   <td>
+     <div id="change_curation_status">
+       <label for="curation_status_manipulate">Change Curation Status:</label>
+       <select id="curation_status_manipulate" name="curation_status_manipulate" onchange="change_curation_status(<% $compound_id %>, $('#curation_status_manipulate').val());">
+         <option value="curated">Verified</option>
+         <option value="review">Review</option>
+         <option value="unverified">Unverified</option>
+       </select>
+     </div>
    </td>
 
 
 
-   <td id="change_public_status">Change Visibility:
-     <select id="public_status_manipulate" name="public_status_manipulate" onchange="change_public_status(<% $compound_id %>, $('#public_status_manipulate').val());">
-       <option value="public">Public</option>
-       <option value="private">Private</option>
-     </select>
+   <td>
+     <div id="change_public_status">
+       <label for="public_status_manipulate">Change Visibility:</label>
+       <select id="public_status_manipulate" name="public_status_manipulate" onchange="change_public_status(<% $compound_id %>, $('#public_status_manipulate').val());">
+         <option value="public">Public</option>
+         <option value="protected">Protected</option>
+         <option value="private">Private</option>
+       </select>
+     </div>
    </td>
 % if ($action eq "edit") {
           <td><button id="cancel_edit" class="btn btn-primary">Cancel Edit</button>
@@ -545,6 +552,27 @@ m/z        Intensity              Relative
   </div>
 </div>
 
+<!-- Select Group for protected status modal -->
+<div id="select_group_for_protected_status_modal" class="modal">
+  <div class="modal-body">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Select Group</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span>When a smid is marked as <i>protected</i>, it is only accessible to curators and group members. Please select a group for this SMID to belong to.</span>
+        <p></p>
+        <select id="select_group" class="display">
+        </select>
+        <p></p>
+        <button id="submit_protected" type="button" class="btn btn-primary" onclick="submit_protected(<% $compound_id %>, $('#select_group').val())">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div style="height:30px">
 </div>

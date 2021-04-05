@@ -6,7 +6,7 @@ function make_fields_editable(compound_id) {
 	    $('#smid_id').prop('disabled', false);
 	    $('#smiles_string').prop('disabled', false);
 	    $('#curation_status').prop("value", "review");
-	    $('#request_review_button').prop('visible', false);
+	    $('#request_review').prop('visibility', 'visible');
 	    $('#formula_input_div').show();
 	    $('#formula_static_div').hide();
 	    $('#formula').prop('disabled', false);
@@ -191,6 +191,7 @@ function update_smid() {
 	    'organisms': $('#organisms').val(),
 	    'description': $('#description').val(),
 	    'synonyms': $('#synonyms').val(),
+      'public_status': 'private'
 	    //'input_image_file_upload' : $('input_image_file_upload').val(),
 
 	}
@@ -403,22 +404,27 @@ function populate_smid_data(compound_id) {
 		$('#organisms').val(r.data.organisms);
 		$('#organisms_input_div').css('visibility', 'hidden');
 
+    if (r.data.edit_permission == 1){
+      $('#public_status_manipulate').prop('value', r.data.public_status);
+    } else {
+      $('#change_public_status').prop('style', "display: none;");
+    }
+
 
 		has_login().then( function(p){
 		    if(p.user !== null && p.role == "curator"){
 			$('#curation_status_manipulate').prop('value', r.data.curation_status);
 		    } else {
-			$('#curation_status_manipulate').prop('style', "display: none;");
-      $('#change_curation_status').prop('style', "display: none;");
+			//$('#curation_status_manipulate').prop('style', "display: none;");
+      $('#change_curation_status').prop('style', "display: none;")
 		    }
 
+        if(p.user !== null && r.data.curation_status == "curated"){
+          $('#request_review_button').prop('disabled', false);
+        } else {
+          $('#request_review_button').prop('disabled', true);
+        }
 
-		    if (p.user !== null && (p.user == r.data.dbuser_id || p.role == "curator")) {
-			$('#public_status_manipulate').prop('value', r.data.public_status);
-		    } else {
-			$('#change_public_status').prop('style', "display: none;");
-			$('#public_status_manipulate').prop('style', "display: none;");
-		    }
 
 		    $('#add_hplc_ms_button').click( function(event) {
 			event.preventDefault();
@@ -492,10 +498,6 @@ function populate_smid_data(compound_id) {
 		$('#curation_status').html(curation_status_html);
 
 		$('#doi').val(r.data.doi);
-
-		if(r.data.curation_status == "" || r.data.curation_status == "unverified" || r.data.curation_status == "review"){
-		    $('#request_review_button').prop('style', "display:none");
-		} else {$('#request_review_button').prop('disabled', false);}
 
 		$('#formula_static_div').css('visibility', 'visible');
 		var formula = r.data.formula;
@@ -583,6 +585,7 @@ function mark_smid_for_review(compound_id){
         alert(r.message);
         $('#curation_status').html("Marked for Review");
         $('#curation_status').prop('style',"color:blue; font-size:1.5em");
+        location.reload();
       }
     }
   });
@@ -600,6 +603,7 @@ function mark_smid_unverified(compound_id){
         alert(r.message);
         $('#curation_status').html("Unverified Entry");
         $('#curation_status').prop('style',"color:red; font-size:1.5em");
+        location.reload();
       }
     }
   });
@@ -617,6 +621,7 @@ function curate_smid(compound_id){
         alert(r.message);
         $('#curation_status').html("Verified Entry");
         $('#curation_status').prop('style',"color:green; font-size:1.5em");
+        location.reload();
       }
     }
   });
@@ -637,19 +642,71 @@ function display_msms_visual_smid(experiment_id){
 }
 
 function change_public_status(compound_id, new_status){
+
+  if (new_status == 'protected'){
+    populate_group_select_modal(compound_id);
+  } else {
+    $.ajax({
+      url: '/rest/smid/'+compound_id+'/change_public_status',
+      data: {
+        'public_status' : new_status
+      },
+      success: function(r){
+        if(r.error) {alert(r.error);}
+        else{
+          alert(r.message);
+          location.reload();
+        }
+      },
+      error: function(r){
+        alert("An error occurred."+r.responseText);
+      }
+    });
+  }
+}
+
+
+function populate_group_select_modal(compound_id){
   $.ajax({
-    url: '/rest/smid/'+compound_id+'/change_public_status',
-    data: {
-      'public_status' : new_status
-    },
+    url: '/rest/smid/'+compound_id+'/list_groups',
     success: function(r){
-      if(r.error) {alert(r.error);}
-      else{
-        alert(r.message);
+      if (r.error){
+        alert(r.error);
+      } else {
+        $('#select_group').html(r.html);
+        $('#select_group_for_protected_status_modal').modal("show");
       }
     },
     error: function(r){
-      alert("An error occurred."+r.responseText);
+      alert("Sorry, an error occurred: "+r.responseText);
+      location.reload();
     }
-  })
+  });
+}
+
+function submit_protected(compound_id, group_id){
+
+  if (group_id == 0){
+    return;
+  }
+
+  $.ajax({
+    url:'/rest/smid/'+compound_id+'/change_public_status',
+    data: {
+      public_status : 'protected',
+      dbgroup_id : group_id
+    },
+    success: function(r){
+      if (r.error){
+        alert(r.error);
+      } else {
+        alert("Successfully update the visibility of this smid and assigned a managment group.");
+        location.reload();
+      }
+    },
+    error: function(r){
+      alert("Sorry, an error occurred: "+r.responseText);
+      location.reload();
+    }
+  });
 }

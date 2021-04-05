@@ -62,6 +62,8 @@ function display_msms_visual(experiment_id){
   $.ajax({
     url: "/rest/experiment/"+experiment_id+"/msms_spectrum",
     success: function(r){
+      if (r.error){alert(r.error);}
+      else{
       var rawdata = r.data;
 
       //Format data to ensure that there are no gaps between peaks
@@ -218,7 +220,10 @@ function display_msms_visual(experiment_id){
         crosshair_x.attr("d", "M"+margin.left+","+(yscale(tooltipData[tooltipIndex].y))+" L"+xscale(width-margin.right)+","+(yscale(tooltipData[tooltipIndex].y)));
         crosshair_y.attr("d", "M"+(xscale(tooltipData[tooltipIndex].x))+","+(height-margin.bottom)+"L"+(xscale(tooltipData[tooltipIndex].x))+","+(margin.top));
       });
-
     }
+  },
+  error: function(r){
+    alert("Sorry, an error occurred. "+r.responseText);
+  }
   });
 }
