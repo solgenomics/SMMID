@@ -77,7 +77,7 @@ sub list_groups :Chained('/') :PathPart('rest/groups/list_groups') {
     my $group_id = $r->dbgroup_id();
     my $group_name = $r->name();
     push @data, [$group_name, $r->description(), "<button id=\"delete_group_$group_id\" type=\"button\" class=\"btn btn-danger\" onclick=\"delete_group($group_id)\">Delete this Group</button>"];
-    $html .= "<option value=$group_id>$group_name</option>";
+    $html .= "<option id=\"group_$group_id\" value=$group_id>$group_name</option>";
   }
 
   $c->stash->{rest} = {data => \@data, html => $html};
@@ -112,7 +112,7 @@ sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') Arg
 
   while (my $row = $rs->next()){
     my $user = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find({dbuser_id => $row->dbuser_id()});
-    push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization(), "<button type=\"button\"class=\"btn btn-danger\" onclick=\"remove_user_from_group($group_id,".$user->dbuser_id().")\">Remove this User</button>"];
+    push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization(), "<button type=\"button\" id=\"remove_user".$user->dbuser_id()."\" class=\"btn btn-danger\" onclick=\"remove_user_from_group($group_id,".$user->dbuser_id().")\">Remove this User</button>"];
   }
 
   $c->stash->{rest} = {data => \@data};
