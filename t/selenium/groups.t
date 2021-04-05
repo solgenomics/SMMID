@@ -59,3 +59,16 @@ sleep(1);
 
 $t->body_text_contains("John Doe");
 $t->body_text_contains("Jane Doe");
+
+$t->mouse_move_to_location({element => "remove_user_1"});
+$t->find_element('remove_user_1', 'id')->click();
+$t->accept_alert_ok();
+sleep(1);
+
+$t->mouse_move_to_location({element => "select_group_users"});
+$t->find_element('select_group_users', 'id')->click();
+$t->mouse_move_to_location({element=>"group_1"});
+$t->find_element('group_1', 'id')->click();
+sleep(1);
+
+$t->body_text_lacks("John Doe");
