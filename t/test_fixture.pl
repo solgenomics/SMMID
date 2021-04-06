@@ -180,6 +180,7 @@ $row = $schema->resultset("SMIDDB::Result::Dbuser")->create(
 	user_type => "curator"
     });
 
+print STDERR "Adding user Another User...\n";
 $row = $schema->resultset("SMIDDB::Result::Dbuser")->create(
     {
 	first_name => "Another",

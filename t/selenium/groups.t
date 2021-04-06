@@ -51,6 +51,9 @@ $submit_new_group->click();
 $t->accept_alert_ok();
 sleep(2);
 
+$t->body_text_contains("Test Group");
+sleep(1);
+
 $t->mouse_move_to_location({element => "select_group_users"});
 $t->find_element('select_group_users', 'id')->click();
 $t->mouse_move_to_location({element=>"group_1"});
@@ -72,3 +75,41 @@ $t->find_element('group_1', 'id')->click();
 sleep(1);
 
 $t->body_text_lacks("John Doe");
+sleep(1);
+
+$t->mouse_move_to_location({element => "delete_group_1"});
+$t->find_element("delete_group_1", "id")->click();
+sleep(1);
+
+$t->body_text_lacks("Delete this Group");
+sleep(1);
+
+$t->mouse_move_to_location({element => "add_group_button"});
+my $new_group_button = $t->find_element('add_group_button', 'id');
+$new_group_button->click();
+sleep(1);
+
+$t->mouse_move_to_location({element => "select_user_1"});
+my $push_user_1 = $t->find_element('select_user_1', 'id');
+$push_user_1->click();
+sleep(1);
+
+$t->mouse_move_to_location({element => "select_user_2"});
+my $push_user_2 = $t->find_element('select_user_2', 'id');
+$push_user_2->click();
+sleep(1);
+
+my $group_name = $t->find_element('new_group_name','id');
+$group_name->send_keys('Test Group 2');
+
+$t->mouse_move_to_location({element => "submit_new_group"});
+my $submit_new_group = $t->find_element('submit_new_group', 'id');
+$submit_new_group->click();
+$t->accept_alert_ok();
+sleep(2);
+
+$t->get_ok('/user/2/profile');
+sleep(1);
+$t->body_text_contains("Test Group 2");
+$t->body_text_contains("John Doe");
+sleep(1);
