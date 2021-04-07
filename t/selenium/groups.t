@@ -113,3 +113,31 @@ sleep(1);
 $t->body_text_contains("Test Group 2");
 $t->body_text_contains("John Doe");
 sleep(1);
+
+$t->get_ok('/');
+$t->logout();
+sleep(1);
+$t->login_user();
+sleep(1);
+$t->get_ok('/browse');
+sleep(1);
+$t->body_text_lacks("earth#0002");
+
+$t->get_ok('/curator');
+sleep(1);
+$t->mouse_move_to_location({element=>'change_public_status_2'});
+my $make_protected = $t->find_element('change_public_status_2', 'id');
+$make_protected->click();
+sleep(1);
+$t->mouse_move_to_location({element => "select_group"});
+$t->find_element('select_group', 'id')->click();
+$t->mouse_move_to_location({element => "group_2"});
+$t->find_element('group2', 'id')->click();
+sleep(1);
+$t->mouse_move_to_location({element=>'submit_protected_button'});
+$t->find_element('submit_protected_button', 'id')->click();
+sleep(1);
+$t->body_text_contains("protected");
+
+$t->logout();
+done_testing();
