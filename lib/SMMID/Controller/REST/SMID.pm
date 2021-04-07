@@ -7,6 +7,7 @@ use Chemistry::Mol;
 use Chemistry::File::SMILES;
 use JSON::XS;
 use Chemistry::MolecularMass;
+use SMMID::Authentication::ViewPermission;
 
 BEGIN { extends 'Catalyst::Controller::REST' };
 
@@ -45,7 +46,7 @@ sub browse :Chained('rest') PathPart('browse') Args(0) {
     my @data;
     while (my $r = $rs->next()) {
 
-      next if (!$self->has_view_permission($c, $r));
+      next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $r, $c->model("SMIDDB")));
 
       my $cur_char = "<p style=\"color:green\"><b>\x{2713}</b></p>";
       if(!defined($r->curation_status()) || $r->curation_status() eq "unverified"){$cur_char = "<p style=\"color:red\">Unverified</p>";}
@@ -106,7 +107,10 @@ return;
       $cur_button = "<button id=\"curate_".$r->compound_id()."\" onclick=\"curate_smid(".$r->compound_id().")\" type=\"button\" class=\"btn btn-primary\" $disabled>$advice</button>";
     }
 
-    my $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'public\' )\" type=\"button\" class=\"btn btn-primary\">Make Public</button>";
+    my $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'protected\' )\" type=\"button\" class=\"btn btn-primary\">Make Protected</button>"; #Change to make protected
+    if ($r->public_status() eq "protected"){
+      $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'public\' )\" type=\"button\" class=\"btn btn-primary\">Make Public</button>";
+    }
     if ($r->public_status() eq "public"){
      $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'private\' )\" type=\"button\" class=\"btn btn-primary\">Make Private</button>";
     }
@@ -193,20 +197,6 @@ sub clean {
     $str =~ s/\<\/script\>//gi;
 
     return $str;
-}
-
-sub has_view_permission {
-  my $self = shift;
-  my $c = shift;
-  my $smid = shift;
-
-  if($smid->public_status() eq "public"){return 1;}
-
-  if(!$c->user() && $smid->public_status() eq "private"){return 0;}
-
-  if($smid->public_status() eq "private" && $c->user()->get_object()->dbuser_id() != $smid->dbuser_id() && $c->user()->get_object()->user_type() ne "curator"){return 0;}
-
-  return 1;
 }
 
 
@@ -493,23 +483,33 @@ sub mark_unverified :Chained('smid') PathPart('mark_unverified') Args(0){
     return;
 }
 
+#NOTE Change to accomodate private status. Check for a group id parameter as well so that protected status can be handled
 sub change_public_status :Chained('smid') PathPart('change_public_status') Args(0){
   my $self = shift;
   my $c = shift;
 
-  if (! $c->user() ) {
-      $c->stash->{rest} = { error => "Author or curator login required to change the visibility of this smid." };
+
+  my $compound_id = $c->stash->{compound_id};
+
+  my $smid = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find({compound_id => $compound_id});
+
+  if (!SMMID::Authentication::ViewPermission::can_edit_smid($c->user(), $smid, $c->model("SMIDDB"))) {
+      $c->stash->{rest} = { error => "You do not have the permission required to change the visibility of this smid." };
       return;
   }
 
   my $public_status = $self->clean($c->req->param("public_status"));
+  my $group_id = $self->clean($c->req->param("dbgroup_id"));
 
-  if($public_status ne "public" && $public_status ne "private"){
-    $c->stash->{rest} = { error => "Invalid. New status must be \"public\" or \"private\"." };
+  if($public_status ne "public" && $public_status ne "private" && $public_status ne "protected"){
+    $c->stash->{rest} = { error => "Invalid. New status must be \"public,\" \"protected,\" or \"private\"." };
     return;
   }
 
-  my $compound_id = $c->stash->{compound_id};
+  if ($public_status eq "protected" && !$group_id){
+    $c->stash->{rest} = { error => "Protected status must be associated with a specific work group." };
+    return;
+  }
 
   my $row = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find( { compound_id => $compound_id} );
 
@@ -518,19 +518,27 @@ sub change_public_status :Chained('smid') PathPart('change_public_status') Args(
     return;
   }
 
-  #In future, this line should be modified to allow changes to be made by a team member. Collect the public_status from the row, then
-  #use that to determine if user_id or team_id should be checked.
-  if ($c->user()->get_object()->dbuser_id() != $row->dbuser_id() && $c->user()->get_object()->user_type() ne "curator"){
-    $c->stash->{rest} = { error => "Only author or curator may change the visibility of this smid." };
+  if (!SMMID::Authentication::ViewPermission::can_edit_smid($c->user(), $row, $c->model("SMIDDB"))){
+    $c->stash->{rest} = { error => "You do not have permission to alter the visibility of this smid." };
     return;
   }
 
   my $smid_id = $row->smid_id();
 
-  my $data={
-    public_status => $public_status,
-    last_modified_date => 'now()',
-  };
+  my $data;
+
+  if ($public_status eq "protected"){
+    $data={
+      public_status => $public_status,
+      last_modified_date => 'now()',
+      dbgroup_id => $group_id
+    };
+  } else {
+    $data={
+      public_status => $public_status,
+      last_modified_date => 'now()',
+    };
+  }
 
   eval {
     $row->update($data);
@@ -570,8 +578,8 @@ sub update :Chained('smid') PathPart('update') Args(0) {
      my $smid_owner_id = $smid_row->dbuser_id();
 
 
-     if ( ($user_id != $smid_owner_id) && ($c->user->get_object()->user_type() ne "curator") )  {
-	 $c->stash->{rest} = { error => "The SMID with id $compound_id is (owned by $smid_owner_id) not owned by you ($user_id) and you cannot modify it." };
+     if ( !SMMID::Authentication::ViewPermission::can_edit_smid($c->user(), $smid_row, $c->model("SMIDDB")) )  {
+	 $c->stash->{rest} = { error => "You do not have permission to modify the SMID with id $compound_id." };
 	 return;
      }
 
@@ -664,7 +672,7 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
 	return;
     }
 
-    if (!$self->has_view_permission($c, $s)){
+    if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $s, $c->model("SMIDDB"))){
       $c->stash->{rest} = {error => "This smid is private, and you do not have permission to view it."};
       return;
     }
@@ -687,6 +695,8 @@ sub detail :Chained('smid') PathPart('details') Args(0) {
     $data->{molecular_weight} = $s->molecular_weight();
     $data->{dbuser_id} = $s->dbuser_id();
     $data->{public_status} = $s->public_status();
+    $data->{view_permission} = SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $s, $c->model("SMIDDB"));
+    $data->{edit_permission} = SMMID::Authentication::ViewPermission::can_edit_smid($c->user(), $s, $c->model("SMIDDB"));
 
     if (! $s->dbuser()) {
 	$data->{author} = "unknown";
@@ -820,6 +830,31 @@ sub compound_images :Chained('smid') PathPart('images') Args(1) {
     }
     print STDERR "returning images for compound ".$c->stash->{compound_id} ." with size $size.\n";
     $c->stash->{rest} = { html => \@source_tags };
+}
+
+sub list_groups :Chained('smid') :PathPart('list_groups') Args(0){
+  my $self = shift;
+  my $c = shift;
+
+  my $compound_id = $c->stash->{compound_id};
+  my $smid = $c->model("SMIDDB")->resultset("SMIDDB::Result::Compound")->find({compound_id => $compound_id});
+
+  if (!SMMID::Authentication::ViewPermission::can_edit_smid($c->user(), $smid, $c->model("SMIDDB"))){
+    $c->stash->{rest} = {error => "Sorry, you do not have permission to edit this smid."};
+    return;
+  }
+
+  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbuser_id => $c->user()->get_object()->dbuser_id()});
+
+  my $html = "<option value=0 selected=\"selected\">Select Group:</option>";
+  while(my $r = $rs->next()){
+    my $group_id = $r->dbgroup_id();
+    my $group = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbgroup")->find({dbgroup_id => $group_id});
+    my $group_name = $group->name();
+    $html .= "<option value=$group_id >$group_name</option>";
+  }
+
+  $c->stash->{rest} = {html=> $html};
 }
 
 =head1 AUTHOR

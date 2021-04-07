@@ -7,6 +7,8 @@ use JSON::XS;
 
 use Data::Dumper;
 
+use SMMID::Authentication::ViewPermission;
+
 BEGIN { extends 'Catalyst::Controller::REST' };
 
 __PACKAGE__->config(
@@ -94,6 +96,12 @@ sub experiment :Chained('/') :PathPart('rest/experiment') CaptureArgs(1) {
     my $experiment_id = shift;
 
     my $experiment = $c->model('SMIDDB')->resultset("SMIDDB::Result::Experiment")->find( { experiment_id => $experiment_id } );
+    my $smid = $c->model("SMIDDB")->resultset('SMIDDB::Result::Compound')->find({compound_id => $experiment->compound_id()});
+
+    if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $smid, $c->model("SMIDDB"))) {
+      $c->stash->{rest} = {error => "You do not have permission to view this experiment!"};
+      return;
+    }
 
     $c->stash->{experiment} = $experiment;
     $c->stash->{experiment_id} = $experiment_id;

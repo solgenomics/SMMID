@@ -3,6 +3,7 @@
 function curator_html() {
 
       $('#new_account_button').attr('style', 'display');
+      $('#go_to_group_management').attr('style', 'display');
 
       $('#browse_c_smid_data_div').DataTable({
         'ajax': 'rest/curator/datatable',
@@ -12,12 +13,12 @@ function curator_html() {
         'info': true,
         //data: r.data,
         columns: [
-          {title: "Compound ID"},
-          {title: "SMID ID"},
-          {title: "Formula"},
-          {title: "Action"},
-          {title: "Visibility"},
-          {title: "Action"},
+          {title: "Compound ID", width: "14%"},
+          {title: "SMID ID", width: "14%"},
+          {title: "Formula", width: "14%"},
+          {title: "Action", width: "14%"},
+          {title: "Visibility", width: "14%"},
+          {title: "Action", width: "14%"},
           {title: "Curation Status"}
         ]
       });
@@ -59,21 +60,72 @@ function curate_smid(compound_id){
   }
 
   function change_public_status(compound_id, new_status){
+
+    if (new_status == 'protected'){
+      populate_group_select_modal(compound_id);
+    } else {
+      $.ajax({
+        url: 'rest/smid/'+compound_id+'/change_public_status',
+        data: {
+          'public_status' : new_status,
+        },
+        error: function(r){
+          alert("Sorry, an error occurred. "+r.responseText);
+        },
+        success: function(r){
+          if(r.error) {
+            alert(r.error);
+          }
+          else{
+            $('#browse_c_smid_data_div').DataTable().ajax.reload();
+          }
+        }
+      });
+    }
+  }
+
+  function populate_group_select_modal(compound_id){
     $.ajax({
-      url: 'rest/smid/'+compound_id+'/change_public_status',
-      data: {
-        'public_status' : new_status,
+      url: '/rest/groups/list_groups',
+      success: function(r){
+        if (r.error){
+          alert(r.error);
+        } else {
+          $('#select_group').html(r.html);
+          $('#submit_protected').html("<button id=\"submit_protected_button\" type=\"button\" class=\"btn btn-primary\" onclick=\"submit_protected("+compound_id+", $('#select_group').val())\">Submit</button>")
+          $('#select_group_for_protected_status_modal').modal("show");
+        }
       },
       error: function(r){
-        alert("Sorry, an error occurred. "+r.responseText);
+        alert("Sorry, an error occurred: "+r.responseText);
+        location.reload();
+      }
+    });
+  }
+
+  function submit_protected(compound_id, group_id){
+
+    if (group_id == 0){
+      return;
+    }
+
+    $.ajax({
+      url:'/rest/smid/'+compound_id+'/change_public_status',
+      data: {
+        public_status : 'protected',
+        dbgroup_id : group_id
       },
       success: function(r){
-        if(r.error) {
+        if (r.error){
           alert(r.error);
+        } else {
+          alert("Successfully update the visibility of this smid and assigned a managment group.");
+          location.reload();
         }
-        else{
-          $('#browse_c_smid_data_div').DataTable().ajax.reload();
-        }
+      },
+      error: function(r){
+        alert("Sorry, an error occurred: "+r.responseText);
+        location.reload();
       }
     });
   }

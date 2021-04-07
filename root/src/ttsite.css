@@ -71,6 +71,8 @@ body {
   padding:0px;
   background-color:white;
   border-radius:5px;
+  height: 80vh;
+  overflow-y: auto;
 }
 
 .tooltip{
