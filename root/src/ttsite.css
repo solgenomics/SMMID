@@ -150,7 +150,7 @@ input:disabled {
     border: none;
     color: black;
     background: white;
-    font-weight: bold;
+    font-weight: normal;
 }
 
 textarea {
@@ -162,7 +162,7 @@ textarea:disabled {
     border: none;
     color: black;
     background: white;
-    font-weight: bold;
+    font-weight: normal;
 }
 
 hr {
