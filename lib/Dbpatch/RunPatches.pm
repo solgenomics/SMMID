@@ -74,8 +74,6 @@ sub run {
 	    print STDERR "Dbpatch has already been run in ".$rs->next()->run_timestamp()."\n";
 	}
     };
-
-    print STDERR "ERROR: $@\n";
     
     if (defined($@) && $@ =~ m/does not exist/) {
 	print STDERR "$@ ... Inserting dbpatch table...\n";
@@ -85,9 +83,7 @@ sub run {
 	die "Can't continue: $@\n";
     }
 
-    print STDERR "LIST : ".$self->list()."\n";
     if ($self->list()) {
-	print STDERR "LIST HERE...\n";
 	$self->list_installed_dbpatches();
 	exit();
     }
@@ -100,34 +96,10 @@ sub run {
 	exit();
     }
 
-     if ($self->update()) {
+    if ($self->update()) {
 	$self->run_all_patches();
 	exit();
     }
-
-
-
-    
-    
-    # #CREATE A METADATA OBJECT and a new metadata_id in the database for this data
-
-    # ## patch method defined in subclass :-)
-    # #
-    # print STDERR "RUNNING PATCH FOR ".__PACKAGE__."\n";
-    # my $error = __PACKAGE__->patch;
-    # if ($error ne '1') {
-    # 	print "Failed! Rolling back! \n $error \n ";
-    # 	#exit();
-    # } elsif ( $self->trial_mode) {
-    # 	print "Trial mode! Not storing new metadata and dbversion rows\n";
-    # } else {
-    # 	print STDERR "Adding patch info to dbpatch table...\n";
-    # 	$dbpatch_schema->resultset("Dbpatch::Result::Dbpatch")->create(
-    # 	    {
-    # 		name => $self->name(),
-    # 		description => $self->description(),
-    # 	    });
-    # }
 }
 
 
@@ -167,7 +139,7 @@ sub get_dbpatch_files {
     my $self = shift;
     my $full_paths = shift;
     
-    my @dbpatches = sort glob 'lib/dbpatches/*/*.pm';
+    my @dbpatches = sort glob 'dbpatches/*/*.pm';
 
     foreach my $dbp (@dbpatches) {
 	if (! $full_paths ) { $dbp =~ s/.*\/(.*?).pm/$1/; }
@@ -180,32 +152,39 @@ sub run_all_patches {
 
     # determine the uninstalled files
     #
-    my %installed_patches;
+    my %missing_patches;
     my %installed_patches_paths;
     my @available_dbpatch_files  = $self->get_dbpatch_files(1);
     foreach my $dbp (@available_dbpatch_files ) {
-	print STDERR "PATH = $dbp\n";
+#	print STDERR "PATH = $dbp\n";
 	my $path = $dbp;
 	$dbp =~ s/.*\/(.*?).pm/$1/;
-	print STDERR "FILE = $dbp\n";
+#	print STDERR "FILE = $dbp\n";
 	my $file = $dbp;
 
-	$installed_patches{$file} = $path;
+	$missing_patches{$file} = $path;
     }
 
     my $rs = $self->schema()->resultset('Dbpatch')->search( { });
     my @lines;
     while (my $row = $rs->next()) {
-	if ($installed_patches{$row->name()}) {
-	    $installed_patches{$row->name()}=undef;
+	if ($missing_patches{$row->name()}) {
+	    delete($missing_patches{$row->name()})
 	}
     }
 
-    foreach my $k (%installed_patches) {
-	print STDERR "Running $k (path = $installed_patches{$k})...\n";
+    if (scalar(keys(%missing_patches))==0) {
+	print "+-------------------------+\n";
+        print "| Patches are up to date! |\n";
+	print "+-------------------------+\n";
+    }
+    
+    
+    foreach my $k (%missing_patches) {
+	print STDERR "Running $k (path = $missing_patches{$k})...\n";
 
-	if (defined($installed_patches{$k})) { 
-	    require(cwd()."/".$installed_patches{$k});
+	if (defined($missing_patches{$k})) { 
+	    require(cwd()."/".$missing_patches{$k});
 	    
 	    my $patch = $k->new();
 	    $patch->dbname($self->dbname());

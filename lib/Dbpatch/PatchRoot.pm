@@ -24,35 +24,6 @@ has 'description' => (
     );
 
 
-has 'list' => (
-    is => 'rw',
-    isa => 'Bool',
-    required => 0,
-    traits      => ['Getopt'],
-    default => 0,
-    cmd_aliases => 'l',
-    documentation => 'Test run. Rollback the transaction.',
-    );
-
-has 'list_files' => (
-    is => 'rw',
-    isa => 'Bool',
-    required => 0,
-    traits      => ['Getopt'],
-    default => 0,
-    cmd_aliases => 'f',
-    documentation => 'List available dbpatch files.',
-    );
-
-has 'update' => (
-    is => 'rw',
-    isa => 'Bool',
-    required => 0,
-    traits      => ['Getopt'],
-    default => 0,
-    cmd_aliases => 'r',
-    documentation => 'List available dbpatch files.',
-    );
     
 sub init_patch {
     #print STDERR "init_patch() needs to be implemented in the subclass.\n";
