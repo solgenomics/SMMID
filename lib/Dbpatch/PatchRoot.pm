@@ -48,7 +48,7 @@ has 'dbuser' => (
     default => 'postgres', 
     traits        => ['Getopt'],
     cmd_aliases   => 'x',
-    documentation => 'required, database host',
+    documentation => 'required, dbuser name',
     );
 
 has 'username' => (
@@ -57,7 +57,7 @@ has 'username' => (
     required      => 0,
     traits        => ['Getopt'],
     cmd_aliases   => 'u',
-    documentation => 'required, database host',
+    documentation => 'required postgres username (default postgres), ',
     );
 
 has "prereq" => (
@@ -148,11 +148,11 @@ has 'update' => (
     );
     
 sub init_patch {
-    print STDERR "init_patch() needs to be implemented in the subclass.\n";
+    #print STDERR "init_patch() needs to be implemented in the subclass.\n";
 }
 
 sub patch {
-    print STDERR "patch() needs to be implemetned in the subclass.\n";
+    #print STDERR "patch() needs to be implemetned in the subclass.\n";
 }
 
 
@@ -182,7 +182,7 @@ sub run {
     eval { 
 	$rs = $dbpatch_schema->resultset('Dbpatch')->search( { name => $self->name() });
 	if ($rs->count > 0) {
-	    die "Dbpatch has already been run in ".$rs->next()->run_timestamp()."\n";
+	    print STDERR "Dbpatch has already been run in ".$rs->next()->run_timestamp()."\n";
 	}
     };
 
@@ -228,7 +228,7 @@ sub run {
     my $error = $self->patch;
     if ($error ne '1') {
         print "Failed! Rolling back! \n $error \n ";
-        exit();
+        #exit();
     } elsif ( $self->trial_mode) {
         print "Trial mode! Not storing new metadata and dbversion rows\n";
     } else {
