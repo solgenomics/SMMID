@@ -89,10 +89,16 @@ sub run {
     }
 
     if ($self->list_files()) {
+	my $tb = Text::Table->new( "AVAILABLE DBPATCH FILES", \" |");
 	my @dbpatches = get_dbpatch_files();
-	print "AVAILABLE DBPATCH FILES:\n";
-	print "------------------------\n";
-	print join("\n", @dbpatches)."\n";
+
+	foreach my $patch (@dbpatches) {
+	    $tb->add($patch);
+	}
+
+	my $rule = $tb->rule('-','+');
+	
+	print $rule, $tb->title(), $rule, $tb->body(), $rule, "\n";
 	exit();
     }
 
@@ -121,8 +127,6 @@ sub list_installed_dbpatches {
     while (my $row = $rs->next()) {
 	$not_installed_files{$row->name()} = 0;
 	$tb->add( $row->name, $row->description,  $row->run_timestamp,  $row->dbuser_id );
-	
-
     }
 
     foreach my $k (%not_installed_files) {
