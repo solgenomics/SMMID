@@ -6,7 +6,7 @@ package dbpatch;
 
 use Moose;
 
-extends 'Dbpatch::PatchRoot';
+extends 'Dbpatch::RunPatches';
 
 my $dbpatch = dbpatch->new_with_options();
 

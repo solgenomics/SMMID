@@ -1,5 +1,5 @@
 
-package Dbpatch::PatchRoot;
+package Dbpatch::RunPatches;
 
 use Moose;
 
@@ -9,20 +9,13 @@ use DBI;
 use SMIDDB;
 use Dbpatch;
 use Text::Table;
+use Cwd qw(cwd);
 
 
-has 'name' => (    #name of the dbpatch
-    is     => 'rw',
-    isa    => 'Str',
-		   default => sub { return __PACKAGE__; }
-		   
-    );
-
-has 'description' => (
+has 'trial_mode' => (
     is => 'rw',
-    isa => 'Str',
+    isa => 'Bool',
     );
-
 
 has 'list' => (
     is => 'rw',
@@ -54,22 +47,11 @@ has 'update' => (
     documentation => 'List available dbpatch files.',
     );
     
-sub init_patch {
-    #print STDERR "init_patch() needs to be implemented in the subclass.\n";
-}
-
-sub patch {
-    #print STDERR "patch() needs to be implemetned in the subclass.\n";
-}
-
-
 sub run {
     my $self = shift;
 
     print STDERR "Connecting to database ".$self->dbname()." on host ".$self->dbhost()."...\n";
     
-    $self->init_patch;  #override this in the child class
-
     my $dbh =  DBI->connect('dbi:Pg:host='.$self->dbhost().";database=".$self->dbname(), 
 			    $self->dbuser(),
 			    $self->dbpass(),
@@ -87,13 +69,13 @@ sub run {
     
     my $rs;
     eval { 
-	$rs = $dbpatch_schema->resultset('Dbpatch')->search( { name => $self->name() });
+	$rs = $dbpatch_schema->resultset('Dbpatch::Result::Dbpatch')->search( { name => 'test' });
 	if ($rs->count > 0) {
 	    print STDERR "Dbpatch has already been run in ".$rs->next()->run_timestamp()."\n";
 	}
     };
 
-    
+    print STDERR "ERROR: $@\n";
     
     if (defined($@) && $@ =~ m/does not exist/) {
 	print STDERR "$@ ... Inserting dbpatch table...\n";
@@ -127,28 +109,27 @@ sub run {
 
     
     
-    #CREATE A METADATA OBJECT and a new metadata_id in the database for this data
+    # #CREATE A METADATA OBJECT and a new metadata_id in the database for this data
 
-    ## patch method defined in subclass :-)
-    #
-    if (__PACKAGE__ ne 'Dbpatch::PatchRoot') { 
-	print STDERR "RUNNING PATCH FOR ".__PACKAGE__."\n";
-	my $error = $self->patch;
-	if ($error ne '1') {
-	    print "Failed! Rolling back! \n $error \n ";
-	    #exit();
-	} elsif ( $self->trial_mode) {
-	    print "Trial mode! Not storing new metadata and dbversion rows\n";
-	} else {
-	    print STDERR "Adding patch info to dbpatch table...\n";
-	    $dbpatch_schema->resultset("Dbpatch::Result::Dbpatch")->create(
-		{
-		    name => $self->name(),
-		    description => $self->description(),
-		});
-	}
-    }
+    # ## patch method defined in subclass :-)
+    # #
+    # print STDERR "RUNNING PATCH FOR ".__PACKAGE__."\n";
+    # my $error = __PACKAGE__->patch;
+    # if ($error ne '1') {
+    # 	print "Failed! Rolling back! \n $error \n ";
+    # 	#exit();
+    # } elsif ( $self->trial_mode) {
+    # 	print "Trial mode! Not storing new metadata and dbversion rows\n";
+    # } else {
+    # 	print STDERR "Adding patch info to dbpatch table...\n";
+    # 	$dbpatch_schema->resultset("Dbpatch::Result::Dbpatch")->create(
+    # 	    {
+    # 		name => $self->name(),
+    # 		description => $self->description(),
+    # 	    });
+    # }
 }
+
 
 
 sub list_installed_dbpatches {
@@ -186,7 +167,7 @@ sub get_dbpatch_files {
     my $self = shift;
     my $full_paths = shift;
     
-    my @dbpatches = glob 'dbpatches/*/*.pm';
+    my @dbpatches = sort glob 'lib/dbpatches/*/*.pm';
 
     foreach my $dbp (@dbpatches) {
 	if (! $full_paths ) { $dbp =~ s/.*\/(.*?).pm/$1/; }
@@ -224,7 +205,7 @@ sub run_all_patches {
 	print STDERR "Running $k (path = $installed_patches{$k})...\n";
 
 	if (defined($installed_patches{$k})) { 
-	    require($installed_patches{$k});
+	    require(cwd()."/".$installed_patches{$k});
 	    
 	    my $patch = $k->new();
 	    $patch->dbname($self->dbname());
@@ -235,7 +216,12 @@ sub run_all_patches {
 	    print STDERR "Running $k as ".$patch->dbuser()."\n";
 	    $patch->dbh($self->dbh());
 	    $patch->schema($self->schema());
-	    $patch->run;
+	    $patch->patch();
+	    $patch->schema()->resultset("Dbpatch::Result::Dbpatch")->create(
+		{
+		    name => $patch->name(),
+		    description => $patch->description(),
+		});
 	}
     }
 } 
