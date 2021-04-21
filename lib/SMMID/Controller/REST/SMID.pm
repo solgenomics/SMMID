@@ -593,7 +593,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
     my $description = $self->clean($c->req->param("description"));
     my $molecular_weight= Chemistry::MolecularMass::molecular_mass($formula);
     my $doi = $self->clean($c->req->param("doi"));
-    my $public_status = $self->clean($c->req->param("public_status"));
+    #my $public_status = $self->clean($c->req->param("public_status"));
 
     my $errors = "";
     if (!$compound_id) {  $errors .= "Need compound id. "; }
@@ -622,7 +622,7 @@ sub update :Chained('smid') PathPart('update') Args(0) {
 	description => $description,
 	synonyms => $synonyms,
 	molecular_weight => $molecular_weight,
-  public_status => $public_status,
+  #public_status => $public_status,
 	last_modified_date => 'now()',
     };
 
@@ -844,7 +844,13 @@ sub list_groups :Chained('smid') :PathPart('list_groups') Args(0){
     return;
   }
 
-  my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbuser_id => $c->user()->get_object()->dbuser_id()});
+  my $rs;
+
+  if ($c->user()->get_object()->user_type() eq "curator"){
+    $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbgroup")->search({});
+  } else {
+    $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbuser_id => $c->user()->get_object()->dbuser_id()});
+  }
 
   my $html = "<option value=0 selected=\"selected\">Select Group:</option>";
   while(my $r = $rs->next()){

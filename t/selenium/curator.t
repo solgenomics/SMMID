@@ -73,11 +73,11 @@ print STDERR "Changing public and private statuses...\n";
 $t->mouse_move_to_location( { element => 'change_public_status_1' } );
 my $public_smid = $t->find_element('change_public_status_1', 'id');
 $public_smid->click();
-sleep(1);
+sleep(2);
 $t->mouse_move_to_location( { element => 'change_public_status_2' } );
 my $private_smid = $t->find_element('change_public_status_2', 'id');
 $private_smid->click();
-sleep(1);
+sleep(2);
 
 #Logout and view from browse page
 $t->get_ok('/');
