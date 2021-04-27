@@ -690,7 +690,10 @@ sub authored_smids :Chained('user') :PathPart('authored_smids') Args(0){
 
     next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $r, $c->model("SMIDDB")));
 
-    push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $r->molecular_weight(), $r->curation_status(), $r->public_status() ];
+    my $formula_subscripts = $r->formula();
+    $formula_subscripts =~ s/(\d+)/\<sub\>$1\<\/sub\>/g;
+
+    push @data, ["<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $formula_subscripts, $r->molecular_weight(), $r->curation_status(), $r->public_status() ];
   }
   $c->stash->{rest} = {data => \@data};
 }
@@ -829,8 +832,11 @@ sub group_data :Chained('user') :PathPart('group_data') Args(0){
 
   print STDERR "Accessing user's groups...\n";
 
-  my @data;
+  my @group_data;
+  my $data;
 
+
+  my $int = 0;
   my $rs = $c->model("SMIDDB")->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbuser_id => $dbuser_id});
  #rs contains a list of all the groups that this user is in.
   while (my $row = $rs->next()){
@@ -845,17 +851,25 @@ sub group_data :Chained('user') :PathPart('group_data') Args(0){
     }
     my $member_string = join(", ", @member_list);
 
-    my @smid_list;
+    my $smid_table = "<table id=smid_list_$int class='display' style='width:\"100%\"'>";
+
     while(my $smid = $smids->next()){
       next if (!SMMID::Authentication::ViewPermission::can_view_smid($c->user(), $smid, $c->model("SMIDDB")));
-      push @smid_list, "<a href=\"/smid/".$smid->compound_id()."\" >".$smid->smid_id()."</a>";
+      my $formula_subscripts = $smid->formula();
+      $formula_subscripts =~ s/(\d+)/\<sub\>$1\<\/sub\>/g;
+      $smid_table .= "<tr>";
+      $smid_table .= "<td><a href=\"/smid/".$smid->compound_id()."\" >".$smid->smid_id()."</a></td><td>".$formula_subscripts."</td><td>".$smid->molecular_weight()."</td><td>".$smid->curation_status()."</td><td>".$smid->public_status()."</td>";
+      $smid_table .= "</tr>";
     }
-    my $smid_string = join(", ", @smid_list);
 
-    push @data, [$group->name(), $group->description(), $member_string, $smid_string];
+    push @group_data, [$group->name(), $group->description(), $member_string, $smid_table];
+    $int = $int + 1;
   }
 
-  $c->stash->{rest} = {data => \@data};
+  $data->{group_data} = \@group_data;
+  $data->{num_smid_tables} = $int;
+
+  $c->stash->{rest} = {data => $data};
 }
 
 

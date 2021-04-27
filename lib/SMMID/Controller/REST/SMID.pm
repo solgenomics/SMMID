@@ -115,7 +115,10 @@ return;
      $pub_status_button = "<button id=\"change_public_status_".$r->compound_id()."\" onclick=\"change_public_status(".$r->compound_id().", \'private\' )\" type=\"button\" class=\"btn btn-primary\">Make Private</button>";
     }
 
-    push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $r->formula(), $pub_status_button, $r->public_status(), $cur_button, $cur_status];
+    my $formula_subscripts = $r->formula();
+    $formula_subscripts =~ s/(\d+)/\<sub\>$1\<\/sub\>/g;
+
+    push @data, [ $r->compound_id(), "<a href=\"/smid/".$r->compound_id()."\">".$r->smid_id()."</a>", $formula_subscripts, $pub_status_button, $r->public_status(), $cur_button, $cur_status];
   }
 
   $c->stash->{rest} = { data => \@data };
