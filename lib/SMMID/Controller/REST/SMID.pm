@@ -503,6 +503,7 @@ sub change_public_status :Chained('smid') PathPart('change_public_status') Args(
 
   my $public_status = $self->clean($c->req->param("public_status"));
   my $group_id = $self->clean($c->req->param("dbgroup_id"));
+  my $strip_group_id = $self->clean($c->req->param("strip_group_id"));
 
   if($public_status ne "public" && $public_status ne "private" && $public_status ne "protected"){
     $c->stash->{rest} = { error => "Invalid. New status must be \"public,\" \"protected,\" or \"private\"." };
@@ -537,10 +538,19 @@ sub change_public_status :Chained('smid') PathPart('change_public_status') Args(
       dbgroup_id => $group_id
     };
   } else {
-    $data={
-      public_status => $public_status,
-      last_modified_date => 'now()',
-    };
+    if ($strip_group_id eq 'true'){
+      $data={
+        public_status => $public_status,
+        last_modified_date => 'now()',
+        dbgroup_id => undef
+      };
+    } if($strip_group_id eq 'false') {
+      $data={
+        public_status => $public_status,
+        last_modified_date => 'now()',
+      };
+    }
+
   }
 
   eval {

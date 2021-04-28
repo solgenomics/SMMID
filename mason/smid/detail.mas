@@ -574,6 +574,25 @@ m/z        Intensity              Relative
   </div>
 </div>
 
+<div id="confirm_strip_group_id" class="modal">
+  <div class="modal-body">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="strip_group_id_modal_title"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span>A SMID may keep group associations, even when it no longer carries the <i>protected</i> visibility. Would you like to strip this SMID of group associations?</span>
+        <p></p>
+        <button id="yes_strip_group_id" type="button" class="btn btn-primary">Yes</button>
+        <button id="no_strip_group_id" type="button" class="btn btn-danger">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div style="height:30px">
 </div>
 

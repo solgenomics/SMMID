@@ -646,22 +646,7 @@ function change_public_status(compound_id, new_status){
   if (new_status == 'protected'){
     populate_group_select_modal(compound_id);
   } else {
-    $.ajax({
-      url: '/rest/smid/'+compound_id+'/change_public_status',
-      data: {
-        'public_status' : new_status
-      },
-      success: function(r){
-        if(r.error) {alert(r.error);}
-        else{
-          alert(r.message);
-          location.reload();
-        }
-      },
-      error: function(r){
-        alert("An error occurred."+r.responseText);
-      }
-    });
+    populate_strip_group_id_modal(compound_id, new_status);
   }
 }
 
@@ -682,6 +667,13 @@ function populate_group_select_modal(compound_id){
       location.reload();
     }
   });
+}
+
+function populate_strip_group_id_modal(compound_id, new_status){
+  $('#strip_group_id_modal_title').html("Mark SMID as "+new_status);
+  $('#yes_strip_group_id').attr("onclick", "submit_private_public("+compound_id+", 'true', '"+new_status+"')");
+  $('#no_strip_group_id').attr("onclick", "submit_private_public("+compound_id+", 'false', '"+new_status+"')");
+  $('#confirm_strip_group_id').modal('show');
 }
 
 function submit_protected(compound_id, group_id){
@@ -707,6 +699,26 @@ function submit_protected(compound_id, group_id){
     error: function(r){
       alert("Sorry, an error occurred: "+r.responseText);
       location.reload();
+    }
+  });
+}
+
+function submit_private_public(compound_id, strip_group_id, new_status){
+  $.ajax({
+    url: '/rest/smid/'+compound_id+'/change_public_status',
+    data: {
+      'public_status' : new_status,
+      'strip_group_id': strip_group_id
+    },
+    success: function(r){
+      if(r.error) {alert(r.error);}
+      else{
+        alert(r.message);
+        location.reload();
+      }
+    },
+    error: function(r){
+      alert("An error occurred."+r.responseText);
     }
   });
 }
