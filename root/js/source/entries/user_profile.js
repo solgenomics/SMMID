@@ -188,7 +188,7 @@ function load_groups_data(dbuser_id){
           {title: "Group Name", width:"10%"},
           {title: "Description", width:"10%"},
           {title: "Members", width:"10%"},
-          {title: "SMIDs"}
+          {title: "<table width='100%'><th width='20%'>SMID ID</th><th width='20%'>Formula</th><th width='20%'>Molecular Weight</th><th width='20%'>Curation Status</th><th width='20%'>Visibility</th></table>"}
         ],
       });
       for(var i = 0; i < r.data.num_smid_tables; i++){
