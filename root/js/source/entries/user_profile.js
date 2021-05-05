@@ -171,16 +171,56 @@ function submit_new_user_data(){
 }
 
 function load_groups_data(dbuser_id){
-  $('#user_profile_groups').DataTable({
-    'ajax': '/rest/user/'+dbuser_id+'/group_data',
-    'paging': false,
-    'searching': false,
-    'info': false,
-    columns: [
-      {title: "Group Name"},
-      {title: "Description"},
-      {title: "Members"},
-      {title: "SMIDs"}
-    ],
+
+  $.ajax({
+    url: '/rest/user/'+dbuser_id+'/group_data',
+    success: function(r){
+      if (r.error){
+        alert(r.error);
+        window.history.back();
+      }
+      $('#user_profile_groups').DataTable({
+        'paging': false,
+        'searching': true,
+        'info': false,
+        'data':r.data.group_data,
+        columns: [
+          {title: "Group Name", width:"10%"},
+          {title: "Description", width:"10%"},
+          {title: "Members", width:"10%"},
+          {title: "<table width='100%'><th width='20%'>SMID ID</th><th width='20%'>Formula</th><th width='20%'>Molecular Weight</th><th width='20%'>Curation Status</th><th width='20%'>Visibility</th></table>"}
+        ],
+      });
+      for(var i = 0; i < r.data.num_smid_tables; i++){
+        $('#smid_list_'+i).DataTable({
+          'paging': false,
+          'searching': false,
+          'info': false,
+          columns: [
+            {width: "20%"},
+            {width: "20%"},
+            {width: "20%"},
+            {width: "20%"},
+            {width: "20%"}
+          ]
+        });
+      }
+    },
+    error: function(r){
+      alert("Sorry, an error occurred: "+r.responseText);
+    }
   });
+
+  // $('#user_profile_groups').DataTable({
+  //   'ajax': '/rest/user/'+dbuser_id+'/group_data',
+  //   'paging': false,
+  //   'searching': false,
+  //   'info': false,
+  //   columns: [
+  //     {title: "Group Name", width:"10%"},
+  //     {title: "Description", width:"10%"},
+  //     {title: "Members", width:"10%"},
+  //     {title: "SMIDs"}
+  //   ],
+  // });
 }
