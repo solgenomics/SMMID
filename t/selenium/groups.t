@@ -25,7 +25,7 @@ $t->login_curator();
 sleep(1);
 
 $t->get_ok('/groups/manage');
-sleep(1);
+sleep(2);
 
 $t->mouse_move_to_location({element => "add_group_button"});
 my $new_group_button = $t->find_element('add_group_button', 'id');
