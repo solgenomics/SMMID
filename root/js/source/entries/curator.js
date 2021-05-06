@@ -110,7 +110,7 @@ function curate_smid(compound_id){
         if (r.error){
           alert(r.error);
         } else {
-          alert("Successfully update the visibility of this smid and assigned a managment group.");
+          alert("Successfully updated the visibility of this smid and assigned a managment group.");
           location.reload();
         }
       },
