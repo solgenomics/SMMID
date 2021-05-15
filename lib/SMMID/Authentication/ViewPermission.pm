@@ -12,7 +12,29 @@ sub can_view_smid {
 
   #my $user = $c->user();
 
-  if($smid->public_status() eq "public"){return 1;}
+  if($smid->public_status() eq "public"){
+    #if the curation status is unverified, only owners, group members, and curators can see it
+    if ($smid->curation_status() ne "curated" && $smid->curation_status() ne "review"){
+      if (!$user){
+        return 0;
+      }
+      if ($user->dbuser_id() == $smid->dbuser_id()){
+        return 1;
+      }
+      if ($user->get_object()->user_type() eq "curator"){
+        return 1;
+      }
+      my $rs = $schema->resultset("SMIDDB::Result::DbuserDbgroup")->search({dbgroup_id => $smid->dbgroup_id()});
+      while(my $r = $rs->next()){
+        if($user->dbuser_id() == $r->dbuser_id()){
+          return 1;
+        }
+      }
+      #Catchall - If they are not the owner, a curator, or a group member, they do not have access to this unverified smid. 
+      return 0;
+    }
+    return 1;
+  }
 
   if (!$user && $smid->public_status() eq "protected"){
     return 0;
