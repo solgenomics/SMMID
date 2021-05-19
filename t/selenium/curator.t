@@ -73,11 +73,18 @@ print STDERR "Changing public and private statuses...\n";
 $t->mouse_move_to_location( { element => 'change_public_status_1' } );
 my $public_smid = $t->find_element('change_public_status_1', 'id');
 $public_smid->click();
+sleep(1);
+$t->mouse_move_to_location( { element => 'yes_strip_group_id' } );
+my $strip_group_id = $t->find_element('yes_strip_group_id', 'id');
+$strip_group_id->click();
 sleep(2);
-$t->mouse_move_to_location( { element => 'change_public_status_2' } );
-my $private_smid = $t->find_element('change_public_status_2', 'id');
-$private_smid->click();
+$t->accept_alert_ok();
 sleep(2);
+#No longer works due to protected status and a lack of working groups
+# $t->mouse_move_to_location( { element => 'change_public_status_2' } );
+# my $private_smid = $t->find_element('change_public_status_2', 'id');
+# $private_smid->click();
+# sleep(5);
 
 #Logout and view from browse page
 $t->get_ok('/');
@@ -85,7 +92,7 @@ sleep(1);
 $t->logout();
 $t->get_ok('/browse');
 sleep(2);
-$t->body_text_contains('earth#0002');
+$t->body_text_lacks('earth#0002');
 $t->body_text_lacks('earth#0001');
 
 #login as curator, return to curator page, and change smid curation status from detail page
@@ -95,10 +102,26 @@ $t->get_ok('/smid/1');
 $t->mouse_move_to_location( { element => 'curation_status_manipulate' } );
 my $curation_status = $t->find_element('curation_status_manipulate', 'id');
 $curation_status->click();
-$t->mouse_move_to_location( { element => 'change_curation_verified' } );
-my $verified = $t->find_element('change_curation_verified', 'id');
+$t->mouse_move_to_location( { element => 'change_curated' } );
+my $verified = $t->find_element('change_curated', 'id');
 $verified->click();
 $t->accept_alert_ok();
+sleep(2);
+
+$t->get_ok('/smid/2');
+$t->mouse_move_to_location( { element => 'public_status_manipulate' } );
+my $public_status = $t->find_element('public_status_manipulate', 'id');
+$public_status->click();
+sleep(1);
+$t->mouse_move_to_location( { element => 'change_public' } );
+my $private = $t->find_element('change_public', 'id');
+$private->click();
+sleep(1);
+$t->mouse_move_to_location( { element => 'yes_strip_group_id' } );
+my $strip_group_id = $t->find_element('yes_strip_group_id', 'id');
+$strip_group_id->click();
+$t->accept_alert_ok();
+sleep(2);
 
 $t->get_ok('/curator');
 sleep(2);

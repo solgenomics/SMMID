@@ -53,9 +53,9 @@ $login_user => undef
      <div id="change_curation_status">
        <label for="curation_status_manipulate">Change Curation Status:</label>
        <select id="curation_status_manipulate" name="curation_status_manipulate" onchange="change_curation_status(<% $compound_id %>, $('#curation_status_manipulate').val());">
-         <option value="curated">Verified</option>
-         <option value="review">Review</option>
-         <option value="unverified">Unverified</option>
+         <option id="change_curated" value="curated">Verified</option>
+         <option id="change_review" value="review">Review</option>
+         <option id="change_verified" value="unverified">Unverified</option>
        </select>
      </div>
    </td>
@@ -66,9 +66,9 @@ $login_user => undef
      <div id="change_public_status">
        <label for="public_status_manipulate">Change Visibility:</label>
        <select id="public_status_manipulate" name="public_status_manipulate" onchange="change_public_status(<% $compound_id %>, $('#public_status_manipulate').val());">
-         <option value="public">Public</option>
-         <option value="protected">Protected</option>
-         <option value="private">Private</option>
+         <option id="change_public" value="public">Public</option>
+         <option id="change_protected" value="protected">Protected</option>
+         <option id="change_private" value="private">Private</option>
        </select>
      </div>
    </td>

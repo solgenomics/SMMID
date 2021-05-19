@@ -17,6 +17,7 @@ use SMMID::Test::WebDriver;
 
 #finish testing
 
+
 my $t = SMMID::Test::WebDriver->new();
 
 $t->get_ok('/');
@@ -25,7 +26,7 @@ $t->login_curator();
 sleep(1);
 
 $t->get_ok('/groups/manage');
-sleep(1);
+sleep(2);
 
 $t->mouse_move_to_location({element => "add_group_button"});
 my $new_group_button = $t->find_element('add_group_button', 'id');
@@ -65,8 +66,11 @@ $t->body_text_contains("Jane Doe");
 
 $t->mouse_move_to_location({element => "remove_user_1"});
 $t->find_element('remove_user_1', 'id')->click();
-$t->accept_alert_ok();
 sleep(1);
+$t->accept_alert();
+sleep(1);
+$t->accept_alert_ok();
+sleep(2);
 
 $t->mouse_move_to_location({element => "select_group_users"});
 $t->find_element('select_group_users', 'id')->click();
@@ -80,6 +84,10 @@ sleep(1);
 $t->mouse_move_to_location({element => "delete_group_1"});
 $t->find_element("delete_group_1", "id")->click();
 sleep(1);
+$t->accept_alert();
+sleep(1);
+$t->accept_alert_ok();
+sleep(2);
 
 $t->body_text_lacks("Delete this Group");
 sleep(1);
@@ -122,6 +130,12 @@ sleep(1);
 $t->get_ok('/browse');
 sleep(1);
 $t->body_text_lacks("earth#0002");
+sleep(1);
+
+$t->logout();
+sleep(1);
+$t->login_curator();
+sleep(1);
 
 $t->get_ok('/curator');
 sleep(1);
@@ -132,12 +146,15 @@ sleep(1);
 $t->mouse_move_to_location({element => "select_group"});
 $t->find_element('select_group', 'id')->click();
 $t->mouse_move_to_location({element => "group_2"});
-$t->find_element('group2', 'id')->click();
+$t->find_element('group_2', 'id')->click();
 sleep(1);
 $t->mouse_move_to_location({element=>'submit_protected_button'});
 $t->find_element('submit_protected_button', 'id')->click();
 sleep(1);
+$t->accept_alert_ok();
+sleep(2);
 $t->body_text_contains("protected");
 
+$t->get_ok('/');
 $t->logout();
 done_testing();

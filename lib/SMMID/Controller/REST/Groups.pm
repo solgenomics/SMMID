@@ -112,7 +112,7 @@ sub list_group_users :Chained('/') :PathPart('rest/groups/list_group_users') Arg
 
   while (my $row = $rs->next()){
     my $user = $c->model("SMIDDB")->resultset("SMIDDB::Result::Dbuser")->find({dbuser_id => $row->dbuser_id()});
-    push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization(), "<button type=\"button\" id=\"remove_user".$user->dbuser_id()."\" class=\"btn btn-danger\" onclick=\"remove_user_from_group($group_id,".$user->dbuser_id().")\">Remove this User</button>"];
+    push @data, ["<a href=\"/user/".$user->dbuser_id()."/profile\">".$user->first_name()." ".$user->last_name()."</a>", $user->email(), $user->organization(), "<button type=\"button\" id=\"remove_user_".$user->dbuser_id()."\" class=\"btn btn-danger\" onclick=\"remove_user_from_group($group_id,".$user->dbuser_id().")\">Remove this User</button>"];
   }
 
   $c->stash->{rest} = {data => \@data};
