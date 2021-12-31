@@ -79,8 +79,11 @@ function display_msms_visual(experiment_id){
         }
         xdata.push(+rawdata[i][0]);
         ydata.push(+rawdata[i][1]);
-        tooltipData.push({ x: +rawdata[i][0], y:+rawdata[i][1]});
+        //tooltipData.push({ x: +rawdata[i][0], y:+rawdata[i][1]});
         prev = +rawdata[i][0];
+      }
+      for(i = 0; i < xdata.length; i++){
+        tooltipData.push({ x: +xdata[i], y: +ydata[i]});
       }
 
       console.log(tooltipData);
